@@ -1,11 +1,11 @@
-reyshan syah
+1. reyshan syah
 
-Muhammad Ilqi Muzaki
+2. Muhammad Ilqi Muzaki
 
-egi
+3. egi
 
-Adjie tegar Alamsyah 
+4. Adjie tegar Alamsyah 
 
-Shaula oceano satria muliawan
+5. Shaula oceano satria muliawan
 
-Ahmad Sopandi
+6. Ahmad Sopandi
