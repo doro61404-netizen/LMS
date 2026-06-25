@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LMS Dashboard UI</title>
+  <style>
+    /* --- CSS VARIABLES & RESET --- */
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg-main: #f8fafc;
+      --bg-card: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --danger: #ef4444;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      padding-top: 60px; /* Space for Top App Bar */
+      padding-bottom: 70px; /* Space for Bottom Menu */
+      min-height: 100vh;
+    }
+
+    /* --- TOP APP BAR & SUBMENU --- */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: var(--bg-card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      z-index: 100;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+    .icon-btn:hover { background-color: #f1f5f9; }
+
+    .top-menu-right { position: relative; }
+    
+    /* Submenu Dropdown */
+    .submenu {
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background: var(--bg-card);
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      width: 160px;
+      display: none;
+      flex-direction: column;
+    }
+    .submenu.active { display: flex; }
+    .submenu a {
+      padding: 12px 16px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-size: 0.95rem;
+    }
+    .submenu a:hover { background-color: #f1f5f9; }
+
+    /* --- BURGER MENU (DRAWER) --- */
+    .drawer-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      opacity: 0; pointer-events: none;
+      transition: var(--transition);
+      z-index: 200;
+    }
+    .drawer-overlay.active { opacity: 1; pointer-events: auto; }
+
+    .drawer {
+      position: fixed;
+      top: 0; left: -280px; bottom: 0;
+      width: 280px;
+      background: var(--bg-card);
+      box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+      transition: var(--transition);
+      z-index: 201;
+      padding: 24px 16px;
+    }
+    .drawer.active { left: 0; }
+    .drawer h2 { margin-bottom: 24px; font-size: 1.3rem; }
+    .drawer nav a {
+      display: block;
+      padding: 12px;
+      color: var(--text-main);
+      text-decoration: none;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+    .drawer nav a:hover { background: #f1f5f9; }
+
+    /* --- TABS BAR --- */
+    .tabs-container {
+      background: var(--bg-card);
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: center;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 16px 24px;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: var(--transition);
+    }
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    /* --- MAIN CONTENT & CARDS --- */
+    main {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Card & Animasi Mouseover */
+    .card {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+    }
+    .card:hover {
+      transform: translateY(-4px); /* Animasi Moveover */
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    }
+    .card h3 { margin-bottom: 8px; font-size: 1.2rem; }
+    .card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
+    
+    .card-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+    .btn-delete {
+      background: none;
+      border: none;
+      color: var(--danger);
+      cursor: pointer;
+      font-weight: 500;
+      padding: 4px 8px;
+    }
+
+    /* --- UNDO TOAST BAR (Bukan Notifikasi Gangguan) --- */
+    .undo-bar {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1e293b;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: var(--transition);
+      z-index: 99;
+    }
+    .undo-bar.active { transform: translateX(-50%) translateY(0); }
+    .btn-undo {
+      background: var(--primary);
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* --- BOTTOM MENU --- */
+    .bottom-menu {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 64px;
+      background: var(--bg-card);
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 100;
+    }
+    .bottom-item {
+      background: none;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.8rem;
+      gap: 4px;
+    }
+    .bottom-item.active { color: var(--primary); }
+    .bottom-item span { font-size: 1.2rem; }
+  </style>
+</head>
+<body>
+
+  <header class="top-bar">
+    <button class="icon-btn" id="burgerBtn" aria-label="Buka Menu Navigasi">&#9776;</button>
+    <h1>LMS Artikel</h1>
+    <div class="top-menu-right">
+      <button class="icon-btn" id="submenuBtn" aria-label="Menu Opsi Tambahan">&#8942;</button>
+      <div class="submenu" id="submenu">
+        <a href="#" id="refreshBtn">🔄 Refresh Halaman</a>
+        <a href="#">⚙️ Pengaturan</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <aside class="drawer" id="drawer" role="navigation" aria-label="Main Navigation">
+    <h2>Menu Utama</h2>
+    <nav>
+      <a href="#">📖 Kelas Saya</a>
+      <a href="#">📝 Tugas</a>
+      <a href="#">📊 Nilai</a>
+    </nav>
+  </aside>
+
+  <div class="tabs-container" role="tablist" aria-label="Kategori Artikel">
+    <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="panel-1" id="tab-1">Artikel Terbaru</button>
+    <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-2" id="tab-2">Disimpan</button>
+  </div>
+
+  <main>
+    <section id="panel-1" class="tab-content active" role="tabpanel" aria-labelledby="tab-1">
+      <article class="card" id="card-1">
+        <h3>Dasar-dasar HTML Semantik</h3>
+        <p>HTML Semantik mempermudah mesin pencari dan teknologi asistif (screen reader) membaca struktur web Anda secara teratur dan mudah dipahami.</p>
+        <div class="card-actions">
+          <button class="btn-delete" onclick="deleteCard('card-1')">Hapus Artikel</button>
+        </div>
+      </article>
+
+      <article class="card" id="card-2">
+        <h3>Panduan CSS Grid vs Flexbox</h3>
+        <p>Gunakan Flexbox untuk tata letak satu dimensi (baris atau kolom saja) dan beralihlah ke CSS Grid untuk tata letak kompleks dua dimensi.</p>
+        <div class="card-actions">
+          <button class="btn-delete" onclick="deleteCard('card-2')">Hapus Artikel</button>
+        </div>
+      </article>
+    </section>
+
+    <section id="panel-2" class="tab-content" role="tabpanel" aria-labelledby="tab-2">
+      <p style="text-align: center; color: var(--text-muted); margin-top: 40px;">Belum ada artikel yang disimpan.</p>
+    </section>
+  </main>
+
+  <div class="undo-bar" id="undoBar" aria-live="polite">
+    <span>Artikel berhasil dihapus.</span>
+    <button class="btn-undo" id="undoBtn">Urungkan (Undo)</button>
+  </div>
+
+  <nav class="bottom-menu" aria-label="Navigasi Bawah">
+    <button class="bottom-item active" aria-label="Beranda">
+      <span>🏠</span>Beranda
+    </button>
+    <button class="bottom-item" aria-label="Cari">
+      <span>🔍</span>Cari
+    </button>
+    <button class="bottom-item" aria-label="Profil">
+      <span>👤</span>Profil
+    </button>
+  </nav>
+
+  <script>
+    // Elements
+    const burgerBtn = document.getElementById('burgerBtn');
+    const drawer = document.getElementById('drawer');
+    const drawerOverlay = document.getElementById('drawerOverlay');
+    const submenuBtn = document.getElementById('submenuBtn');
+    const submenu = document.getElementById('submenu');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const tabs = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const undoBar = document.getElementById('undoBar');
+    const undoBtn = document.getElementById('undoBtn');
+
+    let deletedCardId = null;
+
+    // 1. Toggle Drawer (Burger Menu)
+    function toggleDrawer() {
+      drawer.classList.toggle('active');
+      drawerOverlay.classList.toggle('active');
+    }
+    burgerBtn.addEventListener('click', toggleDrawer);
+    drawerOverlay.addEventListener('click', toggleDrawer);
+
+    // 2. Toggle Top App Submenu
+    submenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      submenu.classList.toggle('active');
+    });
+    document.addEventListener('click', () => submenu.classList.remove('active'));
+
+    // 3. Refresh Action
+    refreshBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      location.reload();
+    });
+
+    // 4. Tabs Interaction
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        tabContents.forEach(c => c.classList.remove('active'));
+
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        tabContents[index].add('active');
+        tabContents[index].classList.add('active');
+      });
+    });
+
+    // 5. Delete & Non-Disruptive Undo Action
+    function deleteCard(cardId) {
+      const card = document.getElementById(cardId);
+      card.style.display = 'none';
+      deletedCardId = cardId;
+      
+      // Tampilkan bar undo pelan-pelan
+      undoBar.classList.add('active');
+
+      // Auto sembunyikan bar undo setelah 5 detik jika tidak di-klik
+      setTimeout(() => {
+        if(deletedCardId === cardId) {
+          undoBar.classList.remove('active');
+        }
+      }, 5000);
+    }
+
+    undoBtn.addEventListener('click', () => {
+      if (deletedCardId) {
+        const card = document.getElementById(deletedCardId);
+        card.style.display = 'block';
+        deletedCardId = null;
+        undoBar.classList.remove('active');
+      }
+    });
+  </script>
+</body>
+</html>
