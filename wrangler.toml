@@ -1,0 +1,11 @@
+name = "lms-crud-worker"
+main = "index.js"
+compatibility_date = "2026-06-25"
+
+[[d1_databases]]
+binding = "DB" # Harus sama dengan env.DB di kode
+database_name = "nama-database-d1-anda"
+database_id = "your-d1-database-id-dari-cloudflare"
+
+[vars]
+JWT_SECRET = "rahasia-lms-super-aman-2026"
