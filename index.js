@@ -68,25 +68,12 @@ const ExamModel = {
     }));
   },
   async create(db, { id, title, description, duration, questions }) {
+    // Memastikan data questions diubah menjadi STRING sebelum masuk ke SQLite/D1
     const questionsStr = typeof questions === 'string' ? questions : JSON.stringify(questions);
+    
     await db.prepare("INSERT INTO exams (id, title, description, duration, questions) VALUES (?, ?, ?, ?, ?)")
       .bind(id, title, description, parseInt(duration), questionsStr)
       .run();
-  }
-};
-
-// --- TAMBAHAN MODEL RIWAYAT UNTUK CLOUD D1 ---
-const ResultModel = {
-  async getAll(db) {
-    const { results } = await db.prepare("SELECT * FROM exam_results ORDER BY timestamp DESC").all();
-    return results;
-  },
-  async create(db, { id, exam_id, exam_title, score, correct_count, total_questions, duration_used }) {
-    await db.prepare(
-      "INSERT INTO exam_results (id, exam_id, exam_title, score, correct_count, total_questions, duration_used) VALUES (?, ?, ?, ?, ?, ?, ?)"
-    )
-    .bind(id, exam_id, exam_title, parseInt(score), parseInt(correct_count), parseInt(total_questions), parseInt(duration_used))
-    .run();
   }
 };
 
@@ -109,46 +96,42 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
     const method = request.method;
+
     const db = env.DB; 
+    const JWT_SECRET = env.JWT_SECRET || "super-secret-key";
+
+    const user = await verifyJWT(request, JWT_SECRET);
+    if (!user) {
+      return jsonResponse({ error: "Unauthorized: Invalid or missing Bearer Token" }, 401);
+    }
 
     try {
-      // ----------------------------------------
-      // ENDPOINT ARTIKEL
-      // ----------------------------------------
+      // --- ROUTING ARTICLES ---
       if (path === "/api/articles") {
         if (method === "GET") {
           const articles = await ArticleModel.getAll(db);
           return jsonResponse({ success: true, data: articles });
         }
-        
+
         if (method === "POST") {
-          const payload = await verifyJWT(request, env.JWT_SECRET);
           const body = await request.json();
           if (!body.title || !body.content) {
             return jsonResponse({ error: "Missing title or content" }, 400);
           }
+          
           const newArticle = {
-            id: "art-" + Date.now(),
+            id: crypto.randomUUID(),
             title: body.title,
             content: body.content,
-            author: payload ? payload.name : "Anonymous"
+            author: user.username || "Anonymous"
           };
+
           await ArticleModel.create(db, newArticle);
-          return jsonResponse({ success: true, message: "Article created!", data: newArticle }, 201);
+          return jsonResponse({ success: true, message: "Article created", data: newArticle }, 201);
         }
       }
 
-      if (path.startsWith("/api/articles/")) {
-        const id = path.split("/")[3];
-        if (method === "DELETE") {
-          await ArticleModel.delete(db, id);
-          return jsonResponse({ success: true, message: "Article deleted successfully" });
-        }
-      }
-
-      // ----------------------------------------
-      // ENDPOINT UJIAN (EXAMS)
-      // ----------------------------------------
+      // --- ROUTING EXAMS ---
       if (path === "/api/exams") {
         if (method === "GET") {
           const exams = await ExamModel.getAll(db);
@@ -158,12 +141,14 @@ export default {
         if (method === "POST") {
           let body;
           try {
+            // Membaca body sebagai teks mentah terlebih dahulu agar tidak memicu error parsing biner
             const rawText = await request.text();
             body = JSON.parse(rawText);
           } catch (jsonErr) {
             return jsonResponse({ error: "Format JSON yang Anda kirim tidak valid / rusak!", details: jsonErr.message }, 400);
           }
           
+          // DEBUGGING UTAMA: Jika data tidak lengkap, server akan membalas isi objek yang dia terima
           if (!body || !body.title || !body.duration || !body.questions) {
             return jsonResponse({ 
               error: "Missing title, duration, or questions", 
@@ -172,47 +157,24 @@ export default {
           }
 
           const newExam = {
-            id: body.id || "exam-\" + Date.now()",
+            id: body.id || "exam-" + Date.now(),
             title: body.title,
             description: body.description || "",
             duration: body.duration,
             questions: body.questions 
           };
 
+          // Jalankan fungsi create ke database D1
           await ExamModel.create(db, newExam);
           return jsonResponse({ success: true, message: "Exam created successfully!", data: newExam }, 201);
-        }
-      }
-
-      // ----------------------------------------
-      // ENDPOINT RIWAYAT UJIAN (RESULTS)
-      // ----------------------------------------
-      if (path === "/api/results") {
-        if (method === "GET") {
-          const results = await ResultModel.getAll(db);
-          return jsonResponse({ success: true, data: results });
-        }
-
-        if (method === "POST") {
-          const body = await request.json();
-          const newResult = {
-            id: body.id || "res-" + Date.now(),
-            exam_id: body.examId,
-            exam_title: body.examTitle,
-            score: body.score,
-            correct_count: body.correctCount,
-            total_questions: body.totalQuestions,
-            duration_used: body.durationUsed
-          };
-          await ResultModel.create(db, newResult);
-          return jsonResponse({ success: true, message: "Result saved to cloud database!", data: newResult }, 201);
         }
       }
 
       return jsonResponse({ error: "Endpoint not found" }, 404);
 
     } catch (error) {
-      return jsonResponse({ error: "Internal Server Error", message: error.message }, 500);
+      // Jika terjadi error database atau crash internal, tangkap pesannya di sini
+      return jsonResponse({ error: "Internal Server Error", details: error.message }, 500);
     }
   }
 };
