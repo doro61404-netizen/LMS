@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <title>EduPulse · Jurnal & Ujian Profesional</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -23,6 +24,7 @@
         },
       };
     </script>
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet" />
     <style>
       .serif-title {
@@ -75,6 +77,7 @@
   </head>
   <body class="bg-surface-900 text-slate-200 min-h-screen flex flex-col justify-between selection:bg-sky-500/30">
     
+    <!-- NAVIGASI -->
     <nav class="border-b border-slate-800/80 bg-surface-900/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4">
       <div class="max-w-6xl mx-auto flex justify-between items-center">
         <a href="#" class="flex items-center gap-2.5 group">
@@ -88,6 +91,7 @@
       </div>
     </nav>
 
+    <!-- HERO -->
     <header class="relative overflow-hidden border-b border-slate-800/50 bg-gradient-to-b from-blue-950/20 to-transparent py-16 px-6">
       <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_45%)]"></div>
       <div class="max-w-4xl mx-auto text-center relative z-10">
@@ -97,6 +101,7 @@
       </div>
     </header>
 
+    <!-- TAB SWITCHER -->
     <div class="max-w-6xl mx-auto w-full px-6 pt-10 pb-2">
       <div class="flex gap-1 bg-surface-800/60 p-1 rounded-2xl border border-slate-800/60 max-w-md mx-auto">
         <button id="tab-artikel" class="flex-1 py-2.5 px-4 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-blue-500/15" onclick="switchTab('artikel')">📄 Artikel</button>
@@ -105,8 +110,10 @@
       </div>
     </div>
 
+    <!-- MAIN CONTENT -->
     <main class="max-w-6xl mx-auto w-full px-6 py-8 flex-grow">
       
+      <!-- SECTION ARTIKEL -->
       <section id="section-artikel">
         <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
           <div class="flex items-center gap-3">
@@ -125,6 +132,7 @@
         <div id="articles-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
       </section>
 
+      <!-- SECTION UJIAN -->
       <section id="section-ujian" class="hidden">
         <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
           <div class="flex items-center gap-3">
@@ -143,6 +151,7 @@
         <div id="exams-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
       </section>
 
+      <!-- SECTION RIWAYAT -->
       <section id="section-riwayat" class="hidden">
         <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
           <h2 class="text-sm font-semibold tracking-wider uppercase text-slate-400">Riwayat & Statistik Ujian</h2>
@@ -155,6 +164,7 @@
       </section>
     </main>
 
+    <!-- MODAL TULIS ARTIKEL -->
     <div id="modal-tulis" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
       <div class="bg-surface-800 border border-slate-700/60 w-full max-w-lg rounded-2xl shadow-2xl modal-enter" id="modal-content-tulis">
         <div class="px-6 py-4 border-b border-slate-700/50 flex justify-between items-center bg-surface-900/40">
@@ -178,6 +188,7 @@
       </div>
     </div>
 
+    <!-- MODAL BUAT / EDIT UJIAN -->
     <div id="modal-buat-ujian" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden overflow-y-auto">
       <div class="bg-surface-800 border border-slate-700/60 w-full max-w-2xl rounded-2xl shadow-2xl my-8 modal-enter" id="modal-content-buat-ujian">
         <div class="px-6 py-4 border-b border-slate-700/50 flex justify-between items-center bg-surface-900/40 sticky top-0 z-10">
@@ -212,6 +223,7 @@
       </div>
     </div>
 
+    <!-- MODAL KERJAKAN UJIAN (FULLSCREEN) -->
     <div id="modal-kerjakan-ujian" class="fixed inset-0 bg-surface-900 z-[60] flex flex-col hidden">
       <div class="border-b border-slate-800 bg-surface-800/90 backdrop-blur-md px-6 py-4 flex items-center justify-between shrink-0">
         <div class="flex items-center gap-4">
@@ -247,6 +259,7 @@
       </div>
     </div>
 
+    <!-- MODAL HASIL UJIAN -->
     <div id="modal-hasil-ujian" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[70] flex items-center justify-center p-4 hidden overflow-y-auto">
       <div class="bg-surface-800 border border-slate-700/60 w-full max-w-2xl rounded-2xl shadow-2xl my-8 modal-enter" id="modal-content-hasil">
         <div class="px-6 py-4 border-b border-slate-700/50 flex justify-between items-center bg-surface-900/40">
@@ -257,14 +270,17 @@
       </div>
     </div>
 
+    <!-- TOAST ALERT -->
     <div id="toast" class="fixed bottom-6 right-6 z-[80] bg-surface-800 border border-slate-700 rounded-xl px-5 py-3 shadow-2xl text-sm text-white font-medium opacity-0 translate-y-4 pointer-events-none transition-all duration-300">
       <span id="toast-message">Pesan</span>
     </div>
 
+    <!-- FOOTER -->
     <footer class="border-t border-slate-800/80 bg-surface-800/20 py-6 px-6 text-center text-xs text-slate-500">
       <p>&copy; 2026 EduPulse · Pengalaman membaca & ujian profesional</p>
     </footer>
 
+    <!-- LOGIKAL JAVASCRIPT UTAMA -->
     <script>
       (function () {
         const API_URL = "https://lms.agungbarliansaputra.workers.dev/api/articles";
@@ -317,6 +333,34 @@
           }
         }
         window.switchTab = switchTab;
+
+        // ========== ENGINE MODAL GLOBAL (PERBAIKAN BUG) ==========
+        function bukaModalTambah() {
+          document.getElementById("modal-tulis").classList.remove("hidden");
+        }
+        function tutupModalTambah() {
+          document.getElementById("modal-tulis").classList.add("hidden");
+        }
+        window.bukaModalTambah = bukaModalTambah;
+        window.tutupModalTambah = tutupModalTambah;
+
+        function bukaModalBuatUjian() {
+          editingExamId = null;
+          soalSementara = [];
+          document.getElementById("modal-ujian-title").textContent = "📝 Buat Ujian Baru";
+          document.getElementById("exam-title-input").value = "";
+          document.getElementById("exam-duration-input").value = "30";
+          document.getElementById("exam-desc-input").value = "";
+          document.getElementById("questions-container").innerHTML = "";
+          tambahSoalField();
+          document.getElementById("modal-buat-ujian").classList.remove("hidden");
+        }
+        window.bukaModalBuatUjian = bukaModalBuatUjian;
+
+        function tutupModalUjian() { 
+          document.getElementById("modal-buat-ujian").classList.add("hidden"); 
+        }
+        window.tutupModalUjian = tutupModalUjian;
 
         // ========== ARTIKEL LMS API ENGINES ==========
         async function fetchArticles() {
@@ -405,16 +449,6 @@
         }
         window.hapusArtikel = hapusArtikel;
 
-        // ========== ENGINE MODAL ARTIKEL ==========
-        function bukaModalTambah() {
-          document.getElementById("modal-tulis").classList.remove("hidden");
-        }
-        function tutupModalTambah() {
-          document.getElementById("modal-tulis").classList.add("hidden");
-        }
-        window.bukaModalTambah = bukaModalTambah;
-        window.tutupModalTambah = tutupModalTambah;
-
         // ========== BANK UJIAN ENGINE (LOCALSTORAGE) ==========
         function loadExams() { window.examsData = JSON.parse(localStorage.getItem(STORAGE_EXAMS) || "[]"); }
         function saveExams() { localStorage.setItem(STORAGE_EXAMS, JSON.stringify(window.examsData)); }
@@ -466,20 +500,6 @@
           toast("Ujian dihapus.");
         }
         window.hapusUjian = hapusUjian;
-
-        // ========== FORM & DINAMISASI MODAL UJIAN ==========
-        function bukaModalBuatUjian() {
-          editingExamId = null;
-          soalSementara = [];
-          document.getElementById("modal-ujian-title").textContent = "📝 Buat Ujian Baru";
-          document.getElementById("exam-title-input").value = "";
-          document.getElementById("exam-duration-input").value = "30";
-          document.getElementById("exam-desc-input").value = "";
-          document.getElementById("questions-container").innerHTML = "";
-          tambahSoalField();
-          document.getElementById("modal-buat-ujian").classList.remove("hidden");
-        }
-        window.bukaModalBuatUjian = bukaModalBuatUjian;
 
         function editUjian(id) {
           editingExamId = id;
@@ -558,9 +578,6 @@
         }
         window.simpanUjian = simpanUjian;
 
-        function tutupModalUjian() { document.getElementById("modal-buat-ujian").classList.add("hidden"); }
-        window.tutupModalUjian = tutupModalUjian;
-
         // ========== EXECUTION EXAM ENGINE RUNTIME ==========
         function mulaiUjian(id) {
           loadExams();
@@ -619,7 +636,7 @@
           optContainer.innerHTML = q.options.map((opt, oIdx) => `
             <div class="relative">
               <input type="radio" name="ans" id="opt-${oIdx}" ${userAnswers[idx] === oIdx ? 'checked' : ''} onclick="pilihJawaban(${oIdx})" class="exam-option-input hidden" />
-              <label soccer for="opt-${oIdx}" class="exam-option-label block p-4 bg-surface-900 border border-slate-800 rounded-xl cursor-pointer hover:border-slate-700 text-sm"><span class="font-bold text-cyan-400 mr-2">${String.fromCharCode(65 + oIdx)}.</span> ${opt}</label>
+              <label for="opt-${oIdx}" class="exam-option-label block p-4 bg-surface-900 border border-slate-800 rounded-xl cursor-pointer hover:border-slate-700 text-sm"><span class="font-bold text-cyan-400 mr-2">${String.fromCharCode(65 + oIdx)}.</span> ${opt}</label>
             </div>`).join("");
 
           document.getElementById("btn-prev").disabled = idx === 0;
