@@ -78,10 +78,11 @@ const ExamModel = {
 };
 
 // ==========================================
-// 4. ROUTER & HANDLERS (Scalable)
+// 4. ROUTER & HANDLERS
 // ==========================================
 export default {
   async fetch(request, env, ctx) {
+    // 1. Handle CORS Preflight (OPTIONS)
     if (request.method === "OPTIONS") {
       return new Response(null, {
         status: 204,
@@ -96,85 +97,91 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
     const method = request.method;
-
     const db = env.DB; 
     const JWT_SECRET = env.JWT_SECRET || "super-secret-key";
 
-    const user = await verifyJWT(request, JWT_SECRET);
-    if (!user) {
-      return jsonResponse({ error: "Unauthorized: Invalid or missing Bearer Token" }, 401);
-    }
-
-    try {
-      // --- ROUTING ARTICLES ---
-      if (path === "/api/articles") {
-        if (method === "GET") {
-          const articles = await ArticleModel.getAll(db);
-          return jsonResponse({ success: true, data: articles });
-        }
-
-        if (method === "POST") {
-          const body = await request.json();
-          if (!body.title || !body.content) {
-            return jsonResponse({ error: "Missing title or content" }, 400);
-          }
-          
-          const newArticle = {
-            id: crypto.randomUUID(),
-            title: body.title,
-            content: body.content,
-            author: user.username || "Anonymous"
-          };
-
-          await ArticleModel.create(db, newArticle);
-          return jsonResponse({ success: true, message: "Article created", data: newArticle }, 201);
-        }
+    // -------------------------------------------------------------
+    // JALUR 1: JALUR API (Diproteksi oleh JWT Bearer Token)
+    // -------------------------------------------------------------
+    if (path.startsWith("/api")) {
+      const user = await verifyJWT(request, JWT_SECRET);
+      if (!user) {
+        return jsonResponse({ error: "Unauthorized: Invalid or missing Bearer Token" }, 401);
       }
 
-      // --- ROUTING EXAMS ---
-      if (path === "/api/exams") {
-        if (method === "GET") {
-          const exams = await ExamModel.getAll(db);
-          return jsonResponse({ success: true, data: exams });
-        }
-
-        if (method === "POST") {
-          let body;
-          try {
-            // Membaca body sebagai teks mentah terlebih dahulu agar tidak memicu error parsing biner
-            const rawText = await request.text();
-            body = JSON.parse(rawText);
-          } catch (jsonErr) {
-            return jsonResponse({ error: "Format JSON yang Anda kirim tidak valid / rusak!", details: jsonErr.message }, 400);
-          }
-          
-          // DEBUGGING UTAMA: Jika data tidak lengkap, server akan membalas isi objek yang dia terima
-          if (!body || !body.title || !body.duration || !body.questions) {
-            return jsonResponse({ 
-              error: "Missing title, duration, or questions", 
-              dataDiterimaServer: body || "Kosong" 
-            }, 400);
+      try {
+        // --- ROUTING ARTICLES ---
+        if (path === "/api/articles") {
+          if (method === "GET") {
+            const articles = await ArticleModel.getAll(db);
+            return jsonResponse({ success: true, data: articles });
           }
 
-          const newExam = {
-            id: body.id || "exam-" + Date.now(),
-            title: body.title,
-            description: body.description || "",
-            duration: body.duration,
-            questions: body.questions 
-          };
+          if (method === "POST") {
+            const body = await request.json();
+            if (!body.title || !body.content) {
+              return jsonResponse({ error: "Missing title or content" }, 400);
+            }
+            
+            const newArticle = {
+              id: crypto.randomUUID(),
+              title: body.title,
+              content: body.content,
+              author: user.username || "Anonymous"
+            };
 
-          // Jalankan fungsi create ke database D1
-          await ExamModel.create(db, newExam);
-          return jsonResponse({ success: true, message: "Exam created successfully!", data: newExam }, 201);
+            await ArticleModel.create(db, newArticle);
+            return jsonResponse({ success: true, message: "Article created", data: newArticle }, 201);
+          }
         }
+
+        // --- ROUTING EXAMS ---
+        if (path === "/api/exams") {
+          if (method === "GET") {
+            const exams = await ExamModel.getAll(db);
+            return jsonResponse({ success: true, data: exams });
+          }
+
+          if (method === "POST") {
+            let body;
+            try {
+              const rawText = await request.text();
+              body = JSON.parse(rawText);
+            } catch (jsonErr) {
+              return jsonResponse({ error: "Format JSON yang Anda kirim tidak valid / rusak!", details: jsonErr.message }, 400);
+            }
+            
+            if (!body || !body.title || !body.duration || !body.questions) {
+              return jsonResponse({ 
+                error: "Missing title, duration, or questions", 
+                dataDiterimaServer: body || "Kosong" 
+              }, 400);
+            }
+
+            const newExam = {
+              id: body.id || "exam-" + Date.now(),
+              title: body.title,
+              description: body.description || "",
+              duration: body.duration,
+              questions: body.questions 
+            };
+
+            await ExamModel.create(db, newExam);
+            return jsonResponse({ success: true, message: "Exam created successfully!", data: newExam }, 201);
+          }
+        }
+
+        return jsonResponse({ error: "Endpoint not found" }, 404);
+
+      } catch (error) {
+        return jsonResponse({ error: "Internal Server Error", details: error.message }, 500);
       }
-
-      return jsonResponse({ error: "Endpoint not found" }, 404);
-
-    } catch (error) {
-      // Jika terjadi error database atau crash internal, tangkap pesannya di sini
-      return jsonResponse({ error: "Internal Server Error", details: error.message }, 500);
     }
+
+    // -------------------------------------------------------------
+    // JALUR 2: BUKAN API? OPER LANGSUNG KE SYSTEM CLOUDFLARE ASSETS
+    // (Ini yang otomatis mencari Index.html, CSS, JS kamu tanpa diubah)
+    // -------------------------------------------------------------
+    return env.ASSETS.fetch(request);
   }
 };
