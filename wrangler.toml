@@ -9,3 +9,10 @@ database_id = "35d6e2cc-266a-4d2d-b15b-7f02525431a4"
 
 [vars]
 JWT_SECRET = "rahasia-lms-super-aman-2026"
+
+# =============================================================
+# TAMBAHKAN BARIS DI BAWAH INI UNTUK MENYALAKAN FITUR ASSETS
+# =============================================================
+[assets]
+directory = "."
+binding = "ASSETS"
