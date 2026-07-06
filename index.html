@@ -36,7 +36,6 @@
   </head>
   <body class="bg-surface-900 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-cyan-500/30 pb-36 md:pb-0">
 
-    <!-- NAVIGASI UTAMA -->
     <nav class="border-b border-slate-800/60 bg-surface-900/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4">
       <div class="max-w-7xl mx-auto flex justify-between items-center">
         <div class="flex items-center gap-8">
@@ -57,7 +56,6 @@
       </div>
     </nav>
 
-    <!-- DRAWER MENU MOBILE -->
     <div id="drawer-menu" class="fixed inset-0 z-[100] hidden" role="dialog" aria-modal="true">
       <div onclick="toggleDrawer(false)" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
       <div class="absolute inset-y-0 left-0 w-72 bg-surface-800 border-r border-slate-700 p-6 flex flex-col justify-between shadow-2xl">
@@ -76,7 +74,6 @@
       </div>
     </div>
 
-    <!-- KONTEN UTAMA -->
     <main class="max-w-7xl mx-auto w-full px-6 py-10 flex-grow">
       
       <section class="text-center py-12 max-w-4xl mx-auto space-y-6">
@@ -91,7 +88,6 @@
         </p>
       </section>
 
-      <!-- SECTION ARTIKEL -->
       <section id="section-artikel" class="space-y-8 pt-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/60 pb-5">
           <div class="flex items-center gap-3">
@@ -103,7 +99,6 @@
         <div id="articles-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
       </section>
 
-      <!-- SECTION UJIAN -->
       <section id="section-ujian" class="hidden space-y-8 pt-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/60 pb-5">
           <div class="flex items-center gap-3">
@@ -115,7 +110,6 @@
         <div id="exams-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
       </section>
 
-      <!-- SECTION RIWAYAT -->
       <section id="section-riwayat" class="hidden space-y-6 pt-6">
         <div class="border-b border-slate-800/60 pb-5">
           <h2 class="text-xs font-extrabold tracking-widest uppercase text-slate-400">Metrik Dashboard & Hasil Mahasiswa</h2>
@@ -126,7 +120,6 @@
 
     </main>
 
-    <!-- MENU BAWAH UNTUK MOBILE -->
     <div class="md:hidden fixed bottom-0 inset-x-0 z-50 flex flex-col pointer-events-none">
       <div class="px-4 py-2 bg-gradient-to-t from-surface-900 to-transparent flex gap-2 pointer-events-auto w-full max-w-md mx-auto">
         <button onclick="bukaModalTambah()" class="flex-1 bg-surface-800/90 backdrop-blur-md border border-slate-700 hover:border-cyan-500/50 text-white text-[11px] font-bold py-2.5 rounded-xl shadow-lg flex items-center justify-center gap-1.5 active:scale-95">
@@ -153,7 +146,17 @@
       </nav>
     </div>
 
-    <!-- MODAL TULIS / EDIT ARTIKEL -->
+    <div id="custom-confirm-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[200] flex items-center justify-center p-4 hidden">
+      <div class="bg-surface-800 border border-slate-700 w-full max-w-sm rounded-2xl shadow-2xl p-6 space-y-4">
+        <h3 id="confirm-modal-title" class="text-sm font-bold text-white uppercase tracking-wider"></h3>
+        <p id="confirm-modal-desc" class="text-xs text-slate-400 leading-relaxed"></p>
+        <div class="flex justify-end gap-3 pt-2">
+          <button id="confirm-btn-cancel" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:bg-surface-700">Batal</button>
+          <button id="confirm-btn-action" class="bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-md">Hapus</button>
+        </div>
+      </div>
+    </div>
+
     <div id="modal-tulis" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
       <div class="bg-surface-800 border border-slate-700 w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center bg-surface-900/50">
@@ -178,7 +181,6 @@
       </div>
     </div>
 
-    <!-- MODAL DETAIL BACA ARTIKEL -->
     <div id="modal-detail-artikel" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
       <div class="bg-surface-800 border border-slate-700 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
         <div id="detail-header-color" class="h-32 bg-gradient-to-r from-cyan-500 to-blue-600 p-6 flex items-end relative">
@@ -199,7 +201,6 @@
       </div>
     </div>
 
-    <!-- MODAL KONFIGURASI UJIAN PILIHAN GANDA -->
     <div id="modal-buat-ujian" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
       <div class="bg-surface-800 border border-slate-700 w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center bg-surface-900/50 shadow-sm">
@@ -219,9 +220,9 @@
             </div>
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-slate-400 mb-2 uppercase">Bank Soal (Pilihan Ganda)</label>
-            <div id="questions-container" class="space-y-4"></div>
-            <button onclick="tambahSoal()" class="mt-3 w-full border border-dashed border-slate-700 text-slate-400 text-xs font-semibold py-3 rounded-xl bg-surface-900/40 hover:text-white hover:border-indigo-500">➕ Tambah Slot Soal</button>
+            <label class="block text-[11px] font-bold text-slate-400 mb-2 uppercase">Bank Soal</label>
+            <div id="questions-container" class="space-y-3"></div>
+            <button onclick="tambahSoal()" class="mt-2 w-full border border-dashed border-slate-700 text-slate-400 text-xs font-semibold py-3 rounded-xl bg-surface-900/40">➕ Tambah Slot Soal</button>
           </div>
         </div>
         <div class="p-4 border-t border-slate-700 bg-surface-900/50 flex justify-end gap-3">
@@ -231,7 +232,6 @@
       </div>
     </div>
 
-    <!-- LEMBAR KERJA / SIMULATOR UJIAN AKTIF -->
     <div id="modal-kerjakan-ujian" class="fixed inset-0 bg-surface-900 z-[60] flex flex-col hidden">
       <div class="border-b border-slate-700 bg-surface-800 px-6 py-4 flex items-center justify-between shadow-md">
         <div class="flex items-center gap-4">
@@ -244,28 +244,13 @@
       </div>
       <div class="flex-1 overflow-y-auto px-6 py-12">
         <div class="max-w-2xl mx-auto">
-          <div id="question-area" class="bg-surface-800 border border-slate-700 rounded-2xl p-6 shadow-xl relative">
+          <div id="question-area" class="bg-surface-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
             <h4 id="question-text" class="text-sm text-white font-medium mb-6 leading-relaxed"></h4>
             <div id="options-container" class="space-y-3"></div>
           </div>
           <div class="text-center mt-8">
-            <button onclick="submitUjian()" class="bg-gradient-to-r from-cyan-500 to-indigo-600 text-white font-bold text-xs px-10 py-3.5 rounded-xl shadow-xl hover:opacity-90">✅ Kirim Semua Jawaban</button>
+            <button onclick="submitUjian()" class="bg-gradient-to-r from-cyan-500 to-indigo-600 text-white font-bold text-xs px-10 py-3.5 rounded-xl shadow-xl">✅ Kirim Jawaban</button>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODAL DI TENGAH: CUSTOM CONFIRMATION (PENGGANTI ALERT ATAS) -->
-    <div id="custom-confirm-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[150] flex items-center justify-center p-4 hidden">
-      <div class="bg-surface-800 border border-slate-700 w-full max-w-sm rounded-2xl p-6 shadow-2xl text-center space-y-4 animate-in fade-in zoom-in-95 duration-150">
-        <div class="mx-auto w-12 h-12 bg-rose-500/10 rounded-full flex items-center justify-center text-rose-500 text-xl">⚠️</div>
-        <div>
-          <h4 id="confirm-modal-title" class="text-white font-bold text-sm">Hapus Data?</h4>
-          <p id="confirm-modal-desc" class="text-xs text-slate-400 mt-1 leading-relaxed">Tindakan ini bersifat permanen dan tidak dapat dibatalkan.</p>
-        </div>
-        <div class="flex gap-2 pt-2">
-          <button id="confirm-btn-cancel" class="flex-1 bg-surface-700 hover:bg-surface-600 text-slate-300 font-semibold text-xs py-2.5 rounded-xl">Batal</button>
-          <button id="confirm-btn-action" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs py-2.5 rounded-xl shadow-lg">Ya, Hapus</button>
         </div>
       </div>
     </div>
@@ -288,7 +273,7 @@
           "from-pink-500 to-rose-500"      
         ];
 
-        // FUNGSI MODAL DI TENGAH (CUSTOM DIALOG)
+        // DIALOG KONFIRMASI CUSTOM (MENGGANTIKAN UNDO TOAST AGAR TIDAK HILANG SAAT REFRESH)
         function tampilkanKonfirmasiCustom(title, desc, actionText, callback) {
           document.getElementById("confirm-modal-title").textContent = title;
           document.getElementById("confirm-modal-desc").textContent = desc;
@@ -428,11 +413,11 @@
                   method: "DELETE", 
                   headers: { Authorization: `Bearer ${AUTH_HEADER}` } 
                 });
-                window.articlesData = window.articlesData.filter(a => a.id !== id);
-                renderArticles();
-              } catch (e) { 
-                console.error(e); 
-              }
+                if (res.ok) {
+                  window.articlesData = window.articlesData.filter(a => a.id !== id);
+                  renderArticles();
+                }
+              } catch (e) { console.error(e); }
             }
           );
         }
@@ -494,7 +479,7 @@
               <div class="p-5 flex-1 flex flex-col justify-between">
                 <div>
                   <div class="flex items-center gap-1.5 text-[11px] text-slate-400 font-medium mb-2.5">
-                    <span>Sistem Akademik</span><span class="text-slate-600">•</span><span>⏱ ${e.duration} Menit</span>
+                    <span>Sistem Academic</span><span class="text-slate-600">•</span><span>⏱ ${e.duration} Menit</span>
                   </div>
                   <h3 class="serif-title text-lg text-white font-semibold leading-tight mb-2 line-clamp-1">${e.title}</h3>
                   <p class="text-xs text-slate-400 line-clamp-1 font-normal mb-4">Evaluasi kompetensi penugasan mandiri terstruktur (${jmlSoal} Soal).</p>
@@ -528,7 +513,7 @@
         function hapusUjianInstan(id) {
           tampilkanKonfirmasiCustom(
             "Hapus Soal Ujian?", 
-            "Apakah kamu yakin ingin menghapus lembar ujian dan data kuesioner ini secara permanen?", 
+            "Apakah kamu yakin ingin menghapus lembar ujian ini secara permanen dari database D1?", 
             "Ya, Hapus Ujian", 
             async () => {
               try { 
@@ -536,11 +521,11 @@
                   method: "DELETE", 
                   headers: { Authorization: `Bearer ${AUTH_HEADER}` } 
                 });
-                window.examsData = window.examsData.filter(e => e.id !== id);
-                renderExamsData();
-              } catch (e) { 
-                console.error(e); 
-              }
+                if (res.ok) {
+                  window.examsData = window.examsData.filter(e => e.id !== id);
+                  renderExamsData();
+                }
+              } catch (e) { console.error(e); }
             }
           );
         }
@@ -570,7 +555,7 @@
           if (idx < 0 || idx >= activeExam.questions.length) return;
           
           const q = activeExam.questions[idx]; 
-          document.getElementById("question-text").innerHTML = `<span class="text-cyan-400 font-bold font-mono">Soal ${idx + 1}/${activeExam.questions.length}:</span> ${q.text}`;
+          document.getElementById("question-text").innerHTML = `${q.text}`;
           
           const container = document.getElementById("options-container");
           container.innerHTML = q.options.map((o, oi) => {
@@ -592,7 +577,7 @@
 
           navDiv.innerHTML = `
             <button onclick="bukaSoal(${idx - 1})" ${idx === 0 ? 'disabled class="opacity-30 text-xs text-slate-500 cursor-not-allowed"' : 'class="text-xs text-cyan-400 hover:text-white font-semibold"'}>◀ Sebelumnya</button>
-            <span class="text-[11px] font-mono text-slate-500">Navigasi Tes</span>
+            <span class="text-[11px] font-mono text-slate-500">Soal ${idx + 1} dari ${activeExam.questions.length}</span>
             <button onclick="${idx === activeExam.questions.length - 1 ? 'submitUjian()' : `bukaSoal(${idx + 1})`}" class="text-xs text-indigo-400 hover:text-white font-semibold">${idx === activeExam.questions.length - 1 ? 'Selesai & Kirim ✔' : 'Berikutnya ▶'}</button>
           `;
         }
@@ -605,10 +590,17 @@
         }
         window.forceKeluarUjian = forceKeluarUjian;
 
+        // SUBMIT JAWABAN & VALIDASI SKOR RIWAYAT
         function submitUjian() {
           clearInterval(examTimerInterval); 
           let benar = 0;
-          activeExam.questions.forEach((q, i) => { if (userAnswers[i] === q.answerIndex) benar++; });
+          
+          activeExam.questions.forEach((q, i) => { 
+            if (userAnswers[i] !== undefined && parseInt(userAnswers[i]) === parseInt(q.answerIndex)) {
+              benar++; 
+            }
+          });
+          
           const score = Math.round((benar / activeExam.questions.length) * 100);
           window.resultsData.unshift({ id: Date.now(), title: activeExam.title, score: score });
           forceKeluarUjian(); 
@@ -638,21 +630,21 @@
             if (!s.options || s.options.length < 4) {
               s.options = [s.options[0] || "", s.options[1] || "", s.options[2] || "", s.options[3] || ""];
             }
-            return `<div class="bg-surface-900 p-4 rounded-xl border border-slate-700 space-y-3 question-block" data-index="${idx}">
+            return `<div class="bg-surface-900 p-4 rounded-xl border border-slate-700 space-y-3">
               <div class="flex justify-between items-center">
                 <span class="text-[10px] font-bold text-cyan-400 uppercase tracking-wider">Soal #${idx + 1}</span>
                 <button onclick="event.preventDefault(); soalSementara.splice(${idx}, 1); renderSoalSementaraDOM();" class="text-rose-400 hover:text-rose-300 text-[10px] font-bold">❌ Hapus Slot</button>
               </div>
-              <input type="text" value="${s.text || ''}" oninput="updateDataSoalLangkat(${idx}, 'text', this.value)" class="w-full bg-surface-800 border border-slate-700 text-xs text-white rounded-lg p-2.5 q-text" placeholder="Pertanyaan (Contoh: Itik mempunyai kaki?)" />
+              <input type="text" value="${s.text || ''}" oninput="updateDataSoalLangkat(${idx}, 'text', this.value)" class="w-full bg-surface-800 border border-slate-700 text-xs text-white rounded-lg p-2.5" placeholder="Pertanyaan..." />
               <div class="grid grid-cols-2 gap-2">
-                <input type="text" value="${s.options[0]}" oninput="updateDataSoalLangkat(${idx}, 0, this.value)" class="w-full bg-surface-800 border border-slate-700 text-xs text-slate-300 rounded-lg p-2 q-opt-0" placeholder="Opsi A" />
-                <input type="text" value="${s.options[1]}" oninput="updateDataSoalLangkat(${idx}, 1, this.value)" class="w-full bg-surface-800 border border-slate-700 text-xs text-slate-300 rounded-lg p-2 q-opt-1" placeholder="Opsi B" />
-                <input type="text" value="${s.options[2]}" oninput="updateDataSoalLangkat(${idx}, 2, this.value)" class="w-full bg-surface-800 border border-slate-700 text-xs text-slate-300 rounded-lg p-2 q-opt-2" placeholder="Opsi C" />
-                <input type="text" value="${s.options[3]}" oninput="updateDataSoalLangkat(${idx}, 3, this.value)" class="w-full bg-surface-800 border border-slate-700 text-xs text-slate-300 rounded-lg p-2 q-opt-3" placeholder="Opsi D" />
+                <input type="text" value="${s.options[0]}" oninput="updateDataSoalLangkat(${idx}, 0, this.value)" class="w-full bg-surface-800 border border-slate-700 text-xs text-slate-300 rounded-lg p-2" placeholder="Opsi A" />
+                <input type="text" value="${s.options[1]}" oninput="updateDataSoalLangkat(${idx}, 1, this.value)" class="w-full bg-surface-800 border border-slate-700 text-xs text-slate-300 rounded-lg p-2" placeholder="Opsi B" />
+                <input type="text" value="${s.options[2]}" oninput="updateDataSoalLangkat(${idx}, 2, this.value)" class="w-full bg-surface-800 border border-slate-700 text-xs text-slate-300 rounded-lg p-2" placeholder="Opsi C" />
+                <input type="text" value="${s.options[3]}" oninput="updateDataSoalLangkat(${idx}, 3, this.value)" class="w-full bg-surface-800 border border-slate-700 text-xs text-slate-300 rounded-lg p-2" placeholder="Opsi D" />
               </div>
               <div>
                 <label class="block text-[10px] font-bold text-slate-400 mb-1 uppercase">Kunci Jawaban Benar</label>
-                <select onchange="updateDataSoalLangkat(${idx}, 'answer', this.value)" class="w-full bg-surface-800 border border-slate-700 text-xs text-white rounded-lg p-2 focus:outline-none focus:border-indigo-500 q-ans">
+                <select onchange="updateDataSoalLangkat(${idx}, 'answer', this.value)" class="w-full bg-surface-800 border border-slate-700 text-xs text-white rounded-lg p-2">
                   <option value="0" ${s.answerIndex === 0 ? 'selected' : ''}>Opsi A</option>
                   <option value="1" ${s.answerIndex === 1 ? 'selected' : ''}>Opsi B</option>
                   <option value="2" ${s.answerIndex === 2 ? 'selected' : ''}>Opsi C</option>
@@ -663,7 +655,6 @@
           }).join("");
         }
 
-        // FUNGSI PENTING: Mengunci data ketikan ke Array agar tidak hilang/kosong lagi
         function updateDataSoalLangkat(idx, tipe, value) {
           if (!soalSementara[idx]) return;
           if (tipe === 'text') {
@@ -687,11 +678,8 @@
           const title = document.getElementById("exam-title-input").value.trim();
           const duration = document.getElementById("exam-duration-input").value;
           
-          if (!title || soalSementara.length === 0) {
-            return;
-          }
+          if (!title || soalSementara.length === 0) return;
           
-          // Memastikan tidak ada data kosong yang terkirim ke Cloudflare
           const payload = { 
             title, 
             duration: parseInt(duration), 
