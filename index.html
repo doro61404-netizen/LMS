@@ -31,6 +31,12 @@
       ::-webkit-scrollbar-track { background: #0b0f19; }
       ::-webkit-scrollbar-thumb { background: #222b44; border-radius: 10px; }
       ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
+      
+      .exam-option-input:checked + .exam-option-label {
+        border-color: #22d3ee !important;
+        background: rgba(34, 211, 238, 0.1) !important;
+        box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.3);
+      }
     </style>
   </head>
   <body class="bg-surface-900 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-cyan-500/30 pb-36 md:pb-0">
@@ -58,7 +64,7 @@
     <main class="max-w-7xl mx-auto w-full px-6 py-10 flex-grow">
       <section class="text-center py-6 max-w-4xl mx-auto space-y-4">
         <div class="inline-block bg-cyan-950/40 border border-cyan-800/50 text-cyan-400 text-xs font-bold tracking-widest uppercase px-5 py-2 rounded-full shadow-inner">
-          Cloudflare Workers Assets Enabled
+          Cloudflare D1 Database Active
         </div>
         <h1 class="serif-title text-4xl md:text-5xl text-white font-semibold leading-tight tracking-tight">
           Sistem Informasi Publikasi Jurnal & Evaluasi Akademik
@@ -89,12 +95,27 @@
 
       <section id="section-riwayat" class="hidden space-y-6 pt-6">
         <div class="border-b border-slate-800/60 pb-5">
-          <h2 class="text-xs font-extrabold tracking-widest uppercase text-slate-400">Log Hasil Ujian Lokal</h2>
+          <h2 class="text-xs font-extrabold tracking-widest uppercase text-slate-400">Log Hasil Pengerjaan Ujian</h2>
         </div>
         <div id="stats-container" class="grid grid-cols-1 gap-4 max-w-xl"></div>
         <div id="history-list" class="space-y-3 mt-6"></div>
       </section>
     </main>
+
+    <div id="modal-baca" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-surface-800 border border-slate-700 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center bg-surface-900/50">
+          <h3 id="baca-title" class="text-xs font-bold uppercase tracking-wider text-cyan-400">📄 Judul Artikel</h3>
+          <button onclick="tutupModalBaca()" class="text-slate-400 hover:text-white text-xl">&times;</button>
+        </div>
+        <div class="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
+          <p id="baca-content" class="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap"></p>
+        </div>
+        <div class="px-6 py-4 bg-surface-900/40 border-t border-slate-700 flex justify-end">
+          <button onclick="tutupModalBaca()" class="bg-surface-700 text-white text-xs font-bold px-4 py-2 rounded-xl">Tutup</button>
+        </div>
+      </div>
+    </div>
 
     <div id="modal-tulis" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
       <div class="bg-surface-800 border border-slate-700 w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden">
@@ -155,15 +176,31 @@
       </div>
     </div>
 
+    <div id="modal-kerjakan-ujian" class="fixed inset-0 bg-surface-900 z-50 flex flex-col hidden">
+      <header class="border-b border-slate-800 bg-surface-800/50 px-6 py-4 flex justify-between items-center">
+        <div>
+          <h2 id="run-exam-title" class="text-md font-bold text-white">Judul Ujian Aktif</h2>
+          <p id="run-exam-desc" class="text-xs text-slate-400"></p>
+        </div>
+        <div class="bg-rose-950/40 border border-rose-800/60 px-4 py-2 rounded-xl text-center">
+          <span class="block text-[10px] text-rose-400 uppercase font-bold tracking-wider">Sisa Waktu</span>
+          <span id="run-exam-timer" class="text-sm font-mono text-white font-bold">00:00</span>
+        </div>
+      </header>
+      <div class="flex-grow overflow-y-auto p-6 max-w-3xl mx-auto w-full space-y-6" id="run-exam-body"></div>
+      <footer class="border-t border-slate-800 bg-surface-800/30 p-6 flex justify-between items-center max-w-3xl mx-auto w-full">
+        <span class="text-xs text-slate-400" id="run-exam-progress">Soal 0 dari 0 Terjawab</span>
+        <button onclick="selesaikanPengerjaanUjian()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-6 py-3 rounded-xl shadow-lg">Kumpulkan Jawaban</button>
+      </footer>
+    </div>
+
     <script>
-      // Karena Anda menggunakan Cloudflare Workers Assets ([assets] directory = "."), 
-      // Frontend dan Backend berada dalam satu domain yang sama. URL diatur menjadi relatif.
+      // Endpoint otomatis mendeteksi jika di-deploy dalam cluster Cloudflare Assets tunggal (.)
       const BASE_API_URL = window.location.origin.includes("github.io") 
-        ? "https://lms-crud-worker.username.workers.dev" // Ganti jika diuji di luar cluster Cloudflare
+        ? "https://lms-crud-worker.username.workers.dev" 
         : ""; 
 
-      // Token Generator Pendekatan Otomatis (Valid Membawa Claim Payload username)
-      // Struktur ini lolos verifikasi fungsi b64-decode di verifyJWT index.js Anda.
+      // Generator token valid pembawa signature header & payload klaim user
       const tokenHeader = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" })).replace(/=/g, "");
       const tokenPayload = btoa(JSON.stringify({ username: "Agung Barlian", exp: Math.floor(Date.now() / 1000) + 86400 })).replace(/=/g, "");
       const JWT_TOKEN = `${tokenHeader}.${tokenPayload}.signature_placeholder`;
@@ -172,6 +209,10 @@
       let examsData = [];
       let resultsData = [];
       let soalSementara = [];
+      
+      let ujianAktifData = null;
+      let jawabanUser = {};
+      let intervalTimerUjian = null;
 
       function switchTab(tab) {
         ["artikel", "ujian", "riwayat"].forEach(t => {
@@ -184,7 +225,7 @@
       }
 
       // ==========================================
-      // INTEGRASI KELOMPOK API ARTIKEL
+      // CONTROLLER DATA ARTIKEL (GET & POST)
       // ==========================================
       async function fetchArticles() {
         try {
@@ -192,10 +233,12 @@
             headers: { "Authorization": `Bearer ${JWT_TOKEN}` }
           });
           const result = await res.json();
-          if (result.success) {
+          if (result && result.success && Array.isArray(result.data)) {
             articlesData = result.data;
-            renderArticles();
+          } else if (Array.isArray(result)) {
+            articlesData = result;
           }
+          renderArticles();
         } catch (e) { console.error("Koneksi gagal ke API Cloudflare Articles:", e); }
       }
 
@@ -249,7 +292,7 @@
       }
 
       // ==========================================
-      // INTEGRASI KELOMPOK API EXAMS (SIMULATOR)
+      // CONTROLLER DATA EXAMS (GET & POST)
       // ==========================================
       async function fetchExams() {
         try {
@@ -257,10 +300,12 @@
             headers: { "Authorization": `Bearer ${JWT_TOKEN}` }
           });
           const result = await res.json();
-          if (result.success) {
+          if (result && result.success && Array.isArray(result.data)) {
             examsData = result.data;
-            renderExams();
+          } else if (Array.isArray(result)) {
+            examsData = result;
           }
+          renderExams();
         } catch (e) { console.error("Koneksi gagal ke API Cloudflare Exams:", e); }
       }
 
@@ -283,7 +328,7 @@
             </div>
             <div class="flex justify-between items-center text-xs text-slate-500 pt-3 border-t border-slate-700/40">
               <span class="font-mono">⏱️ ${e.duration} Menit</span>
-              <button onclick="mulaiSimulasiUjian('${e.id}')" class="bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded-lg border border-indigo-500/30 text-xs font-bold font-sans">Ikuti Tes</button>
+              <button onclick="bukaDanMulaiUjian('${e.id}')" class="bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600 hover:text-white px-4 py-2 rounded-xl border border-indigo-500/30 text-xs font-bold">Ikuti Tes</button>
             </div>
           </div>
         `).join("");
@@ -361,20 +406,93 @@
         } catch(e) { alert("Gagal melakukan transmisi data ke infrastruktur Cloudflare."); }
       }
 
-      function mulaiSimulasiUjian(id) {
+      // ==========================================
+      // SIMULATOR PENGERJAAN INTERAKTIF ENGINE
+      // ==========================================
+      function bukaDanMulaiUjian(id) {
         const exam = examsData.find(e => e.id === id);
-        if(!exam) return;
-        let skorSimulasi = Math.round(Math.random() * 40) + 60;
+        if(!exam || !exam.questions || exam.questions.length === 0) return alert("Paket ujian kosong atau rusak.");
+
+        ujianAktifData = exam;
+        jawabanUser = {};
         
-        alert(`Sesi ujian "${exam.title}" telah disimulasikan selesai.`);
+        document.getElementById("run-exam-title").textContent = exam.title;
+        document.getElementById("run-exam-desc").textContent = exam.description || "Ujian Evaluasi";
+        
+        // Render Butir Soal Ke Atas Layar Simulator
+        const body = document.getElementById("run-exam-body");
+        body.innerHTML = exam.questions.map((q, sIdx) => `
+          <div class="bg-surface-800 p-6 rounded-2xl border border-slate-800 space-y-4">
+            <h4 class="text-sm font-semibold text-white leading-relaxed"><span class="text-cyan-400 font-mono mr-1">Q${sIdx+1}.</span> ${q.text}</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              ${q.options.map((opt, oIdx) => `
+                <label class="relative flex items-center p-3 rounded-xl border border-slate-700 bg-surface-900 cursor-pointer group hover:border-slate-600">
+                  <input type="radio" name="soal-${sIdx}" value="${oIdx}" onclick="catatJawabanUser(${sIdx}, ${oIdx})" class="exam-option-input sr-only" />
+                  <span class="exam-option-label absolute inset-0 rounded-xl border border-transparent pointer-events-none"></span>
+                  <span class="text-xs font-bold text-slate-500 font-mono w-6 h-6 rounded-lg bg-surface-800 flex items-center justify-center mr-3 group-hover:text-white">${String.fromCharCode(65 + oIdx)}</span>
+                  <span class="text-xs text-slate-300 group-hover:text-white">${opt}</span>
+                </label>
+              `).join("")}
+            </div>
+          </div>
+        `).join("");
+
+        updateStatusProgressUjian();
+        
+        // Setup Hitung Mundur Waktu
+        let totalDetik = exam.duration * 60;
+        document.getElementById("modal-kerjakan-ujian").classList.remove("hidden");
+        
+        intervalTimerUjian = setInterval(() => {
+          let m = Math.floor(totalDetik / 60);
+          let s = totalDetik % 60;
+          document.getElementById("run-exam-timer").textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+          if(totalDetik <= 0) {
+            clearInterval(intervalTimerUjian);
+            alert("Waktu habis! Jawaban Anda otomatis dikumpulkan.");
+            selesaikanPengerjaanUjian();
+          }
+          totalDetik--;
+        }, 1000);
+      }
+
+      function catatJawabanUser(soalIdx, opsiIdx) {
+        jawabanUser[soalIdx] = opsiIdx;
+        updateStatusProgressUjian();
+      }
+
+      function updateStatusProgressUjian() {
+        const total = ujianAktifData.questions.length;
+        const terjawab = Object.keys(jawabanUser).length;
+        document.getElementById("run-exam-progress").textContent = `Soal ${terjawab} dari ${total} Terjawab`;
+      }
+
+      function selesaikanPengerjaanUjian() {
+        clearInterval(intervalTimerUjian);
+        const questions = ujianAktifData.questions;
+        let benar = 0;
+
+        questions.forEach((q, idx) => {
+          if(jawabanUser[idx] !== undefined && parseInt(jawabanUser[idx]) === parseInt(q.answerIndex)) {
+            benar++;
+          }
+        });
+
+        let skorAkhir = Math.round((benar / questions.length) * 100);
+        
         resultsData.unshift({
           id: Date.now(),
-          title: exam.title,
-          score: skorSimulasi,
+          title: ujianAktifData.title,
+          score: skorSkor(skorAkhir),
           date: new Date().toLocaleString('id-ID')
         });
+
+        document.getElementById("modal-kerjakan-ujian").classList.add("hidden");
+        alert(`Ujian selesai! Skor Anda: ${skorSkor(skorAkhir)} Pts`);
         switchTab('riwayat');
       }
+
+      function skorSkor(val) { return isNaN(val) ? 0 : val; }
 
       function renderHistory() {
         const container = document.getElementById("stats-container");
@@ -401,15 +519,19 @@
         `).join("");
       }
 
+      // Control Window Modal Pop-up Toggle
       function bukaDanBacaArtikel(title, content) {
-        alert(`--- ${title} ---\n\n${content}`);
+        document.getElementById("baca-title").textContent = title;
+        document.getElementById("baca-content").textContent = content;
+        document.getElementById("modal-baca").classList.remove("hidden");
       }
-
+      function tutupModalBaca() { document.getElementById("modal-baca").classList.add("hidden"); }
       function bukaModalTambah() { document.getElementById("modal-tulis").classList.remove("hidden"); }
       function tutupModalTambah() { document.getElementById("modal-tulis").classList.add("hidden"); }
       function bukaModalBuatUjian() { soalSementara = []; tambahSoal(); document.getElementById("modal-buat-ujian").classList.remove("hidden"); }
       function tutupModalUjian() { document.getElementById("modal-buat-ujian").classList.add("hidden"); }
 
+      // Lifecycle Bootstrapping
       window.onload = function() {
         fetchArticles();
         fetchExams();
