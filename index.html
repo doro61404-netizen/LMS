@@ -78,7 +78,7 @@
       
       <section class="text-center py-12 max-w-4xl mx-auto space-y-6">
         <div class="inline-block bg-cyan-950/40 border border-cyan-800/50 text-cyan-400 text-[10px] md:text-xs font-bold tracking-widest uppercase px-5 py-2 rounded-full shadow-inner shadow-cyan-500/5">
-          Sistem Informasi Pembelajaran Terintegrasi
+          Sistem Informasi Pembelajaran Terintegrated
         </div>
         <h1 class="serif-title text-4xl md:text-6xl text-white font-semibold leading-tight tracking-tight">
           Evolusi Manajemen Literasi & Evaluasi Kompetensi
@@ -318,20 +318,20 @@
             const inisial = a.title ? a.title.substring(0, 3).toUpperCase() : "COB";
             const gradienSesuai = gradienWarna[index % gradienWarna.length];
 
-            return `<div onclick="bukaDetailArtikel('${a.id}', '${gradienSesuai}')" class="bg-[#151b2c] rounded-2xl overflow-hidden shadow-lg border border-slate-800/60 flex flex-col hover:border-slate-700 cursor-pointer group">
-              <div class="h-44 bg-gradient-to-tr ${gradienSesuai} relative flex items-center justify-center p-6 select-none">
+            return `<div class="bg-[#151b2c] rounded-2xl overflow-hidden shadow-lg border border-slate-800/60 flex flex-col hover:border-slate-700 group">
+              <div onclick="bukaDetailArtikel('${a.id}', '${gradienSesuai}')" class="h-44 bg-gradient-to-tr ${gradienSesuai} relative flex items-center justify-center p-6 select-none cursor-pointer">
                 <span class="absolute top-4 left-4 bg-[#0b0f19]/80 backdrop-blur-sm text-[9px] font-extrabold text-[#06b6d4] px-2.5 py-1 rounded-md tracking-wider uppercase">MATERI LMS</span>
                 <span class="serif-title text-5xl font-black text-white/10 tracking-widest group-hover:scale-110 transition-transform">${inisial}</span>
               </div>
               <div class="p-5 flex-1 flex flex-col justify-between">
-                <div>
+                <div onclick="bukaDetailArtikel('${a.id}', '${gradienSesuai}')" class="cursor-pointer">
                   <div class="flex items-center gap-1.5 text-[11px] text-slate-400 font-medium mb-2.5">
                     <span>Anonymous</span><span class="text-slate-600">•</span><span>6 Jul 2026</span>
                   </div>
                   <h3 class="serif-title text-lg text-white font-semibold leading-tight mb-2 line-clamp-1 group-hover:text-cyan-400">${a.title}</h3>
                   <p class="text-xs text-slate-400 line-clamp-2 font-normal leading-relaxed mb-4">${a.content}</p>
                 </div>
-                <div onclick="event.stopPropagation();" class="pt-4 border-t border-slate-800/60 flex justify-between items-center">
+                <div class="pt-4 border-t border-slate-800/60 flex justify-between items-center">
                   <span class="text-slate-400 text-[11px] font-medium flex items-center gap-1">☕ 3 min read</span>
                   <div class="flex gap-1.5">
                     <button onclick="bukaModalEditArtikel('${a.id}')" class="text-cyan-400/80 hover:text-cyan-400 text-xs font-semibold px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/10">Edit</button>
@@ -378,7 +378,8 @@
               method: "DELETE", 
               headers: { Authorization: `Bearer ${AUTH_HEADER}` } 
             });
-            if (res.ok) {
+            const json = await res.json();
+            if (res.ok || json.success) {
               window.articlesData = window.articlesData.filter(a => a.id !== id);
               renderArticles();
             } else {
@@ -484,7 +485,8 @@
               method: "DELETE", 
               headers: { Authorization: `Bearer ${AUTH_HEADER}` } 
             });
-            if (res.ok) {
+            const json = await res.json();
+            if (res.ok || json.success) {
               window.examsData = window.examsData.filter(e => e.id !== id);
               renderExamsData();
             } else {
@@ -518,6 +520,8 @@
 
         function bukaSoal(idx) {
           if (!activeExam || !activeExam.questions || activeExam.questions.length === 0) return;
+          if (idx < 0 || idx >= activeExam.questions.length) return;
+          
           const q = activeExam.questions[idx]; 
           document.getElementById("question-text").innerHTML = `<span class="text-cyan-400 font-bold font-mono">Soal ${idx + 1}/${activeExam.questions.length}:</span> ${q.text}`;
           
@@ -585,28 +589,23 @@
           const container = document.getElementById("questions-container");
           container.innerHTML = soalSementara.map((s, idx) => {
             if (!s.options || s.options.length < 4) {
-              s.options = [
-                s.options[0] || "",
-                s.options[1] || "",
-                s.options[2] || "",
-                s.options[3] || ""
-              ];
+              s.options = [s.options[0] || "", s.options[1] || "", s.options[2] || "", s.options[3] || ""];
             }
-            return `<div class="bg-surface-900 p-4 rounded-xl border border-slate-700 space-y-3">
+            return `<div class="bg-surface-900 p-4 rounded-xl border border-slate-700 space-y-3 question-block" data-index="${idx}">
               <div class="flex justify-between items-center">
                 <span class="text-[10px] font-bold text-cyan-400 uppercase tracking-wider">Soal #${idx + 1}</span>
                 <button onclick="event.preventDefault(); soalSementara.splice(${idx}, 1); renderSoalSementaraDOM();" class="text-rose-400 hover:text-rose-300 text-[10px] font-bold">❌ Hapus Slot</button>
               </div>
-              <input type="text" value="${s.text || ''}" oninput="soalSementara[${idx}].text = this.value" class="w-full bg-surface-800 border border-slate-700 text-xs text-white rounded-lg p-2.5" placeholder="Pertanyaan..." />
+              <input type="text" value="${s.text || ''}" class="w-full bg-surface-800 border border-slate-700 text-xs text-white rounded-lg p-2.5 q-text" placeholder="Pertanyaan (Contoh: Itik mempunyai kaki?)" />
               <div class="grid grid-cols-2 gap-2">
-                <input type="text" value="${s.options[0]}" oninput="soalSementara[${idx}].options[0] = this.value" class="w-full bg-surface-800 border border-slate-700 text-xs text-slate-400 rounded-lg p-2" placeholder="Opsi A" />
-                <input type="text" value="${s.options[1]}" oninput="soalSementara[${idx}].options[1] = this.value" class="w-full bg-surface-800 border border-slate-700 text-xs text-slate-400 rounded-lg p-2" placeholder="Opsi B" />
-                <input type="text" value="${s.options[2]}" oninput="soalSementara[${idx}].options[2] = this.value" class="w-full bg-surface-800 border border-slate-700 text-xs text-slate-400 rounded-lg p-2" placeholder="Opsi C" />
-                <input type="text" value="${s.options[3]}" oninput="soalSementara[${idx}].options[3] = this.value" class="w-full bg-surface-800 border border-slate-700 text-xs text-slate-400 rounded-lg p-2" placeholder="Opsi D" />
+                <input type="text" value="${s.options[0]}" class="w-full bg-surface-800 border border-slate-700 text-xs text-slate-300 rounded-lg p-2 q-opt-0" placeholder="Opsi A" />
+                <input type="text" value="${s.options[1]}" class="w-full bg-surface-800 border border-slate-700 text-xs text-slate-300 rounded-lg p-2 q-opt-1" placeholder="Opsi B" />
+                <input type="text" value="${s.options[2]}" class="w-full bg-surface-800 border border-slate-700 text-xs text-slate-300 rounded-lg p-2 q-opt-2" placeholder="Opsi C" />
+                <input type="text" value="${s.options[3]}" class="w-full bg-surface-800 border border-slate-700 text-xs text-slate-300 rounded-lg p-2 q-opt-3" placeholder="Opsi D" />
               </div>
               <div>
                 <label class="block text-[10px] font-bold text-slate-400 mb-1 uppercase">Kunci Jawaban Benar</label>
-                <select onchange="soalSementara[${idx}].answerIndex = parseInt(this.value)" class="w-full bg-surface-800 border border-slate-700 text-xs text-white rounded-lg p-2 focus:outline-none focus:border-indigo-500">
+                <select class="w-full bg-surface-800 border border-slate-700 text-xs text-white rounded-lg p-2 focus:outline-none focus:border-indigo-500 q-ans">
                   <option value="0" ${s.answerIndex === 0 ? 'selected' : ''}>Opsi A</option>
                   <option value="1" ${s.answerIndex === 1 ? 'selected' : ''}>Opsi B</option>
                   <option value="2" ${s.answerIndex === 2 ? 'selected' : ''}>Opsi C</option>
@@ -618,24 +617,54 @@
         }
 
         function tambahSoal() { 
+          bacaInputDOMKeSoalSementara();
           soalSementara.push({ text: "", options: ["", "", "", ""], answerIndex: 0 });
           renderSoalSementaraDOM(); 
         }
         window.tambahSoal = tambahSoal;
 
+        function bacaInputDOMKeSoalSementara() {
+          const blocks = document.querySelectorAll("#questions-container .question-block");
+          blocks.forEach(block => {
+            const idx = parseInt(block.getAttribute("data-index"));
+            if (soalSementara[idx]) {
+              soalSementara[idx].text = block.querySelector(".q-text").value.trim();
+              soalSementara[idx].options[0] = block.querySelector(".q-opt-0").value.trim();
+              soalSementara[idx].options[1] = block.querySelector(".q-opt-1").value.trim();
+              soalSementara[idx].options[2] = block.querySelector(".q-opt-2").value.trim();
+              soalSementara[idx].options[3] = block.querySelector(".q-opt-3").value.trim();
+              soalSementara[idx].answerIndex = parseInt(block.querySelector(".q-ans").value);
+            }
+          });
+        }
+
         async function simpanUjianOnline() {
+          bacaInputDOMKeSoalSementara();
           const id = document.getElementById("edit-exam-id").value;
           const title = document.getElementById("exam-title-input").value.trim();
           const duration = document.getElementById("exam-duration-input").value;
-          if (!title || soalSementara.length === 0) return;
+          
+          if (!title || soalSementara.length === 0) {
+            alert("Judul ujian atau isi bank soal tidak boleh kosong.");
+            return;
+          }
+          
           const payload = { title, duration: parseInt(duration), questions: soalSementara };
           const url = id ? `${API_ENDPOINT}/exams/${id}` : `${API_ENDPOINT}/exams`;
           const method = id ? "PUT" : "POST";
 
           if(!id) payload.id = "exam-" + Date.now();
           try {
-            await fetch(url, { method: method, headers: { Authorization: `Bearer ${AUTH_HEADER}`, "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-            tutupModalUjian(); fetchExams();
+            const res = await fetch(url, { 
+              method: method, 
+              headers: { Authorization: `Bearer ${AUTH_HEADER}`, "Content-Type": "application/json" }, 
+              body: JSON.stringify(payload) 
+            });
+            if(res.ok) {
+              tutupModalUjian(); fetchExams();
+            } else {
+              alert("Gagal menyimpan konfigurasi lembar ujian.");
+            }
           } catch(e) { console.error(e); }
         }
         window.simpanUjianOnline = simpanUjianOnline;
@@ -656,7 +685,9 @@
           document.getElementById("exam-title-input").value = "";
           document.getElementById("exam-duration-input").value = "30";
           document.getElementById("modal-ujian-title").textContent = "📝 Konfigurasi Evaluasi Baru";
-          soalSementara = []; tambahSoal(); 
+          soalSementara = []; 
+          soalSementara.push({ text: "", options: ["", "", "", ""], answerIndex: 0 });
+          renderSoalSementaraDOM(); 
           document.getElementById("modal-buat-ujian").classList.remove("hidden");
         }
         function tutupModalUjian() { 
