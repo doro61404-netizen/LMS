@@ -29,812 +29,537 @@
       * { transition: all 0.2s ease-in-out; }
       ::-webkit-scrollbar { width: 6px; }
       ::-webkit-scrollbar-track { background: #0b0f19; }
-      ::-webkit-scrollbar-thumb { background: #222b44; border-radius: 10px; }
+      ::-webkit-scrollbar-thumb { background: #222b44; border-radius: 3px; }
       ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
       body.drawer-open { overflow: hidden; }
-      .exam-option-input:checked + .exam-option-label {
-        border-color: #22d3ee !important;
-        background: rgba(34, 211, 238, 0.1) !important;
-        box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.3);
-      }
-      .exam-option-label.correct-highlight {
-        border-color: #34d399 !important;
-        background: rgba(52, 211, 153, 0.15) !important;
-      }
-      .exam-option-label.wrong-highlight {
-        border-color: #f87171 !important;
-        background: rgba(248, 113, 113, 0.15) !important;
-      }
-      @keyframes pulse-warning {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.4; }
-      }
-      .timer-warning { animation: pulse-warning 0.8s ease-in-out infinite; }
-      body.exam-active { overflow: hidden; }
     </style>
   </head>
-  <body class="bg-surface-900 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-cyan-500/30 pb-36 md:pb-0">
+  <body class="bg-surface-900 text-slate-300 font-sans min-h-screen flex flex-col antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
 
-    <nav class="border-b border-slate-800/60 bg-surface-900/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4">
-      <div class="max-w-7xl mx-auto flex justify-between items-center">
-        <div class="flex items-center gap-8">
-          <a href="#" class="flex items-center gap-3 group">
-            <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-white font-extrabold shadow-lg shadow-cyan-500/20">E</div>
-            <span class="text-lg font-bold tracking-tight text-white">Edu<span class="text-cyan-400">Pulse Pro.</span></span>
-          </a>
-          <div class="hidden md:flex items-center gap-6 text-xs font-semibold uppercase tracking-wider text-slate-400">
-            <button onclick="switchTab('artikel')" id="nav-artikel" class="hover:text-white text-cyan-400">📄 Artikel</button>
-            <button onclick="switchTab('ujian')" id="nav-ujian" class="hover:text-white">📝 Ujian</button>
-            <button onclick="switchTab('riwayat')" id="nav-riwayat" class="hover:text-white">📊 Riwayat</button>
-          </div>
+    <header class="sticky top-0 z-40 bg-surface-900/80 backdrop-blur-md border-b border-slate-800/60 hidden md:block">
+      <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center font-black text-white text-base shadow-md shadow-cyan-500/10">E</div>
+          <span class="serif-title text-lg font-bold text-white tracking-wide">EduPulse <span class="text-cyan-400 font-sans text-xs font-semibold align-super">PRO</span></span>
         </div>
-        <div class="hidden md:flex items-center gap-3">
-          <button onclick="bukaModalTambah()" class="bg-surface-800 hover:bg-surface-700 text-slate-200 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700">✍️ Tulis Artikel</button>
-          <button onclick="bukaModalBuatUjian()" class="bg-gradient-to-r from-cyan-500 to-indigo-600 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md">📝 Buat Ujian</button>
+        <nav class="flex items-center gap-8 text-xs font-semibold text-slate-400 tracking-wide uppercase">
+          <button id="nav-artikel" onclick="switchTab('artikel')" class="hover:text-white">Jurnal Materi</button>
+          <button id="nav-ujian" onclick="switchTab('ujian')" class="hover:text-white">Simulator Ujian</button>
+          <button id="nav-riwayat" onclick="switchTab('riwayat')" class="hover:text-white">Rekam Evaluasi</button>
+        </nav>
+        <div class="flex items-center gap-3">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="text-[11px] font-mono font-bold tracking-wider text-slate-400 uppercase">Cloudflare Sync Connected</span>
         </div>
       </div>
-    </nav>
+    </header>
 
-    <main class="max-w-7xl mx-auto w-full px-6 py-10 flex-grow">
+    <header class="sticky top-0 z-40 bg-surface-900/80 backdrop-blur-md border-b border-slate-800/60 md:hidden px-4 h-14 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center font-black text-white text-xs">E</div>
+        <span class="serif-title text-sm font-bold text-white">EduPulse</span>
+      </div>
+      <button onclick="toggleDrawer(true)" class="p-2 text-slate-400 hover:text-white focus:outline-none">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </header>
+
+    <div id="drawer-menu" class="fixed inset-0 z-50 bg-[#0b0f19]/90 backdrop-blur-sm hidden" onclick="toggleDrawer(false)">
+      <div class="w-64 bg-surface-800 h-full p-6 space-y-6 border-r border-slate-800 shadow-2xl flex flex-col justify-between" onclick="event.stopPropagation()">
+        <div class="space-y-6">
+          <div class="flex justify-between items-center">
+            <span class="serif-title text-base font-bold text-white">Menu Navigasi</span>
+            <button onclick="toggleDrawer(false)" class="text-slate-500 hover:text-white text-xs">Tutup</button>
+          </div>
+          <nav class="flex flex-col gap-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <button onclick="switchTab('artikel'); toggleDrawer(false)" class="text-left py-2 border-b border-slate-700/40">Jurnal Materi</button>
+            <button onclick="switchTab('ujian'); toggleDrawer(false)" class="text-left py-2 border-b border-slate-700/40">Simulator Ujian</button>
+            <button onclick="switchTab('riwayat'); toggleDrawer(false)" class="text-left py-2 border-b border-slate-700/40">Rekam Evaluasi</button>
+          </nav>
+        </div>
+        <div class="text-[10px] text-slate-500 font-mono text-center border-t border-slate-700/40 pt-4">v2.1 · Cloudflare D1 System</div>
+      </div>
+    </div>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 md:px-6 py-6 md:py-10 pb-24 md:pb-10">
       
-      <section class="text-center py-12 max-w-4xl mx-auto space-y-6">
-        <div class="inline-block bg-cyan-950/40 border border-cyan-800/50 text-cyan-400 text-[10px] md:text-xs font-bold tracking-widest uppercase px-5 py-2 rounded-full shadow-inner shadow-cyan-500/5">
-          Sistem Informasi Pembelajaran Terintegrasi
+      <section id="section-artikel" class="space-y-6">
+        <div class="bg-surface-800 rounded-3xl p-6 md:p-8 border border-slate-800 relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div class="space-y-2 max-w-2xl">
+            <div class="text-[10px] font-bold text-cyan-400 uppercase tracking-widest font-mono">Knowledge Base Jurnal</div>
+            <h1 class="serif-title text-2xl md:text-3xl text-white font-bold leading-tight">Eksplorasi Cakrawala Literasi Sains dan Teknologi Terapan</h1>
+            <p class="text-xs text-slate-400 font-normal leading-relaxed">Ruang publikasi artikel, jurnal akademik, dan diktat kuliah mandiri. Kelola dan sinkronisasikan seluruh pustaka materi langsung melalui kluster basis data Cloudflare D1 secara terstruktur.</p>
+          </div>
+          <button onclick="bukaModalTambah()" class="bg-white hover:bg-slate-100 text-surface-900 font-bold text-xs px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 shrink-0 w-full md:w-auto justify-center">
+            <span>✍️</span> Terbitkan Jurnal Baru
+          </button>
         </div>
-        <h1 class="serif-title text-4xl md:text-6xl text-white font-semibold leading-tight tracking-tight">
-          Evolusi Manajemen Literasi & Evaluasi Kompetensi
-        </h1>
-        <p class="text-slate-400 text-sm md:text-base font-normal max-w-2xl mx-auto leading-relaxed">
-          Platform pengelolaan jurnal edukasi mandiri dilengkapi modul ujian interaktif berbasis Cloud untuk mengukur indeks pemahaman secara akurat.
-        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+          <div class="text-xs text-slate-400 font-medium">Menampilkan <span id="article-count" class="text-white font-bold font-mono">0</span> arsip publikasi</div>
+          <div class="w-full sm:w-72 bg-surface-800 border border-slate-800 rounded-xl px-3 py-2 flex items-center gap-2">
+            <span class="text-xs">🔍</span>
+            <input type="text" id="search-artikel" oninput="renderArticles()" placeholder="Cari judul artikel..." class="w-full bg-transparent text-xs text-white focus:outline-none placeholder-slate-500" />
+          </div>
+        </div>
+        <div id="articles-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
       </section>
 
-      <section id="section-artikel" class="space-y-8 pt-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/60 pb-5">
-          <div class="flex items-center gap-3">
-            <h2 class="text-xs font-extrabold tracking-widest uppercase text-slate-400">Daftar Publikasi Jurnal</h2>
-            <span id="article-count" class="bg-surface-800 text-cyan-400 text-xs px-2.5 py-0.5 rounded-md font-mono border border-slate-700">0</span>
+      <section id="section-ujian" class="space-y-6 hidden">
+        <div class="bg-surface-800 rounded-3xl p-6 md:p-8 border border-slate-800 relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div class="space-y-2 max-w-2xl">
+            <div class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest font-mono">Sistem Evaluasi Digital</div>
+            <h1 class="serif-title text-2xl md:text-3xl text-white font-bold leading-tight">Simulator Kompetensi dan Ujian Adaptif Real-time</h1>
+            <p class="text-xs text-slate-400 font-normal leading-relaxed">Uji pemahaman akademik siswa melalui simulator pengerjaan soal interaktif yang dilengkapi penghitung waktu mundur otomatis dan penilaian otomatis terpusat.</p>
           </div>
-          <div class="flex items-center gap-3 w-full sm:w-auto">
-            <input type="text" id="search-artikel" placeholder="🔍 Cari kata kunci materi..." oninput="renderArticles()" class="bg-surface-800 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 w-full sm:w-64" />
-            <button onclick="fetchArticles()" class="text-xs text-cyan-400 bg-surface-800 border border-slate-700 p-2 rounded-xl hover:bg-surface-700">🔄</button>
+          <button onclick="bukaModalBuatUjian()" class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold text-xs px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 shrink-0 w-full md:w-auto justify-center">
+            <span>📝</span> Konfigurasi Soal Baru
+          </button>
+        </div>
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+          <div class="text-xs text-slate-400 font-medium">Terdapat <span id="exam-count" class="text-white font-bold font-mono">0</span> simulator aktif</div>
+          <div class="w-full sm:w-72 bg-surface-800 border border-slate-800 rounded-xl px-3 py-2 flex items-center gap-2">
+            <span class="text-xs">🔍</span>
+            <input type="text" id="search-ujian" oninput="renderExamsData()" placeholder="Cari evaluasi..." class="w-full bg-transparent text-xs text-white focus:outline-none placeholder-slate-500" />
           </div>
         </div>
-        <div id="articles-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div class="col-span-full text-center py-20 bg-surface-800/40 border border-slate-800/80 rounded-2xl">
-            <div class="inline-block animate-spin rounded-full h-7 w-7 border-2 border-cyan-400 border-r-transparent mb-3"></div>
-            <p class="text-xs text-slate-400 tracking-wide">Memuat data artikel...</p>
-          </div>
-        </div>
+        <div id="exams-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
       </section>
 
-      <section id="section-ujian" class="hidden space-y-8 pt-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/60 pb-5">
-          <div class="flex items-center gap-3">
-            <h2 class="text-xs font-extrabold tracking-widest uppercase text-slate-400">Simulator Ujian Aktif</h2>
-            <span id="exam-count" class="bg-surface-800 text-indigo-400 text-xs px-2.5 py-0.5 rounded-md font-mono border border-slate-700">0</span>
+      <section id="section-riwayat" class="space-y-6 hidden">
+        <div class="max-w-2xl mx-auto space-y-6">
+          <div class="text-center space-y-2">
+            <h2 class="serif-title text-2xl text-white font-bold">Rekam Jejak Evaluasi & Portofolio Nilai</h2>
+            <p class="text-xs text-slate-400">Daftar pencapaian skor hasil pengerjaan paket simulator ujian online terenkripsi di perangkat lokal.</p>
           </div>
-          <div class="flex items-center gap-3 w-full sm:w-auto">
-            <input type="text" id="search-ujian" placeholder="🔍 Cari judul ujian..." oninput="renderExams()" class="bg-surface-800 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 w-full sm:w-64" />
-            <button onclick="fetchExams()" class="text-xs text-emerald-400 bg-surface-800 border border-slate-700 p-2 rounded-xl hover:bg-surface-700">🔄</button>
-          </div>
-        </div>
-        <div id="exams-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div class="col-span-full text-center py-20 bg-surface-800/40 border border-slate-800/80 rounded-2xl">
-            <p class="text-xs text-slate-400">Memuat bank ujian...</p>
-          </div>
+          <div id="stats-container" class="grid grid-cols-1 gap-4"></div>
+          <div id="history-list" class="space-y-3"></div>
         </div>
       </section>
-
-      <section id="section-riwayat" class="hidden space-y-6 pt-6">
-        <div class="flex justify-between items-center border-b border-slate-800/60 pb-5">
-          <h2 class="text-xs font-extrabold tracking-widest uppercase text-slate-400">Metrik Dashboard & Hasil Mahasiswa</h2>
-          <button onclick="renderHistory()" class="text-xs text-cyan-400 bg-surface-800 border border-slate-700 p-2 rounded-xl hover:bg-surface-700">🔄</button>
-        </div>
-        <div id="stats-container" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6"></div>
-        <div class="mb-4">
-          <input type="text" id="search-riwayat" placeholder="🔍 Filter riwayat..." oninput="renderHistory()" class="bg-surface-800 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 w-full max-w-md" />
-        </div>
-        <div id="history-list" class="space-y-3 mt-6"></div>
-      </section>
-
     </main>
 
-    <div class="md:hidden fixed bottom-0 inset-x-0 z-50 flex flex-col pointer-events-none">
-      <div class="px-4 py-2 bg-gradient-to-t from-surface-900 to-transparent flex gap-2 pointer-events-auto w-full max-w-md mx-auto">
-        <button onclick="bukaModalTambah()" class="flex-1 bg-surface-800/90 backdrop-blur-md border border-slate-700 hover:border-cyan-500/50 text-white text-[11px] font-bold py-2.5 rounded-xl shadow-lg flex items-center justify-center gap-1.5 active:scale-95">
-          <span>✍️</span> Tulis Artikel
-        </button>
-        <button onclick="bukaModalBuatUjian()" class="flex-1 bg-gradient-to-r from-cyan-600 to-indigo-600 text-white text-[11px] font-bold py-2.5 rounded-xl shadow-lg flex items-center justify-center gap-1.5 active:scale-95">
-          <span>📝</span> Buat Ujian
-        </button>
-      </div>
-      <nav class="bg-surface-800/95 backdrop-blur-xl border-t border-slate-700 px-2 py-2.5 flex justify-around items-center pointer-events-auto shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.5)]">
-        <button onclick="switchTab('artikel')" id="bot-nav-artikel" class="flex flex-col items-center gap-1 text-[10px] font-bold tracking-wider uppercase text-cyan-400">
-          <span>📄</span><span>Artikel</span>
-        </button>
-        <button onclick="switchTab('ujian')" id="bot-nav-ujian" class="flex flex-col items-center gap-1 text-[10px] font-bold tracking-wider uppercase text-slate-400 hover:text-white">
-          <span>📝</span><span>Ujian</span>
-        </button>
-        <button onclick="switchTab('riwayat')" id="bot-nav-riwayat" class="flex flex-col items-center gap-1 text-[10px] font-bold tracking-wider uppercase text-slate-400 hover:text-white">
-          <span>📊</span><span>Riwayat</span>
-        </button>
-      </nav>
+    <div class="fixed bottom-0 left-0 right-0 z-40 bg-surface-900/95 backdrop-blur-md border-t border-slate-800/60 md:hidden flex justify-around items-center h-16 px-2 select-none">
+      <button id="bot-nav-artikel" onclick="switchTab('artikel')" class="flex flex-col items-center gap-0.5 text-cyan-400 focus:outline-none w-16">
+        <span class="text-lg">📚</span><span class="text-[9px] font-bold uppercase tracking-wider">Jurnal</span>
+      </button>
+      <button id="bot-nav-ujian" onclick="switchTab('ujian')" class="flex flex-col items-center gap-0.5 text-slate-500 focus:outline-none w-16">
+        <span class="text-lg">⏱️</span><span class="text-[9px] font-bold uppercase tracking-wider">Ujian</span>
+      </button>
+      <button id="bot-nav-riwayat" onclick="switchTab('riwayat')" class="flex flex-col items-center gap-0.5 text-slate-500 focus:outline-none w-16">
+        <span class="text-lg">📊</span><span class="text-[9px] font-bold uppercase tracking-wider">Riwayat</span>
+      </button>
     </div>
 
-    <div id="modal-tulis" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-      <div class="bg-surface-800 border border-slate-700/60 w-full max-w-lg rounded-2xl shadow-2xl p-6 space-y-4" id="modal-content-tulis">
+    <div id="modal-tulis" class="fixed inset-0 z-50 bg-[#0b0f19]/80 backdrop-blur-sm p-4 flex items-center justify-center hidden" onclick="tutupModalTambah()">
+      <div class="bg-surface-800 border border-slate-700/80 rounded-2xl w-full max-w-lg p-6 shadow-2xl flex flex-col space-y-4" onclick="event.stopPropagation()">
         <div class="flex justify-between items-center border-b border-slate-700 pb-3">
-          <h3 id="modal-artikel-title" class="text-sm font-bold text-white">✍️ Mulai Menulis Artikel</h3>
-          <button onclick="tutupModalTambah()" class="text-slate-400 hover:text-white text-xl">&times;</button>
+          <h3 id="modal-artikel-title" class="serif-title text-base font-bold text-white">✍️ Terbitkan Materi Jurnal</h3>
+          <button onclick="tutupModalTambah()" class="text-slate-400 hover:text-white text-xs">✕</button>
         </div>
-        <input type="hidden" id="edit-article-id" />
-        <div>
-          <label class="block text-xs font-semibold text-slate-400 mb-1 uppercase tracking-wider">Judul</label>
-          <input type="text" id="input-title" placeholder="Judul yang memikat..." class="w-full bg-surface-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500" />
+        <input type="hidden" id="edit-article-id" value="" />
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Topik Utama Jurnal / Artikel</label>
+          <input type="text" id="input-title" placeholder="Masukkan judul materi..." class="w-full bg-surface-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500" />
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-400 mb-1 uppercase tracking-wider">Isi Artikel</label>
-          <textarea id="input-content" rows="6" placeholder="Tulis di sini..." class="w-full bg-surface-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500 resize-none"></textarea>
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Isi Kandungan Karya</label>
+          <textarea id="input-content" rows="6" placeholder="Tulis esai, rangkuman materi, atau narasi literasi ilmiah secara komprehensif..." class="w-full bg-surface-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500 resize-none leading-relaxed"></textarea>
         </div>
-        <div class="flex justify-end gap-2">
-          <button onclick="tutupModalTambah()" class="px-4 py-2 rounded-xl text-xs text-slate-400 hover:bg-surface-700">Batal</button>
-          <button onclick="simpanArtikelBaru()" class="bg-cyan-500 text-white text-xs font-bold px-4 py-2 rounded-xl">Terbitkan</button>
+        <div class="flex justify-end gap-2 pt-2">
+          <button onclick="tutupModalTambah()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-700/40">Batal</button>
+          <button onclick="simpanArtikelBaru()" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold text-xs px-5 py-2 rounded-xl shadow-md">Simpan Data</button>
         </div>
       </div>
     </div>
 
-    <div id="modal-buat-ujian" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden overflow-y-auto">
-      <div class="bg-surface-800 border border-slate-700/60 w-full max-w-2xl rounded-2xl shadow-2xl my-8 modal-enter" id="modal-content-buat-ujian">
-        <div class="px-6 py-4 border-b border-slate-700/50 flex justify-between items-center bg-surface-900/40 sticky top-0 z-10">
-          <h3 id="modal-ujian-title" class="text-sm font-bold text-white">📝 Buat Ujian Baru</h3>
-          <button onclick="tutupModalUjian()" class="text-slate-400 hover:text-white text-xl">&times;</button>
+    <div id="modal-detail-artikel" class="fixed inset-0 z-50 bg-[#0b0f19]/80 backdrop-blur-sm p-4 flex items-center justify-center hidden" onclick="tutupDetailArtikel()">
+      <div class="bg-surface-800 border border-slate-700/80 rounded-2xl w-full max-w-xl overflow-hidden shadow-2xl flex flex-col" onclick="event.stopPropagation()">
+        <div id="detail-header-color" class="h-32 p-6 flex items-end relative">
+          <button onclick="tutupDetailArtikel()" class="absolute top-4 right-4 bg-black/40 hover:bg-black/60 w-7 h-7 rounded-full flex items-center justify-center text-white text-xs backdrop-blur-sm">✕</button>
+          <span class="bg-[#0b0f19]/80 backdrop-blur-sm text-[9px] font-extrabold text-[#06b6d4] px-2.5 py-1 rounded-md uppercase tracking-wider">Pembaca Pustaka</span>
         </div>
-        <input type="hidden" id="edit-exam-id" />
-        <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1 uppercase">Judul Ujian</label>
-              <input type="text" id="exam-title-input" class="w-full bg-surface-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-400" />
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1 uppercase">Durasi (menit)</label>
-              <input type="number" id="exam-duration-input" value="30" min="1" max="180" class="w-full bg-surface-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-400" />
-            </div>
+        <div class="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
+          <h2 id="detail-title" class="serif-title text-xl font-bold text-white leading-tight"></h2>
+          <div class="flex items-center gap-2 text-[10px] text-slate-400 font-mono"><span>Oleh: Akademisi Sistem</span><span>•</span><span>Update Real-time</span></div>
+          <p id="detail-content" class="text-xs text-slate-300 font-normal leading-relaxed whitespace-pre-line pt-2 border-t border-slate-700/50"></p>
+        </div>
+        <div class="bg-surface-900 p-4 border-t border-slate-700/50 flex justify-end">
+          <button onclick="tutupDetailArtikel()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-5 py-2 rounded-xl">Selesai Membaca</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal-buat-ujian" class="fixed inset-0 z-50 bg-[#0b0f19]/80 backdrop-blur-sm p-4 flex items-center justify-center hidden" onclick="tutupModalUjian()">
+      <div class="bg-surface-800 border border-slate-700/80 rounded-2xl w-full max-w-xl p-6 shadow-2xl flex flex-col space-y-4 max-h-[90vh]" onclick="event.stopPropagation()">
+        <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+          <h3 id="modal-ujian-title" class="serif-title text-base font-bold text-white">📝 Konfigurasi Evaluasi Baru</h3>
+          <button onclick="tutupModalUjian()" class="text-slate-400 hover:text-white text-xs">✕</button>
+        </div>
+        <input type="hidden" id="edit-exam-id" value="" />
+        <div class="grid grid-cols-3 gap-3">
+          <div class="col-span-2 space-y-1">
+            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Judul Paket Ujian</label>
+            <input type="text" id="exam-title-input" placeholder="Contoh: Ujian Tengah Semester" class="w-full bg-surface-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500" />
           </div>
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Durasi (Menit)</label>
+            <input type="number" id="exam-duration-input" value="30" min="1" class="w-full bg-surface-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono text-center" />
+          </div>
+        </div>
+        <div class="flex justify-between items-center pt-2 border-t border-slate-700/50">
+          <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Daftar Pertanyaan Soal Pilihan Ganda</span>
+          <button type="button" onclick="tambahSoal()" class="bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 text-xs font-bold px-3 py-1.5 rounded-lg border border-indigo-500/30">+ Slot Soal</button>
+        </div>
+        <div id="questions-container" class="space-y-3 overflow-y-auto flex-1 pr-1 max-h-[45vh]"></div>
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-700">
+          <button onclick="tutupModalUjian()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-700/40">Batal</button>
+          <button onclick="simpanUjianOnline()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-xs px-5 py-2 rounded-xl shadow-md">Simpan Konfigurasi</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal-kerjakan-ujian" class="fixed inset-0 z-50 bg-[#0b0f19] p-4 flex flex-col justify-between hidden">
+      <div class="max-w-3xl w-full mx-auto flex-1 flex flex-col justify-between py-4">
+        <div class="flex justify-between items-center border-b border-slate-800 pb-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1 uppercase">Deskripsi</label>
-            <textarea id="exam-desc-input" rows="2" class="w-full bg-surface-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-400 resize-none"></textarea>
+            <span class="text-[9px] font-mono font-bold uppercase text-indigo-400 tracking-wider">Computer Assisted Test Active</span>
+            <h3 id="exam-modal-title" class="serif-title text-base font-bold text-white mt-0.5"></h3>
           </div>
-          <div class="border-t border-slate-700/50 pt-4">
-            <label class="block text-xs font-semibold text-slate-400 mb-3 uppercase">Daftar Soal</label>
-            <div id="questions-container" class="space-y-4"></div>
-            <button onclick="tambahSoal()" class="mt-4 w-full border-2 border-dashed border-slate-600 hover:border-emerald-400 text-slate-400 hover:text-emerald-400 text-xs font-semibold py-3 rounded-xl">➕ Tambah Soal</button>
+          <div class="flex items-center gap-3 bg-surface-800 border border-slate-700 px-4 py-2 rounded-xl">
+            <span class="text-[11px] font-bold text-slate-400">SISA WAKTU</span>
+            <span id="timer-display" class="font-mono font-black text-sm text-amber-400 tracking-widest">00:00</span>
           </div>
-          <div class="flex justify-end gap-3 pt-4 border-t border-slate-700/50">
-            <button onclick="tutupModalUjian()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:bg-slate-700/40">Batal</button>
-            <button onclick="simpanUjianOnline()" class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold text-xs px-5 py-2.5 rounded-xl shadow-lg shadow-emerald-500/10">Simpan Ujian</button>
-          </div>
+        </div>
+        <div id="question-area" class="my-8 bg-surface-800 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-xl flex-1 overflow-y-auto"></div>
+        <div class="flex justify-between items-center border-t border-slate-800 pt-4">
+          <button onclick="if(confirm('Yakin ingin membatalkan ujian? Nilai tidak akan disimpan.')) forceKeluarUjian()" class="text-xs text-rose-400 font-semibold px-4 py-2 rounded-xl hover:bg-rose-500/10">Keluar / Batalkan</button>
+          <button onclick="if(confirm('Apakah Anda yakin semua jawaban telah terisi dan ingin menyelesaikan sesi ujian ini?')) submitUjian()" class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-xs px-6 py-2.5 rounded-xl shadow-md">Kirim & Selesai</button>
         </div>
       </div>
     </div>
 
-    <div id="modal-kerjakan-ujian" class="fixed inset-0 bg-surface-900 z-[60] flex flex-col hidden">
-      <div class="border-b border-slate-800 bg-surface-800/90 backdrop-blur-md px-6 py-4 flex items-center justify-between shrink-0">
-        <div class="flex items-center gap-4">
-          <button onclick="konfirmasiKeluarUjian()" class="text-slate-400 hover:text-rose-400 text-sm font-medium">✕ Keluar</button>
-          <span class="text-slate-500 text-sm">|</span>
-          <span id="exam-modal-title" class="text-white font-semibold text-sm truncate max-w-[200px] md:max-w-sm">Judul Ujian</span>
-        </div>
-        <div class="flex items-center gap-3">
-          <span id="exam-progress-text" class="text-xs text-slate-400">0/0</span>
-          <div id="exam-timer" class="bg-surface-900 border border-slate-700 rounded-full px-4 py-1.5 text-sm font-mono font-bold text-cyan-400 flex items-center gap-1.5">
-            ⏱ <span id="timer-display">30:00</span>
-          </div>
-        </div>
-      </div>
-      <div class="h-1 bg-slate-800 shrink-0">
-        <div id="exam-progress-bar" class="h-full bg-gradient-to-r from-emerald-500 to-teal-500" style="width: 0%"></div>
-      </div>
-      <div class="flex-1 overflow-y-auto px-6 py-8">
-        <div class="max-w-3xl mx-auto">
-          <div class="flex gap-2 mb-8 overflow-x-auto pb-2" id="question-indicators"></div>
-          <div id="question-area" class="bg-surface-800 border border-slate-800/80 rounded-2xl p-6 md:p-8">
-            <span id="question-number-badge" class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 mb-4 inline-block">Soal 1</span>
-            <h3 id="question-text" class="text-lg md:text-xl text-white font-medium mb-6 leading-relaxed"></h3>
-            <div id="options-container" class="space-y-3"></div>
-          </div>
-          <div class="flex justify-between items-center mt-6">
-            <button id="btn-prev" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 bg-slate-800/60 border border-slate-700 hover:bg-slate-700/60 disabled:opacity-30" onclick="navigasiSoal(-1)">← Sebelumnya</button>
-            <span id="nav-info" class="text-xs text-slate-500">Soal 1 dari 10</span>
-            <button id="btn-next" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 shadow-md shadow-emerald-500/10" onclick="navigasiSoal(1)">Selanjutnya →</button>
-          </div>
-          <div class="text-center mt-6">
-            <button onclick="submitUjian()" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-sm px-8 py-3 rounded-full shadow-lg shadow-blue-500/15 active:scale-95">✅ Kumpulkan Jawaban</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="modal-hasil-ujian" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[70] flex items-center justify-center p-4 hidden overflow-y-auto">
-      <div class="bg-surface-800 border border-slate-700/60 w-full max-w-2xl rounded-2xl shadow-2xl my-8 modal-enter" id="modal-content-hasil">
-        <div class="px-6 py-4 border-b border-slate-700/50 flex justify-between items-center bg-surface-900/40">
-          <h3 class="text-md font-semibold text-white">📊 Hasil Ujian</h3>
-          <button onclick="tutupModalHasil()" class="text-slate-400 hover:text-white text-lg">&times;</button>
-        </div>
-        <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto" id="hasil-ujian-body"></div>
-      </div>
+    <div id="undo-toast" class="fixed bottom-20 md:bottom-6 right-4 z-50 bg-slate-900 border border-slate-700 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-4 hidden">
+      <span class="text-xs font-medium">⚠️ Aksi berhasil dilakukan.</span>
+      <button onclick="picuUndoGlobal()" class="text-cyan-400 font-bold text-xs hover:underline uppercase tracking-wider">Undo</button>
     </div>
 
     <script>
       (function () {
-        const API_BASE = "https://api-pembelajaran.wawansismadi.workers.dev";
+        const API_ENDPOINT = "https://lms.agungbarliansaputra.workers.dev/api";
+        const AUTH_HEADER = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.QMUFsIDTnFmyG3nMiGM6SDlOWk5GTlVSR0Yzd2g3U21xSnAtUXYzMA";
         
-        let articles = [];
-        let exams = [];
-        let results = [];
-        let soalSementara = [];
+        window.articlesData = []; window.examsData = []; window.resultsData = [];
+        let undoTargetId = null; let undoTargetType = null; let undoBackupData = null; let toastTimeout = null;
+        let activeExam = null; let userAnswers = {};
+        let examTimerInterval = null; let examTimeRemaining = 0;
+        const gradienWarna = [
+          "from-cyan-500 to-blue-600",     
+          "from-purple-500 to-indigo-600", 
+          "from-emerald-400 to-teal-600",  
+          "from-orange-500 to-red-500",    
+          "from-pink-500 to-rose-500"      
+        ];
 
-        let activeExam = null;
-        let currentQuestionIndex = 0;
-        let userAnswers = {}; 
-        let examTimerInterval = null;
-        let examSecondsLeft = 0;
+        function toggleDrawer(open) {
+          const drawer = document.getElementById("drawer-menu");
+          if (open) { 
+            drawer.classList.remove("hidden");
+            document.body.classList.add("drawer-open");
+          } else { 
+            drawer.classList.add("hidden"); 
+            document.body.classList.remove("drawer-open");
+          }
+        }
+        window.toggleDrawer = toggleDrawer;
 
-        // ========== CORE NAVIGATION TAB FUNCTION ==========
-        function switchTab(tabId) {
-          document.getElementById("section-artikel").classList.add("hidden");
-          document.getElementById("section-ujian").classList.add("hidden");
-          document.getElementById("section-riwayat").classList.add("hidden");
+        function switchTab(tab) {
+          ["artikel", "ujian", "riwayat"].forEach((t) => {
+            document.getElementById(`section-${t}`).classList.add("hidden");
+            document.getElementById(`nav-${t}`).className = "hover:text-white";
+            const botNav = document.getElementById(`bot-nav-${t}`);
+            if (botNav) botNav.className = "flex flex-col items-center gap-0.5 text-slate-500 focus:outline-none w-16";
+          });
+          document.getElementById(`section-${tab}`).classList.remove("hidden");
+          document.getElementById(`nav-${tab}`).className = "hover:text-white text-cyan-400 border-b-2 border-cyan-500 pb-1";
+          
+          const activeBotNav = document.getElementById(`bot-nav-${tab}`);
+          if (activeBotNav) activeBotNav.className = "flex flex-col items-center gap-0.5 text-cyan-400 focus:outline-none w-16";
 
-          // Desktop
-          document.getElementById("nav-artikel").classList.remove("text-cyan-400", "text-white");
-          document.getElementById("nav-ujian").classList.remove("text-cyan-400", "text-white");
-          document.getElementById("nav-riwayat").classList.remove("text-cyan-400", "text-white");
-          document.getElementById(`nav-${tabId}`).classList.add("text-cyan-400");
-
-          // Mobile
-          document.getElementById("bot-nav-artikel").classList.remove("text-cyan-400", "text-slate-400");
-          document.getElementById("bot-nav-ujian").classList.remove("text-cyan-400", "text-slate-400");
-          document.getElementById("bot-nav-riwayat").classList.remove("text-cyan-400", "text-slate-400");
-          document.getElementById(`bot-nav-${tabId}`).classList.add("text-cyan-400");
-
-          document.getElementById(`section-${tabId}`).classList.remove("hidden");
+          if (tab === "artikel") fetchArticles();
+          if (tab === "ujian") fetchExams();
+          if (tab === "riwayat") renderHistory();
         }
         window.switchTab = switchTab;
 
-        // ========== LOGIC AREA: ARTIKEL MAPPING ==========
+        // ========== CORE OPERATIONS FOR ARTICLES ==========
         async function fetchArticles() {
           try {
-            const res = await fetch(`${API_BASE}/api/articles`);
-            if (!res.ok) throw new Error();
-            articles = await res.json();
-            renderArticles();
-          } catch {
-            document.getElementById("articles-grid").innerHTML = `<div class="col-span-full text-center py-10 text-rose-400 text-xs">Gagal mengambil data Cloudflare D1.</div>`;
-          }
+            const res = await fetch(`${API_ENDPOINT}/articles`, { headers: { Authorization: `Bearer ${AUTH_HEADER}` } });
+            const json = await res.json(); 
+            if (json.success) window.articlesData = json.data;
+          } catch (e) { console.error(e); }
+          renderArticles();
         }
         window.fetchArticles = fetchArticles;
 
-        function renderArticles() {
-          const grid = document.getElementById("articles-grid");
-          const count = document.getElementById("article-count");
-          const q = document.getElementById("search-artikel").value.toLowerCase();
-
-          const data = articles.filter(a => a.title.toLowerCase().includes(q) || a.content.toLowerCase().includes(q));
-          count.textContent = data.length;
-
-          if (data.length === 0) {
-            grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500 text-xs">Tidak ada publikasi artikel.</div>`;
-            return;
-          }
-
-          grid.innerHTML = data.map(a => `
-            <div class="bg-surface-800 border border-slate-800/80 rounded-2xl p-6 flex flex-col justify-between hover:border-slate-700">
-              <div class="space-y-3">
-                <h3 class="text-white font-bold text-base leading-snug line-clamp-2">${a.title}</h3>
-                <p class="text-xs text-slate-400 leading-relaxed line-clamp-4 whitespace-pre-line">${a.content}</p>
-              </div>
-              <div class="flex justify-end gap-2 pt-5 mt-4 border-t border-slate-700/40">
-                <button onclick="bukaEditArtikel('${a.id}')" class="text-[11px] font-bold text-cyan-400 bg-cyan-500/10 px-3 py-1.5 rounded-lg border border-cyan-500/20">Edit</button>
-                <button onclick="hapusArtikel('${a.id}')" class="text-[11px] font-bold text-rose-400 bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/20">Hapus</button>
-              </div>
-            </div>
-          `).join("");
-        }
-        window.renderArticles = renderArticles;
-
         async function simpanArtikelBaru() {
           const id = document.getElementById("edit-article-id").value;
-          const title = document.getElementById("input-title").value.trim();
-          const content = document.getElementById("input-content").value.trim();
-          if (!title || !content) return alert("Mohon lengkapi seluruh field!");
+          const title = document.getElementById("input-title").value;
+          const content = document.getElementById("input-content").value;
+          if (!title || !content) return alert("Topik Materi dan Isi Kandungan Karya wajib diisi!");
+
+          const payload = { title, content };
+          const url = id ? `${API_ENDPOINT}/articles/${id}` : `${API_ENDPOINT}/articles`;
+          const method = id ? "PUT" : "POST";
 
           try {
-            const url = id ? `${API_BASE}/api/articles/${id}` : `${API_BASE}/api/articles`;
-            const method = id ? "PUT" : "POST";
             const res = await fetch(url, {
-              method,
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ title, content })
+              method: method,
+              headers: { Authorization: `Bearer ${AUTH_HEADER}`, "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
             });
-            if (!res.ok) throw new Error();
-            tutupModalTambah();
-            fetchArticles();
-          } catch {
-            alert("Gagal melakukan sinkronisasi data.");
-          }
+            const json = await res.json();
+            if (json.success) {
+              tutupModalTambah();
+              fetchArticles();
+            } else { alert(json.message || "Gagal menyimpan artikel"); }
+          } catch (e) { console.error(e); }
         }
         window.simpanArtikelBaru = simpanArtikelBaru;
 
-        function bukaEditArtikel(id) {
-          const a = articles.find(x => x.id == id);
-          if (!a) return;
-          document.getElementById("edit-article-id").value = a.id;
-          document.getElementById("input-title").value = a.title;
-          document.getElementById("input-content").value = a.content;
-          document.getElementById("modal-artikel-title").textContent = "✏️ Perbarui Materi Jurnal";
+        async function hapusArtikelInstan(id) {
+          if(!confirm("Yakin ingin menghapus artikel ini?")) return;
+          try {
+            const res = await fetch(`${API_ENDPOINT}/articles/${id}`, {
+              method: "DELETE",
+              headers: { Authorization: `Bearer ${AUTH_HEADER}` }
+            });
+            const json = await res.json();
+            if (json.success) fetchArticles();
+          } catch (e) { console.error(e); }
+        }
+        window.hapusArtikelInstan = hapusArtikelInstan;
+
+        function bukaModalEditArtikel(id) {
+          const art = window.articlesData.find(a => a.id === id);
+          if (!art) return;
+          document.getElementById("edit-article-id").value = art.id;
+          document.getElementById("input-title").value = art.title;
+          document.getElementById("input-content").value = art.content;
+          document.getElementById("modal-artikel-title").textContent = "✏️ Modifikasi Artikel Jurnal";
           document.getElementById("modal-tulis").classList.remove("hidden");
         }
-        window.bukaEditArtikel = bukaEditArtikel;
+        window.bukaModalEditArtikel = bukaModalEditArtikel;
 
-        async function hapusArtikel(id) {
-          if (!confirm("Apakah Anda yakin ingin menghapus artikel ini?")) return;
-          try {
-            const res = await fetch(`${API_BASE}/api/articles/${id}`, { method: "DELETE" });
-            if (!res.ok) throw new Error();
-            fetchArticles();
-          } catch {
-            alert("Gagal menghapus.");
-          }
-        }
-        window.hapusArtikel = hapusArtikel;
-
-        // ========== LOGIC AREA: SIMULATOR UJIAN ==========
+        // ========== CORE OPERATIONS FOR EXAMS ==========
         async function fetchExams() {
           try {
-            const res = await fetch(`${API_BASE}/api/exams`);
-            if (!res.ok) throw new Error();
-            exams = await res.json();
-            renderExams();
-          } catch {
-            document.getElementById("exams-grid").innerHTML = `<div class="col-span-full text-center py-10 text-rose-400 text-xs">Gagal memuat bank ujian.</div>`;
-          }
+            const res = await fetch(`${API_ENDPOINT}/exams`, { headers: { Authorization: `Bearer ${AUTH_HEADER}` } });
+            const json = await res.json();
+            if (json.success) window.examsData = json.data;
+          } catch (e) { console.error(e); }
+          renderExamsData();
         }
         window.fetchExams = fetchExams;
 
-        function renderExams() {
-          const grid = document.getElementById("exams-grid");
-          const count = document.getElementById("exam-count");
-          const q = document.getElementById("search-ujian").value.toLowerCase();
-
-          const data = exams.filter(e => e.title.toLowerCase().includes(q));
-          count.textContent = data.length;
-
-          if (data.length === 0) {
-            grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500 text-xs">Tidak ada simulator ujian yang tersedia.</div>`;
-            return;
-          }
-
-          grid.innerHTML = data.map(e => {
-            let soalCount = 0;
-            try { soalCount = JSON.parse(e.questions || "[]").length; } catch { soalCount = 0; }
-            return `
-              <div class="bg-surface-800 border border-slate-800/80 rounded-2xl p-6 flex flex-col justify-between hover:border-slate-700">
-                <div class="space-y-2">
-                  <span class="text-[10px] bg-indigo-500/10 text-indigo-400 px-2.5 py-1 rounded-md border border-indigo-500/20 font-mono font-bold uppercase">⏱ ${e.duration} Menit</span>
-                  <h3 class="text-white font-bold text-base leading-snug pt-1">${e.title}</h3>
-                  <p class="text-xs text-slate-400 line-clamp-2">${e.description || "Tidak ada deskripsi."}</p>
-                  <p class="text-[11px] font-semibold text-slate-500">Jumlah Soal: ${soalCount} Lembar</p>
-                </div>
-                <div class="flex justify-between items-center pt-5 mt-4 border-t border-slate-700/40">
-                  <div class="flex gap-1.5">
-                    <button onclick="bukaEditUjian('${e.id}')" class="text-[10px] font-bold bg-slate-700 text-white px-2 py-1.5 rounded-lg border border-slate-600">Edit</button>
-                    <button onclick="hapusUjian('${e.id}')" class="text-[10px] font-bold bg-rose-500/10 text-rose-400 px-2 py-1.5 rounded-lg border border-rose-500/20">Hapus</button>
-                  </div>
-                  <button onclick="mulaiUjianOnline('${e.id}')" class="text-xs font-bold bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-4 py-2 rounded-xl shadow-md">Kerjakan</button>
-                </div>
-              </div>
-            `;
-          }).join("");
-        }
-        window.renderExams = renderExams;
-
-        // ========== LOGIC AREA: MULTIPLE CHOICE QUESTIONS FORM GENERATOR ==========
-        function tambahSoal() {
-          const container = document.getElementById("questions-container");
-          const idx = container.children.length;
-
-          const block = document.createElement("div");
-          block.className = "bg-surface-900 border border-slate-700/70 p-4 rounded-xl space-y-3 relative group";
-          block.innerHTML = `
-            <div class="flex justify-between items-center">
-              <span class="text-xs font-bold text-indigo-400 uppercase font-mono">Soal #${idx + 1}</span>
-              <button type="button" onclick="this.parentElement.parentElement.remove(); reindexSoal();" class="text-xs text-rose-400 hover:text-rose-300">Hapus Soal</button>
-            </div>
-            <input type="text" placeholder="Pertanyaan..." class="q-text w-full bg-surface-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500" required />
-            <div class="grid grid-cols-2 gap-2">
-              <input type="text" placeholder="Pilihan A" class="q-a w-full bg-surface-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500" required />
-              <input type="text" placeholder="Pilihan B" class="q-b w-full bg-surface-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500" required />
-              <input type="text" placeholder="Pilihan C" class="q-c w-full bg-surface-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500" required />
-              <input type="text" placeholder="Pilihan D" class="q-d w-full bg-surface-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500" required />
-            </div>
-            <div>
-              <label class="block text-[10px] font-bold text-slate-400 mb-1 uppercase font-mono">Kunci Jawaban</label>
-              <select class="q-key w-full bg-surface-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
-                <option value="A">A</option>
-                <option value="B">B</option>
-                <option value="C">C</option>
-                <option value="D">D</option>
-              </select>
-            </div>
-          `;
-          container.appendChild(block);
-        }
-        window.tambahSoal = tambahSoal;
-
-        function reindexSoal() {
-          const container = document.getElementById("questions-container");
-          Array.from(container.children).forEach((el, idx) => {
-            el.querySelector("span").textContent = `Soal #${idx + 1}`;
-          });
-        }
-        window.reindexSoal = reindexSoal;
-
         async function simpanUjianOnline() {
           const id = document.getElementById("edit-exam-id").value;
-          const title = document.getElementById("exam-title-input").value.trim();
+          const title = document.getElementById("exam-title-input").value;
           const duration = parseInt(document.getElementById("exam-duration-input").value) || 30;
-          const description = document.getElementById("exam-desc-input").value.trim();
+          
+          const qContainers = document.querySelectorAll("#questions-container > div");
+          const questions = [];
+          qContainers.forEach((container) => {
+            const textInput = container.querySelector('input[placeholder="Pertanyaan..."]');
+            const optionInputs = container.querySelectorAll('.option-input');
+            const selectAnswer = container.querySelector('.answer-select');
+            
+            if (textInput && textInput.value.trim() !== "") {
+              const options = Array.from(optionInputs).map(opt => opt.value || "");
+              questions.push({
+                text: textInput.value,
+                options: options,
+                answerIndex: parseInt(selectAnswer.value) || 0
+              });
+            }
+          });
 
-          const container = document.getElementById("questions-container");
-          const questionBlocks = Array.from(container.children);
+          if (!title || questions.length === 0) return alert("Judul Ujian dan minimal 1 slot pertanyaan valid harus terisi!");
 
-          if (!title || questionBlocks.length === 0) {
-            return alert("Harap isi Judul dan tambahkan minimal 1 Soal!");
-          }
-
-          const questionsArr = questionBlocks.map(block => ({
-            question: block.querySelector(".q-text").value.trim(),
-            options: {
-              A: block.querySelector(".q-a").value.trim(),
-              B: block.querySelector(".q-b").value.trim(),
-              C: block.querySelector(".q-c").value.trim(),
-              D: block.querySelector(".q-d").value.trim()
-            },
-            correctAnswer: block.querySelector(".q-key").value
-          }));
+          const payload = { title, duration, questions };
+          const url = id ? `${API_ENDPOINT}/exams/${id}` : `${API_ENDPOINT}/exams`;
+          const method = id ? "PUT" : "POST";
 
           try {
-            const url = id ? `${API_BASE}/api/exams/${id}` : `${API_BASE}/api/exams`;
-            const method = id ? "PUT" : "POST";
             const res = await fetch(url, {
-              method,
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ title, duration, description, questions: JSON.stringify(questionsArr) })
+              method: method,
+              headers: { Authorization: `Bearer ${AUTH_HEADER}`, "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
             });
-            if (!res.ok) throw new Error();
-            tutupModalUjian();
-            fetchExams();
-          } catch {
-            alert("Gagal melakukan penyimpanan bank ujian.");
-          }
+            const json = await res.json();
+            if (json.success) {
+              tutupModalUjian();
+              fetchExams();
+            } else { alert(json.message || "Gagal menyimpan konfigurasi ujian"); }
+          } catch (e) { console.error(e); }
         }
         window.simpanUjianOnline = simpanUjianOnline;
 
-        function bukaEditUjian(id) {
-          const e = exams.find(x => x.id == id);
-          if (!e) return;
-          document.getElementById("edit-exam-id").value = e.id;
-          document.getElementById("exam-title-input").value = e.title;
-          document.getElementById("exam-duration-input").value = e.duration;
-          document.getElementById("exam-desc-input").value = e.description || "";
+        async function hapusUjianInstan(id) {
+          if(!confirm("Yakin ingin menghapus simulator ujian ini?")) return;
+          try {
+            const res = await fetch(`${API_ENDPOINT}/exams/${id}`, {
+              method: "DELETE",
+              headers: { Authorization: `Bearer ${AUTH_HEADER}` }
+            });
+            const json = await res.json();
+            if (json.success) fetchExams();
+          } catch (e) { console.error(e); }
+        }
+        window.hapusUjianInstan = hapusUjianInstan;
 
+        // ========== DYNAMIC UI GENERATION FOR SLOTS ==========
+        function tambahSoal() {
+          const container = document.getElementById("questions-container");
+          const index = container.children.length;
+          const div = document.createElement("div");
+          div.className = "bg-surface-900 border border-slate-700 p-4 rounded-xl space-y-2 relative";
+          div.innerHTML = `
+            <div class="flex justify-between items-center">
+              <span class="text-[10px] font-bold text-slate-500 uppercase">Soal #${index + 1}</span>
+              <button type="button" onclick="this.parentElement.parentElement.remove()" class="text-rose-400 text-xs hover:underline">Hapus</button>
+            </div>
+            <input type="text" placeholder="Pertanyaan..." class="w-full bg-surface-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500" required />
+            <div class="grid grid-cols-2 gap-2">
+              <input type="text" placeholder="Pilihan A" class="option-input w-full bg-surface-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500" required />
+              <input type="text" placeholder="Pilihan B" class="option-input w-full bg-surface-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500" required />
+              <input type="text" placeholder="Pilihan C" class="option-input w-full bg-surface-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500" required />
+              <input type="text" placeholder="Pilihan D" class="option-input w-full bg-surface-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500" required />
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="text-[10px] font-bold text-slate-500 uppercase">Jawaban Benar:</label>
+              <select class="answer-select bg-surface-800 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white focus:outline-none">
+                <option value="0">A</option>
+                <option value="1">B</option>
+                <option value="2">C</option>
+                <option value="3">D</option>
+              </select>
+            </div>
+          `;
+          container.appendChild(div);
+        }
+        window.tambahSoal = tambahSoal;
+
+        // ========== EDIT SELECTION RENDERING ==========
+        function bukaModalEditUjian(id) {
+          const exam = window.examsData.find(e => e.id === id);
+          if (!exam) return;
+          document.getElementById("edit-exam-id").value = exam.id;
+          document.getElementById("exam-title-input").value = exam.title;
+          document.getElementById("exam-duration-input").value = exam.duration;
+          
           const container = document.getElementById("questions-container");
           container.innerHTML = "";
-
-          let qList = [];
-          try { qList = JSON.parse(e.questions || "[]"); } catch { qList = []; }
-
-          qList.forEach((q, idx) => {
-            const block = document.createElement("div");
-            block.className = "bg-surface-900 border border-slate-700/70 p-4 rounded-xl space-y-3 relative group";
-            block.innerHTML = `
-              <div class="flex justify-between items-center">
-                <span class="text-xs font-bold text-indigo-400 uppercase font-mono">Soal #${idx + 1}</span>
-                <button type="button" onclick="this.parentElement.parentElement.remove(); reindexSoal();" class="text-xs text-rose-400 hover:text-rose-300">Hapus Soal</button>
-              </div>
-              <input type="text" value="${q.question.replace(/"/g, '&quot;')}" class="q-text w-full bg-surface-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none" required />
-              <div class="grid grid-cols-2 gap-2">
-                <input type="text" value="${(q.options?.A || '').replace(/"/g, '&quot;')}" class="q-a w-full bg-surface-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" required />
-                <input type="text" value="${(q.options?.B || '').replace(/"/g, '&quot;')}" class="q-b w-full bg-surface-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" required />
-                <input type="text" value="${(q.options?.C || '').replace(/"/g, '&quot;')}" class="q-c w-full bg-surface-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" required />
-                <input type="text" value="${(q.options?.D || '').replace(/"/g, '&quot;')}" class="q-d w-full bg-surface-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" required />
-              </div>
-              <div>
-                <select class="q-key w-full bg-surface-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white">
-                  <option value="A" ${q.correctAnswer === 'A' ? 'selected' : ''}>A</option>
-                  <option value="B" ${q.correctAnswer === 'B' ? 'selected' : ''}>B</option>
-                  <option value="C" ${q.correctAnswer === 'C' ? 'selected' : ''}>C</option>
-                  <option value="D" ${q.correctAnswer === 'D' ? 'selected' : ''}>D</option>
-                </select>
-              </div>
-            `;
-            container.appendChild(block);
-          });
-
-          document.getElementById("modal-ujian-title").textContent = "✏️ Konfigurasi Evaluasi Ujian";
+          
+          if (exam.questions && exam.questions.length > 0) {
+            exam.questions.forEach((q) => {
+              tambahSoal();
+              const blocks = container.children;
+              const currentBlock = blocks[blocks.length - 1];
+              currentBlock.querySelector('input[placeholder="Pertanyaan..."]').value = q.text;
+              const optionInputs = currentBlock.querySelectorAll('.option-input');
+              if(q.options) {
+                q.options.forEach((opt, oIdx) => { if(optionInputs[oIdx]) optionInputs[oIdx].value = opt; });
+              }
+              currentBlock.querySelector('.answer-select').value = q.answerIndex;
+            });
+          }
+          document.getElementById("modal-ujian-title").textContent = "✏️ Modifikasi Evaluasi Kompetensi";
           document.getElementById("modal-buat-ujian").classList.remove("hidden");
         }
-        window.bukaEditUjian = bukaEditUjian;
+        window.bukaModalEditUjian = bukaModalEditUjian;
 
-        async function hapusUjian(id) {
-          if (!confirm("Hapus ujian ini secara permanen dari sistem?")) return;
-          try {
-            const res = await fetch(`${API_BASE}/api/exams/${id}`, { method: "DELETE" });
-            if (!res.ok) throw new Error();
-            fetchExams();
-          } catch {
-            alert("Gagal menghapus modul ujian.");
-          }
-        }
-        window.hapusUjian = hapusUjian;
-
-        // ========== RUNTIME ENGINE: PENGERJAAN SIMULATOR UJIAN ==========
-        function mulaiUjianOnline(id) {
-          const e = exams.find(x => x.id == id);
-          if (!e) return;
-
-          let qList = [];
-          try { qList = JSON.parse(e.questions || "[]"); } catch { qList = []; }
-          if (qList.length === 0) return alert("Ujian ini belum memiliki soal!");
-
-          activeExam = { ...e, questionsArr: qList };
-          currentQuestionIndex = 0;
-          userAnswers = {};
-
-          document.getElementById("exam-modal-title").textContent = activeExam.title;
-          document.body.classList.add("exam-active");
-
-          examSecondsLeft = (activeExam.duration || 30) * 60;
-          updateTimerDisplay();
-          
-          document.getElementById("exam-timer").classList.remove("timer-warning");
-          clearInterval(examTimerInterval);
-          examTimerInterval = setInterval(() => {
-            examSecondsLeft--;
-            updateTimerDisplay();
-            if (examSecondsLeft <= 60) document.getElementById("exam-timer").classList.add("timer-warning");
-            if (examSecondsLeft <= 0) {
-              clearInterval(examTimerInterval);
-              alert("Waktu habis! Jawaban Anda akan otomatis dikumpulkan.");
-              submitUjian(true);
-            }
-          }, 1000);
-
-          renderIndicators();
-          showQuestion(0);
-          document.getElementById("modal-kerjakan-ujian").classList.remove("hidden");
-        }
-        window.mulaiUjianOnline = mulaiUjianOnline;
-
-        function updateTimerDisplay() {
-          const m = Math.floor(examSecondsLeft / 60);
-          const s = examSecondsLeft % 60;
-          document.getElementById("timer-display").textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-        }
-
-        function renderIndicators() {
-          const container = document.getElementById("question-indicators");
-          container.innerHTML = activeExam.questionsArr.map((_, idx) => `
-            <button id="ind-${idx}" onclick="showQuestion(${idx})" class="h-8 w-8 rounded-lg text-xs font-bold shrink-0 border border-slate-700 bg-surface-800 text-slate-400">
-              ${idx + 1}
-            </button>
-          `).join("");
-        }
-
-        function showQuestion(idx) {
-          if (idx < 0 || idx >= activeExam.questionsArr.length) return;
-          
-          document.getElementById(`ind-${currentQuestionIndex}`)?.classList.remove("border-cyan-400", "text-cyan-400");
-          currentQuestionIndex = idx;
-          document.getElementById(`ind-${idx}`).classList.add("border-cyan-400", "text-cyan-400");
-
-          const q = activeExam.questionsArr[idx];
-          document.getElementById("question-number-badge").textContent = `Soal ${idx + 1} dari ${activeExam.questionsArr.length}`;
-          document.getElementById("question-text").textContent = q.question;
-
-          const optionsDiv = document.getElementById("options-container");
-          optionsDiv.innerHTML = ['A', 'B', 'C', 'D'].map(opt => `
-            <label class="exam-option-label block bg-surface-900 border border-slate-800 rounded-xl p-4 cursor-pointer flex items-center gap-3 hover:border-slate-700">
-              <input type="radio" name="exam-opt" value="${opt}" class="exam-option-input hidden" onchange="pilihJawaban('${opt}')" ${userAnswers[idx] === opt ? 'checked' : ''} />
-              <span class="h-6 w-6 rounded-lg bg-surface-800 border border-slate-700 text-xs font-bold flex items-center justify-center text-slate-300">${opt}</span>
-              <span class="text-xs text-slate-200">${q.options[opt]}</span>
-            </label>
-          `).join("");
-
-          document.getElementById("nav-info").textContent = `Soal ${idx + 1} dari ${activeExam.questionsArr.length}`;
-          document.getElementById("btn-prev").disabled = idx === 0;
-          document.getElementById("btn-next").disabled = idx === activeExam.questionsArr.length - 1;
-
-          // Progress status bar
-          const progressPercent = (Object.keys(userAnswers).length / activeExam.questionsArr.length) * 100;
-          document.getElementById("exam-progress-bar").style.width = `${progressPercent}%`;
-          document.getElementById("exam-progress-text").textContent = `${Object.keys(userAnswers).length}/${activeExam.questionsArr.length}`;
-
-          // Update indicator coloring if dynamic answered
-          activeExam.questionsArr.forEach((_, i) => {
-            const btn = document.getElementById(`ind-${i}`);
-            if (userAnswers[i]) btn?.classList.add("bg-cyan-950/40");
-          });
-        }
-        window.showQuestion = showQuestion;
-
-        function pilihJawaban(opt) {
-          userAnswers[currentQuestionIndex] = opt;
-          document.getElementById(`ind-${currentQuestionIndex}`).classList.add("bg-cyan-950/40");
-          const progressPercent = (Object.keys(userAnswers).length / activeExam.questionsArr.length) * 100;
-          document.getElementById("exam-progress-bar").style.width = `${progressPercent}%`;
-          document.getElementById("exam-progress-text").textContent = `${Object.keys(userAnswers).length}/${activeExam.questionsArr.length}`;
-        }
-        window.pilihJawaban = pilihJawaban;
-
-        function navigasiSoal(dir) {
-          showQuestion(currentQuestionIndex + dir);
-        }
-        window.navigasiSoal = navigasiSoal;
-
-        function konfirmasiKeluarUjian() {
-          if (confirm("Apakah Anda yakin ingin membatalkan ujian? Seluruh progres saat ini akan hangus.")) {
-            keluarUjianCleanUp();
-          }
-        }
-        window.konfirmasiKeluarUjian = konfirmasiKeluarUjian;
-
-        function keluarUjianCleanUp() {
-          clearInterval(examTimerInterval);
-          activeExam = null;
-          document.body.classList.remove("exam-active");
-          document.getElementById("modal-kerjakan-ujian").classList.add("hidden");
-        }
-
-        function submitUjian(isOtomatis = false) {
-          if (!isOtomatis && !confirm("Kumpulkan lembar jawaban sekarang?")) return;
-
-          clearInterval(examTimerInterval);
-          let benar = 0;
-          activeExam.questionsArr.forEach((q, idx) => {
-            if (userAnswers[idx] === q.correctAnswer) benar++;
-          });
-
-          const totalSoal = activeExam.questionsArr.length;
-          const nilai = Math.round((benar / totalSoal) * 100);
-
-          const resultPayload = {
-            id: Date.now().toString(),
-            examId: activeExam.id,
-            examTitle: activeExam.title,
-            score: nilai,
-            correctCount: benar,
-            totalQuestions: totalSoal,
-            answers: JSON.stringify(userAnswers),
-            timestamp: new Date().toISOString()
-          };
-
-          // Save tracking data
-          results.unshift(resultPayload);
-          localStorage.setItem("edupulse_results", JSON.stringify(results));
-
-          keluarUjianCleanUp();
-          switchTab("riwayat");
-          renderHistory();
-          bukaDetailHasil(resultPayload.id);
-        }
-        window.submitUjian = submitUjian;
-
-        // ========== HISTORY & LOCALSTORAGE RECONCILIATION ==========
-        function loadResults() {
-          try {
-            results = JSON.parse(localStorage.getItem("edupulse_results") || "[]");
-          } catch {
-            results = [];
-          }
-        }
-
-        function renderHistory() {
-          const list = document.getElementById("history-list");
-          const container = document.getElementById("stats-container");
-          const q = document.getElementById("search-riwayat").value.toLowerCase();
-
-          const filtered = results.filter(r => r.examTitle.toLowerCase().includes(q));
-
-          // Metrics rendering
-          const avgScore = results.length ? Math.round(results.reduce((s, x) => s + x.score, 0) / results.length) : 0;
-          container.innerHTML = `
-            <div class="bg-surface-800 border border-slate-800 p-4 rounded-xl text-center">
-              <p class="text-[10px] text-slate-400 uppercase tracking-wider">Ujian Selesai</p>
-              <p class="text-xl font-bold text-white mt-1">${results.length}</p>
-            </div>
-            <div class="bg-surface-800 border border-slate-800 p-4 rounded-xl text-center">
-              <p class="text-[10px] text-slate-400 uppercase tracking-wider">Rata-rata Indeks</p>
-              <p class="text-xl font-bold text-cyan-400 mt-1">${avgScore}</p>
-            </div>
-          `;
-
-          if (filtered.length === 0) {
-            list.innerHTML = `<p class="text-center py-8 text-slate-500 text-xs">Belum ada rekaman riwayat kompetensi.</p>`;
+        // ========== RENDERING DATA TO UI ==========
+        function renderArticles() {
+          const grid = document.getElementById("articles-grid");
+          const search = document.getElementById("search-artikel")?.value?.toLowerCase() || "";
+          let data = window.articlesData || [];
+          if (search) data = data.filter(a => a.title.toLowerCase().includes(search));
+          document.getElementById("article-count").textContent = data.length;
+          if (data.length === 0) {
+            grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500 border border-dashed border-slate-700 rounded-2xl text-xs">Belum ada publikasi artikel materi.</div>`;
             return;
           }
-
-          list.innerHTML = filtered.map(r => {
-            const d = new Date(r.timestamp).toLocaleDateString('id-ID', { hour: '2-digit', minute: '2-digit' });
-            return `
-              <div class="bg-surface-800 border border-slate-800/80 rounded-xl p-4 flex justify-between items-center hover:border-slate-700">
+          grid.innerHTML = data.map((a, index) => {
+            const inisial = a.title ? a.title.substring(0, 3).toUpperCase() : "LMS";
+            const gradienSesuai = gradienWarna[index % gradienWarna.length];
+            return `<div onclick="bukaDetailArtikel('${a.id}', '${gradienSesuai}')" class="bg-[#151b2c] rounded-2xl overflow-hidden shadow-lg border border-slate-800/60 flex flex-col hover:border-slate-700 cursor-pointer group">
+              <div class="h-44 bg-gradient-to-tr ${gradienSesuai} relative flex items-center justify-center p-6 select-none">
+                <span class="absolute top-4 left-4 bg-[#0b0f19]/80 backdrop-blur-sm text-[9px] font-extrabold text-[#06b6d4] px-2.5 py-1 rounded-md tracking-wider uppercase">MATERI LMS</span>
+                <span class="serif-title text-5xl font-black text-white/10 tracking-widest group-hover:scale-110 transition-transform">${inisial}</span>
+              </div>
+              <div class="p-5 flex-1 flex flex-col justify-between">
                 <div>
-                  <h4 class="text-sm font-bold text-white">${r.examTitle}</h4>
-                  <p class="text-[11px] text-slate-400 mt-0.5">${d} · Tepat: ${r.correctCount}/${r.totalQuestions}</p>
+                  <div class="flex items-center gap-1.5 text-[11px] text-slate-400 font-medium mb-2.5"><span>Anonymous</span><span class="text-slate-600">•</span><span>6 Jul 2026</span></div>
+                  <h3 class="serif-title text-lg text-white font-semibold leading-tight mb-2 line-clamp-1 group-hover:text-cyan-400">${a.title}</h3>
+                  <p class="text-xs text-slate-400 line-clamp-2 font-normal leading-relaxed mb-4">${a.content}</p>
                 </div>
-                <div class="flex items-center gap-4">
-                  <span class="text-base font-mono font-bold ${r.score >= 70 ? 'text-emerald-400' : 'text-amber-400'}">${r.score}</span>
-                  <button onclick="bukaDetailHasil('${r.id}')" class="text-[10px] font-bold text-cyan-400 bg-cyan-400/10 border border-cyan-400/20 px-3 py-1.5 rounded-lg">Detail</button>
+                <div onclick="event.stopPropagation();" class="pt-4 border-t border-slate-800/60 flex justify-between items-center">
+                  <span class="text-slate-400 text-[11px] font-medium flex items-center gap-1">☕ 3 min read</span>
+                  <div class="flex gap-1.5">
+                    <button onclick="bukaModalEditArtikel('${a.id}')" class="text-cyan-400/80 hover:text-cyan-400 text-xs font-semibold px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/10">Edit</button>
+                    <button onclick="hapusArtikelInstan('${a.id}')" class="text-rose-400/80 hover:text-rose-400 text-xs font-semibold px-2.5 py-1.5 rounded-lg hover:bg-rose-500/10">Hapus</button>
+                  </div>
                 </div>
               </div>
-            `;
+            </div>`;
           }).join("");
         }
-        window.renderHistory = renderHistory;
+        window.renderArticles = renderArticles;
 
-        function bukaDetailHasil(id) {
-          const r = results.find(x => x.id === id);
-          if (!r) return;
-
-          const ex = exams.find(x => x.id == r.examId);
-          let qList = [];
-          if (ex) {
-            try { qList = JSON.parse(ex.questions || "[]"); } catch { qList = []; }
+        function renderExamsData() {
+          const grid = document.getElementById("exams-grid");
+          const search = document.getElementById("search-ujian")?.value?.toLowerCase() || "";
+          let data = window.examsData || [];
+          if (search) data = data.filter(e => e.title.toLowerCase().includes(search));
+          document.getElementById("exam-count").textContent = data.length;
+          if (data.length === 0) {
+            grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500 border border-dashed border-slate-700 rounded-2xl text-xs">Belum ada simulator ujian aktif.</div>`;
+            return;
           }
-
-          let ansSaved = {};
-          try { ansSaved = JSON.parse(r.answers || "{}"); } catch { ansSaved = {}; }
-
-          const body = document.getElementById("hasil-ujian-body");
-          body.innerHTML = `
-            <div class="bg-surface-900 border border-slate-800 p-5 rounded-xl grid grid-cols-3 gap-2 text-center">
-              <div><p class="text-[10px] text-slate-400 uppercase">Skor Akumulasi</p><p class="text-lg font-bold text-white mt-1">${r.score}</p></div>
-              <div><p class="text-[10px] text-slate-400 uppercase">Jawaban Benar</p><p class="text-lg font-bold text-emerald-400 mt-1">${r.correctCount}</p></div>
-              <div><p class="text-[10px] text-slate-400 uppercase">Total Soal</p><p class="text-lg font-bold text-indigo-400 mt-1">${r.totalQuestions}</p></div>
-            </div>
-            <div class="space-y-4">
-              <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Analisis Lembar Jawaban</h4>
-              ${qList.length === 0 ? '<p class="text-xs text-slate-500">Master soal asli telah terhapus atau dimodifikasi.</p>' : qList.map((q, idx) => {
-                const userAns = ansSaved[idx] || "Tidak Dijawab";
-                const isCorrect = userAns === q.correctAnswer;
-                return `
-                  <div class="bg-surface-900/60 border ${isCorrect ? 'border-emerald-500/20' : 'border-rose-500/20'} p-4 rounded-xl space-y-2">
-                    <p class="text-xs font-semibold text-white">${idx + 1}. ${q.question}</p>
-                    <div class="text-[11px] space-y-1 font-mono">
-                      <p class="text-slate-400">Pilihan Anda: <span class="${isCorrect ? 'text-emerald-400' : 'text-rose-400'} font-bold">${userAns} (${q.options[userAns] || '-'})</span></p>
-                      <p class="text-slate-500">Kunci Jawaban: <span class="text-emerald-400 font-bold">${q.correctAnswer} (${q.options[q.correctAnswer]})</span></p>
-                    </div>
+          grid.innerHTML = data.map((e, index) => {
+            const inisial = e.title ? e.title.substring(0, 3).toUpperCase() : "EXM";
+            const gradienSesuai = gradienWarna[(index + 1) % gradienWarna.length];
+            return `<div class="bg-[#151b2c] rounded-2xl overflow-hidden shadow-lg border border-slate-800 flex flex-col hover:border-slate-700">
+              <div class="h-44 bg-gradient-to-tr ${gradienSesuai} relative flex items-center justify-center p-6 select-none">
+                <span class="absolute top-4 left-4 bg-[#0b0f19]/80 backdrop-blur-sm text-[9px] font-extrabold text-[#818cf8] px-2.5 py-1 rounded-md tracking-wider uppercase">SIMULATOR UJIAN</span>
+                <span class="serif-title text-5xl font-black text-white/10 tracking-widest">${inisial}</span>
+              </div>
+              <div class="p-5 flex-1 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center gap-1.5 text-[11px] text-slate-400 font-medium mb-2.5"><span>Sistem Akademik</span><span class="text-slate-600">•</span><span>⏱ ${e.duration} Menit</span></div>
+                  <h3 class="serif-title text-lg text-white font-semibold leading-tight mb-2 line-clamp-1">${e.title}</h3>
+                  <p class="text-xs text-slate-400 line-clamp-1 font-normal mb-4">Evaluasi kompetensi penugasan mandiri terstruktur (${e.questions ? e.questions.length : 0} Soal).</p>
+                </div>
+                <div class="pt-4 border-t border-slate-800/60 flex flex-col gap-2">
+                  <button onclick="mulaiUjian('${e.id}')" class="w-full bg-gradient-to-r from-cyan-500 to-indigo-600 text-white font-bold text-xs py-2 rounded-xl shadow-md text-center">Mulai Tes</button>
+                  <div class="flex justify-between gap-2 mt-1">
+                    <button onclick="bukaModalEditUjian('${e.id}')" class="flex-1 text-center text-cyan-400 border border-slate-700 hover:bg-slate-700/40 text-xs py-1.5 rounded-xl font-medium">Edit</button>
+                    <button onclick="hapusUjianInstan('${e.id}')" class="flex-1 text-center text-rose-400 border border-slate-700 hover:bg-slate-700/40 text-xs py-1.5 rounded-xl font-medium">Hapus</button>
                   </div>
-                `;
-              }).join("")}
-            </div>
-          `;
-          document.getElementById("modal-hasil-ujian").classList.remove("hidden");
+                </div>
+              </div>
+            </div>`;
+          }).join("");
         }
-        window.bukaDetailHasil = bukaDetailHasil;
+        window.renderExamsData = renderExamsData;
 
-        function tutupModalHasil() { document.getElementById("modal-hasil-ujian").classList.add("hidden"); }
-        window.tutupModalHasil = tutupModalHasil;
-
-        // ========== LAYOUT TRIGGERS (MODAL) ==========
+        // ========== INTERFACES MODAL MANAGER ==========
         function bukaModalTambah() { 
           document.getElementById("edit-article-id").value = "";
           document.getElementById("input-title").value = "";
           document.getElementById("input-content").value = "";
-          document.getElementById("modal-artikel-title").textContent = "✍️ Mulai Menulis Artikel";
-          document.getElementById("modal-tulis").classList.remove("hidden"); 
+          document.getElementById("modal-artikel-title").textContent = "✍️ Terbitkan Materi Jurnal";
+          document.getElementById("modal-tulis").classList.remove("hidden");
         }
         function tutupModalTambah() { document.getElementById("modal-tulis").classList.add("hidden"); }
         
@@ -842,32 +567,132 @@
           document.getElementById("edit-exam-id").value = "";
           document.getElementById("exam-title-input").value = "";
           document.getElementById("exam-duration-input").value = "30";
-          document.getElementById("exam-desc-input").value = "";
-          document.getElementById("questions-container").innerHTML = "";
+          document.getElementById("modal-ujian-title").textContent = "📝 Konfigurasi Evaluasi Baru";
+          document.getElementById("questions-container").innerHTML = ""; 
           tambahSoal(); 
-          document.getElementById("modal-ujian-title").textContent = "📝 Buat Ujian Baru";
-          document.getElementById("modal-buat-ujian").classList.remove("hidden"); 
+          document.getElementById("modal-buat-ujian").classList.remove("hidden");
         }
         function tutupModalUjian() { document.getElementById("modal-buat-ujian").classList.add("hidden"); }
         
-        window.bukaModalTambah = bukaModalTambah; window.tutupModalTambah = tutupModalTambah; 
-        window.bukaModalBuatUjian = bukaModalBuatUjian; window.tutupModalUjian = tutupModalUjian;
+        function bukaDetailArtikel(id, gradien) {
+          const art = window.articlesData.find(a => a.id === id); if (!art) return;
+          const header = document.getElementById("detail-header-color");
+          header.className = `h-32 bg-gradient-to-r ${gradien} p-6 flex items-end relative`;
+          document.getElementById("detail-title").textContent = art.title;
+          document.getElementById("detail-content").textContent = art.content;
+          document.getElementById("modal-detail-artikel").classList.remove("hidden");
+        }
+        function tutupDetailArtikel() { document.getElementById("modal-detail-artikel").classList.add("hidden"); }
 
-        // ========== INITIALIZATION ONLOAD ==========
-        window.onload = function () {
-          loadResults();
-          fetchArticles();
-          fetchExams();
-          switchTab("artikel");
+        // ========== EXAM EXECUTION CORE LOGIC ==========
+        function mulaiUjian(id) {
+          const exam = window.examsData.find(e => e.id === id); if(!exam || !exam.questions || exam.questions.length === 0) return alert("Ujian tidak memiliki soal.");
+          activeExam = exam; userAnswers = {}; examTimeRemaining = exam.duration * 60;
+          document.getElementById("exam-modal-title").textContent = exam.title;
+          renderQuestionTemplate(0);
+          bukaTimerUjian();
+          document.getElementById("modal-kerjakan-ujian").classList.remove("hidden");
+        }
+        window.mulaiUjian = mulaiUjian;
+
+        function renderQuestionTemplate(index) {
+          if(!activeExam || !activeExam.questions[index]) return;
+          const questionArea = document.getElementById("question-area");
+          const q = activeExam.questions[index];
+          
+          let navButtons = activeExam.questions.map((_, i) => 
+            `<button onclick="renderQuestionTemplate(${i})" class="w-8 h-8 rounded-lg text-xs font-bold ${index === i ? 'bg-cyan-500 text-white' : userAnswers[i] !== undefined ? 'bg-indigo-950 border border-indigo-500 text-indigo-300' : 'bg-surface-900 text-slate-400'}">${i+1}</button>`
+          ).join("");
+
+          questionArea.innerHTML = `
+            <div class="mb-4 text-xs font-mono text-slate-400">Pertanyaan ${index + 1} dari ${activeExam.questions.length}</div>
+            <h4 class="text-sm text-white font-medium mb-6 leading-relaxed">${q.text}</h4>
+            <div class="space-y-3">
+              ${q.options.map((opt, oIdx) => `
+                <label class="flex items-center gap-3 p-3 rounded-xl bg-surface-900 border ${userAnswers[index] === oIdx ? 'border-cyan-500' : 'border-slate-700/60'} hover:border-slate-600 cursor-pointer">
+                  <input type="radio" name="q-ans" value="${oIdx}" ${userAnswers[index] === oIdx ? 'checked' : ''} onchange="simpanJawabanSiswa(${index}, ${oIdx})" class="accent-cyan-500" />
+                  <span class="text-xs text-slate-200">${opt}</span>
+                </label>
+              `).join("")}
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-700 flex flex-wrap gap-2 justify-center">${navButtons}</div>
+          `;
+        }
+        window.renderQuestionTemplate = renderQuestionTemplate;
+
+        window.simpanJawabanSiswa = function(qIdx, oIdx) {
+          userAnswers[qIdx] = oIdx;
+          renderQuestionTemplate(qIdx);
         };
 
-        // Keyboard handler
+        function bukaTimerUjian() {
+          clearInterval(examTimerInterval);
+          examTimerInterval = setInterval(() => {
+            examTimeRemaining--;
+            if (examTimeRemaining <= 0) {
+              clearInterval(examTimerInterval);
+              alert("Waktu habis! Jawaban Anda akan otomatis dikirim.");
+              submitUjian();
+            } else {
+              const m = Math.floor(examTimeRemaining / 60).toString().padStart(2, '0');
+              const s = (examTimeRemaining % 60).toString().padStart(2, '0');
+              document.getElementById("timer-display").textContent = `${m}:${s}`;
+            }
+          }, 1000);
+        }
+
+        function forceKeluarUjian() {
+          clearInterval(examTimerInterval); activeExam = null;
+          document.getElementById("modal-kerjakan-ujian").classList.add("hidden");
+        }
+        window.forceKeluarUjian = forceKeluarUjian;
+
+        function submitUjian() {
+          clearInterval(examTimerInterval); let benar = 0;
+          activeExam.questions.forEach((q, i) => { if (userAnswers[i] === q.answerIndex) benar++; });
+          const score = Math.round((benar / activeExam.questions.length) * 100);
+          window.resultsData.unshift({ id: Date.now(), title: activeExam.title, score: score });
+          forceKeluarUjian(); switchTab("riwayat");
+        }
+        window.submitUjian = submitUjian;
+
+        function renderHistory() {
+          const list = document.getElementById("history-list");
+          const container = document.getElementById("stats-container");
+          if(window.resultsData.length === 0) {
+            container.innerHTML = `<div class="bg-surface-800 border border-slate-700 p-4 rounded-xl text-center text-xs text-slate-500">Belum ada rekam riwayat pengerjaan tes.</div>`;
+            list.innerHTML = ""; return;
+          }
+          container.innerHTML = `<div class="bg-surface-800 border border-slate-700 p-4 rounded-xl text-center"><div class="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Total Tes Selesai</div><div class="text-xl font-bold text-white mt-1 font-mono">${window.resultsData.length}</div></div>`;
+          list.innerHTML = window.resultsData.map(r => `
+            <div class="bg-surface-800 border border-slate-700 p-4 rounded-xl flex justify-between items-center">
+              <div><h4 class="text-xs font-bold text-white uppercase">${r.title}</h4><p class="text-[10px] text-slate-500 mt-1">Selesai dikerjakan</p></div>
+              <div class="text-right"><span class="text-sm font-bold ${r.score >= 70 ? 'text-emerald-400' : 'text-rose-400'} font-mono">${r.score} Pts</span></div>
+            </div>
+          `).join("");
+        }
+        window.renderHistory = renderHistory;
+
+        window.bukaModalTambah = bukaModalTambah; window.tutupModalTambah = tutupModalTambah; 
+        window.bukaModalBuatUjian = bukaModalBuatUjian; window.tutupModalUjian = tutupModalUjian;
+        window.bukaDetailArtikel = bukaDetailArtikel; window.tutupDetailArtikel = tutupDetailArtikel;
+
+        // ========== INITIALIZATION ONLOAD ==========
+        window.onload = function () { 
+          fetchArticles(); 
+          fetchExams(); 
+          switchTab("artikel"); 
+        };
+
+        // Escape keyboard handler untuk menutup modal
         document.addEventListener("keydown", (e) => {
           if (e.key === "Escape") {
-            if (!document.getElementById("modal-kerjakan-ujian").classList.contains("hidden")) konfirmasiKeluarUjian();
-            else if (!document.getElementById("modal-hasil-ujian").classList.contains("hidden")) tutupModalHasil();
+            if (!document.getElementById("modal-kerjakan-ujian").classList.contains("hidden")) {
+              if(confirm('Yakin ingin membatalkan ujian? Nilai tidak akan disimpan.')) forceKeluarUjian();
+            }
             else if (!document.getElementById("modal-buat-ujian").classList.contains("hidden")) tutupModalUjian();
             else if (!document.getElementById("modal-tulis").classList.contains("hidden")) tutupModalTambah();
+            else if (!document.getElementById("modal-detail-artikel").classList.contains("hidden")) tutupDetailArtikel();
           }
         });
       })();
