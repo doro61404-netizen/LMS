@@ -415,7 +415,7 @@
         }
         window.bukaModalEditArtikel = bukaModalEditArtikel;
 
-        // FIX: Ditambahkan pemanggilan renderArticles() agar data langsung hilang dari layar saat dihapus
+        // FIX FIX: Menggunakan perbandingan String(id) agar filter array internal 100% akurat membuang objek & langsung rendering ulang
         function hapusArtikelInstan(id) {
           tampilkanKonfirmasiCustom(
             "Hapus Artikel?", 
@@ -428,7 +428,7 @@
                   headers: { Authorization: `Bearer ${AUTH_HEADER}` } 
                 });
                 if (res.ok) {
-                  window.articlesData = window.articlesData.filter(a => a.id !== id);
+                  window.articlesData = window.articlesData.filter(a => String(a.id) !== String(id));
                   renderArticles(); 
                 }
               } catch (e) { console.error(e); }
@@ -524,7 +524,7 @@
         }
         window.bukaModalEditUjian = bukaModalEditUjian;
 
-        // FIX: Ditambahkan pemanggilan renderExamsData() agar lembar ujian langsung terhapus dari tampilan visual
+        // FIX FIX: Menggunakan perbandingan String(id) agar filter array internal 100% akurat membuang objek & langsung rendering ulang
         function hapusUjianInstan(id) {
           tampilkanKonfirmasiCustom(
             "Hapus Soal Ujian?", 
@@ -537,7 +537,7 @@
                   headers: { Authorization: `Bearer ${AUTH_HEADER}` } 
                 });
                 if (res.ok) {
-                  window.examsData = window.examsData.filter(e => e.id !== id);
+                  window.examsData = window.examsData.filter(e => String(e.id) !== String(id));
                   renderExamsData(); 
                 }
               } catch (e) { console.error(e); }
@@ -605,7 +605,6 @@
         }
         window.forceKeluarUjian = forceKeluarUjian;
 
-        // FIX: Evaluasi jawaban benar/salah diperketat konversinya agar akurat
         function submitUjian() {
           clearInterval(examTimerInterval); 
           let benar = 0;
@@ -645,7 +644,6 @@
             if (!s.options || s.options.length < 4) {
               s.options = [s.options[0] || "", s.options[1] || "", s.options[2] || "", s.options[3] || ""];
             }
-            // Memastikan answerIndex memiliki nilai integer dasar default jika undefined
             if (s.answerIndex === undefined) s.answerIndex = 0;
 
             return `<div class="bg-surface-900 p-4 rounded-xl border border-slate-700 space-y-3">
@@ -673,7 +671,6 @@
           }).join("");
         }
 
-        // FIX: Data answer dipaksa menjadi integer menggunakan parseInt() agar sinkron dengan kunci jawaban saat dicocokkan
         function updateDataSoalLangkat(idx, tipe, value) {
           if (!soalSementara[idx]) return;
           if (tipe === 'text') {
