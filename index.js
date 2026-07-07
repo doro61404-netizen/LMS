@@ -68,12 +68,19 @@ const ExamModel = {
     }));
   },
   async create(db, { id, title, description, duration, questions }) {
-    // Memastikan data questions diubah menjadi STRING sebelum masuk ke SQLite/D1
     const questionsStr = typeof questions === 'string' ? questions : JSON.stringify(questions);
-    
     await db.prepare("INSERT INTO exams (id, title, description, duration, questions) VALUES (?, ?, ?, ?, ?)")
       .bind(id, title, description, parseInt(duration), questionsStr)
       .run();
+  },
+  async update(db, id, { title, duration, questions }) {
+    const questionsStr = typeof questions === 'string' ? questions : JSON.stringify(questions);
+    await db.prepare("UPDATE exams SET title = ?, duration = ?, questions = ? WHERE id = ?")
+      .bind(title, parseInt(duration), questionsStr, id)
+      .run();
+  },
+  async delete(db, id) {
+    await db.prepare("DELETE FROM exams WHERE id = ?").bind(id).run();
   }
 };
 
@@ -110,7 +117,7 @@ export default {
       }
 
       try {
-        // --- ROUTING ARTICLES ---
+        // --- ROUTING ARTICLES (`/api/articles`) ---
         if (path === "/api/articles") {
           if (method === "GET") {
             const articles = await ArticleModel.getAll(db);
@@ -135,7 +142,23 @@ export default {
           }
         }
 
-        // --- ROUTING EXAMS ---
+        // --- ROUTING ARTICLES WITH ID (`/api/articles/:id`) ---
+        if (path.startsWith("/api/articles/")) {
+          const id = path.split("/").pop();
+
+          if (method === "PUT") {
+            const body = await request.json();
+            await ArticleModel.update(db, id, { title: body.title, content: body.content });
+            return jsonResponse({ success: true, message: "Article updated successfully" });
+          }
+
+          if (method === "DELETE") {
+            await ArticleModel.delete(db, id);
+            return jsonResponse({ success: true, message: "Article deleted successfully" });
+          }
+        }
+
+        // --- ROUTING EXAMS (`/api/exams`) ---
         if (path === "/api/exams") {
           if (method === "GET") {
             const exams = await ExamModel.getAll(db);
@@ -148,7 +171,7 @@ export default {
               const rawText = await request.text();
               body = JSON.parse(rawText);
             } catch (jsonErr) {
-              return jsonResponse({ error: "Format JSON yang Anda kirim tidak valid / rusak!", details: jsonErr.message }, 400);
+              return jsonResponse({ error: "Format JSON tidak valid!", details: jsonErr.message }, 400);
             }
             
             if (!body || !body.title || !body.duration || !body.questions) {
@@ -171,6 +194,26 @@ export default {
           }
         }
 
+        // --- ROUTING EXAMS WITH ID (`/api/exams/:id`) ---
+        if (path.startsWith("/api/exams/")) {
+          const id = path.split("/").pop();
+
+          if (method === "PUT") {
+            const body = await request.json();
+            await ExamModel.update(db, id, { 
+              title: body.title, 
+              duration: body.duration, 
+              questions: body.questions 
+            });
+            return jsonResponse({ success: true, message: "Exam updated successfully" });
+          }
+
+          if (method === "DELETE") {
+            await ExamModel.delete(db, id);
+            return jsonResponse({ success: true, message: "Exam deleted successfully" });
+          }
+        }
+
         return jsonResponse({ error: "Endpoint not found" }, 404);
 
       } catch (error) {
@@ -180,7 +223,6 @@ export default {
 
     // -------------------------------------------------------------
     // JALUR 2: BUKAN API? OPER LANGSUNG KE SYSTEM CLOUDFLARE ASSETS
-    // (Ini yang otomatis mencari Index.html, CSS, JS kamu tanpa diubah)
     // -------------------------------------------------------------
     return env.ASSETS.fetch(request);
   }
