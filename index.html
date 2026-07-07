@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPEdoctype html>
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
@@ -36,121 +36,215 @@
   </head>
   <body class="bg-surface-900 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-cyan-500/30 pb-36 md:pb-0">
 
-    <!-- NAVBAR UTAMA -->
-    <nav class="border-b border-slate-800/60 bg-surface-900/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4">
-      <div class="max-w-7xl mx-auto flex justify-between items-center">
-        <div class="flex items-center gap-8">
-          <a href="#" class="flex items-center gap-3 group">
-            <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-white font-extrabold shadow-lg shadow-cyan-500/20">E</div>
-            <span class="text-lg font-bold tracking-tight text-white">Edu<span class="text-cyan-400">Pulse Pro.</span></span>
-          </a>
-          <div class="hidden md:flex items-center gap-6 text-xs font-semibold uppercase tracking-wider text-slate-400">
-            <button onclick="switchTab('artikel')" id="nav-artikel" class="hover:text-white text-cyan-400">📄 Artikel</button>
-            <button onclick="switchTab('ujian')" id="nav-ujian" class="hover:text-white">📝 Ujian</button>
-            <button onclick="switchTab('riwayat')" id="nav-riwayat" class="hover:text-white">📊 Riwayat</button>
-          </div>
+    <!-- ================= AUTH SECTION (LOGIN / REGISTER SPLIT SCREEN) ================= -->
+    <div id="auth-container" class="fixed inset-0 z-[999] bg-surface-900 flex flex-col md:flex-row">
+      <!-- Sisi Kiri: Branding & Informasi Visual -->
+      <div class="hidden md:flex md:w-1/2 bg-gradient-to-tr from-surface-900 via-surface-800 to-indigo-950/40 p-12 flex-col justify-between border-r border-slate-800/80 relative overflow-hidden">
+        <div class="absolute -top-40 -left-40 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-20 -right-20 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <div class="flex items-center gap-3 relative z-10">
+          <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-white font-extrabold shadow-lg shadow-cyan-500/20">E</div>
+          <span class="text-xl font-bold tracking-tight text-white">Edu<span class="text-cyan-400">Pulse Pro.</span></span>
         </div>
-        <div class="hidden md:flex items-center gap-3">
-          <button onclick="bukaModalTambah()" class="bg-surface-800 hover:bg-surface-700 text-slate-200 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700">✍️ Tulis Artikel</button>
-          <button onclick="bukaModalBuatUjian()" class="bg-gradient-to-r from-cyan-500 to-indigo-600 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md">📝 Buat Ujian</button>
-        </div>
-      </div>
-    </nav>
 
-    <!-- DRAWER MOBILE -->
-    <div id="drawer-menu" class="fixed inset-0 z-[100] hidden" role="dialog" aria-modal="true">
-      <div onclick="toggleDrawer(false)" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
-      <div class="absolute inset-y-0 left-0 w-72 bg-surface-800 border-r border-slate-700 p-6 flex flex-col justify-between shadow-2xl">
-        <div>
-          <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-6">
-            <h2 class="text-xs font-bold tracking-wider uppercase text-slate-400">Navigasi Hub</h2>
-            <button onclick="toggleDrawer(false)" class="text-slate-400 hover:text-white text-2xl font-normal">&times;</button>
-          </div>
-          <div class="space-y-2">
-            <button onclick="switchTab('artikel'); toggleDrawer(false);" class="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-wider text-slate-300 hover:bg-surface-700 rounded-xl text-left">📄 Ruang Artikel</button>
-            <button onclick="switchTab('ujian'); toggleDrawer(false);" class="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-wider text-slate-300 hover:bg-surface-700 rounded-xl text-left">📝 Simulator Ujian</button>
-            <button onclick="switchTab('riwayat'); toggleDrawer(false);" class="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-wider text-slate-300 hover:bg-surface-700 rounded-xl text-left">📊 Dashboard Hasil</button>
-          </div>
+        <div class="space-y-4 relative z-10">
+          <span class="bg-cyan-950/60 border border-cyan-800/50 text-cyan-400 text-[10px] font-bold tracking-widest uppercase px-4 py-1.5 rounded-full">GENERASI BARU LMS</span>
+          <h2 class="serif-title text-4xl lg:text-5xl font-semibold leading-tight text-white">Eksplorasi Ilmu Tanpa Batas Ruang & Waktu</h2>
+          <p class="text-slate-400 text-sm max-w-md leading-relaxed">Masuk untuk mengakses ruang publikasi jurnal ilmiah terstruktur dan menguji parameter kompetensi melaui simulator ujian interaktif.</p>
         </div>
-        <div class="text-center text-[10px] text-slate-600 border-t border-slate-700 pt-4">EduPulse Pro v2.0</div>
+
+        <div class="text-xs text-slate-500 relative z-10">EduPulse Pro Engine © 2026. All rights reserved.</div>
+      </div>
+
+      <!-- Sisi Kanan: Form Dinamis Auth -->
+      <div class="flex-1 flex items-center justify-center p-6 sm:p-12 md:p-16 relative bg-surface-900">
+        <div class="w-full max-w-md space-y-8">
+          
+          <!-- Logo Tampilan Mobile Only -->
+          <div class="flex md:hidden items-center gap-3 justify-center mb-6">
+            <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-white font-extrabold">E</div>
+            <span class="text-lg font-bold text-white">Edu<span class="text-cyan-400">Pulse Pro.</span></span>
+          </div>
+
+          <!-- Header Form -->
+          <div class="space-y-2 text-center md:text-left">
+            <h3 id="auth-title" class="text-2xl font-bold text-white tracking-tight">Selamat Datang Kembali</h3>
+            <p id="auth-subtitle" class="text-xs text-slate-400">Silakan masukkan kredensial akun Anda untuk memulai sesi.</p>
+          </div>
+
+          <!-- CONTAINER FORM INDUK -->
+          <div class="space-y-4">
+            <!-- Input Nama (Hanya muncul saat Register) -->
+            <div id="group-name" class="hidden">
+              <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-1.5">Nama Lengkap</label>
+              <input type="text" id="auth-name" placeholder="Agung Barlian" class="w-full bg-surface-800 border border-slate-700/80 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-cyan-500 placeholder-slate-500" />
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-1.5">Alamat Email</label>
+              <input type="email" id="auth-email" placeholder="nama@edupulse.com" class="w-full bg-surface-800 border border-slate-700/80 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-cyan-500 placeholder-slate-500" />
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-1.5">Kata Sandi</label>
+              <input type="password" id="auth-password" placeholder="••••••••" class="w-full bg-surface-800 border border-slate-700/80 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-cyan-500 placeholder-slate-500" />
+            </div>
+
+            <!-- Pilihan Role Akun (Hanya muncul saat Register) -->
+            <div id="group-role" class="hidden">
+              <label class="block text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-1.5">Hak Akses Sistem (Role)</label>
+              <select id="auth-role" class="w-full bg-surface-800 border border-slate-700/80 rounded-xl px-4 py-3 text-xs text-slate-300 focus:outline-none focus:border-cyan-500">
+                <option value="user" selected>User / Mahasiswa (Baca Materi & Ujian)</option>
+                <option value="admin">Admin / Dosen (Akses Manajemen Penuh)</option>
+              </select>
+            </div>
+
+            <div class="pt-2">
+              <button id="btn-auth-primary" onclick="prosesAksiAuth()" class="w-full bg-gradient-to-r from-cyan-500 to-indigo-600 text-white font-bold text-xs py-3.5 rounded-xl shadow-lg shadow-cyan-500/10 hover:opacity-95 transform active:scale-[0.98]">Masuk Sistem</button>
+            </div>
+          </div>
+
+          <!-- Footer Switch Link -->
+          <p id="auth-switch-text" class="text-center md:text-left text-xs text-slate-400">
+            Belum terdaftar di EduPulse? <a href="#" onclick="toggleAuthMode(true)" class="text-cyan-400 font-semibold hover:underline">Buat Akun Baru</a>
+          </p>
+
+        </div>
       </div>
     </div>
 
-    <!-- KONTEN UTAMA -->
-    <main class="max-w-7xl mx-auto w-full px-6 py-10 flex-grow">
+    <!-- ================= MAIN CORE APP SECTION ================= -->
+    <div id="main-application-content" class="opacity-0 pointer-events-none hidden flex flex-col justify-between min-h-screen">
       
-      <section class="text-center py-12 max-w-4xl mx-auto space-y-6">
-        <div class="inline-block bg-cyan-950/40 border border-cyan-800/50 text-cyan-400 text-[10px] md:text-xs font-bold tracking-widest uppercase px-5 py-2 rounded-full shadow-inner shadow-cyan-500/5">
-          Sistem Informasi Pembelajaran Terintegrasi
-        </div>
-        <h1 class="serif-title text-4xl md:text-6xl text-white font-semibold leading-tight tracking-tight">
-          Evolusi Manajemen Literasi & Evaluasi Kompetensi
-        </h1>
-        <p class="text-slate-400 text-sm md:text-base font-normal max-w-2xl mx-auto leading-relaxed">
-          Platform pengelolaan jurnal edukasi mandiri dilengkapi modul ujian interaktif berbasis Cloud untuk mengukur indeks pemahaman secara akurat.
-        </p>
-      </section>
-
-      <!-- TAB ARTIKEL -->
-      <section id="section-artikel" class="space-y-8 pt-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/60 pb-5">
-          <div class="flex items-center gap-3">
-            <h2 class="text-xs font-extrabold tracking-widest uppercase text-slate-400">Daftar Publikasi Jurnal</h2>
-            <span id="article-count" class="bg-surface-800 text-cyan-400 text-xs px-2.5 py-0.5 rounded-md font-mono border border-slate-700">0</span>
+      <!-- NAVBAR UTAMA -->
+      <nav class="border-b border-slate-800/60 bg-surface-900/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+          <div class="flex items-center gap-8">
+            <a href="#" class="flex items-center gap-3 group">
+              <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-white font-extrabold shadow-lg shadow-cyan-500/20">E</div>
+              <span class="text-lg font-bold tracking-tight text-white">Edu<span class="text-cyan-400">Pulse Pro.</span></span>
+            </a>
+            <div class="hidden md:flex items-center gap-6 text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <button onclick="switchTab('artikel')" id="nav-artikel" class="hover:text-white text-cyan-400">📄 Artikel</button>
+              <button onclick="switchTab('ujian')" id="nav-ujian" class="hover:text-white">📝 Ujian</button>
+              <button onclick="switchTab('riwayat')" id="nav-riwayat" class="hover:text-white">📊 Riwayat</button>
+            </div>
           </div>
-          <input type="text" id="search-artikel" placeholder="🔍 Cari kata kunci materi..." oninput="renderArticles()" class="bg-surface-800 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 w-full sm:w-64" />
-        </div>
-        <div id="articles-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-      </section>
-
-      <!-- TAB UJIAN -->
-      <section id="section-ujian" class="hidden space-y-8 pt-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/60 pb-5">
-          <div class="flex items-center gap-3">
-            <h2 class="text-xs font-extrabold tracking-widest uppercase text-slate-400">Simulator Ujian Aktif</h2>
-            <span id="exam-count" class="bg-surface-800 text-indigo-400 text-xs px-2.5 py-0.5 rounded-md font-mono border border-slate-700">0</span>
+          <div class="flex items-center gap-4">
+            <!-- Tombol Kelola Admin (Akan Tersembunyi Otomatis bagi User Biasa) -->
+            <div id="admin-action-nav-group" class="hidden md:flex items-center gap-3">
+              <button onclick="bukaModalTambah()" class="bg-surface-800 hover:bg-surface-700 text-slate-200 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700">✍️ Tulis Artikel</button>
+              <button onclick="bukaModalBuatUjian()" class="bg-gradient-to-r from-cyan-500 to-indigo-600 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md">📝 Buat Ujian</button>
+            </div>
+            
+            <!-- User Profile & Log Out -->
+            <div class="flex items-center gap-3 border-l border-slate-800 pl-4">
+              <div class="text-right hidden sm:block">
+                <div id="profile-display-name" class="text-xs font-bold text-white">Guest</div>
+                <div id="profile-display-role" class="text-[9px] font-semibold text-cyan-400 tracking-wider uppercase">User</div>
+              </div>
+              <button onclick="keluarSistem()" class="bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white text-xs font-bold p-2.5 rounded-xl border border-rose-500/20" title="Keluar dari Sistem">✕</button>
+            </div>
           </div>
-          <input type="text" id="search-ujian" placeholder="🔍 Cari judul ujian..." oninput="renderExamsData()" class="bg-surface-800 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 w-full sm:w-64" />
         </div>
-        <div id="exams-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-      </section>
+      </nav>
 
-      <!-- TAB RIWAYAT -->
-      <section id="section-riwayat" class="hidden space-y-6 pt-6">
-        <div class="border-b border-slate-800/60 pb-5">
-          <h2 class="text-xs font-extrabold tracking-widest uppercase text-slate-400">Metrik Dashboard & Hasil Mahasiswa</h2>
+      <!-- DRAWER MOBILE -->
+      <div id="drawer-menu" class="fixed inset-0 z-[100] hidden" role="dialog" aria-modal="true">
+        <div onclick="toggleDrawer(false)" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+        <div class="absolute inset-y-0 left-0 w-72 bg-surface-800 border-r border-slate-700 p-6 flex flex-col justify-between shadow-2xl">
+          <div>
+            <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-6">
+              <h2 class="text-xs font-bold tracking-wider uppercase text-slate-400">Navigasi Hub</h2>
+              <button onclick="toggleDrawer(false)" class="text-slate-400 hover:text-white text-2xl font-normal">&times;</button>
+            </div>
+            <div class="space-y-2">
+              <button onclick="switchTab('artikel'); toggleDrawer(false);" class="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-wider text-slate-300 hover:bg-surface-700 rounded-xl text-left">📄 Ruang Artikel</button>
+              <button onclick="switchTab('ujian'); toggleDrawer(false);" class="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-wider text-slate-300 hover:bg-surface-700 rounded-xl text-left">📝 Simulator Ujian</button>
+              <button onclick="switchTab('riwayat'); toggleDrawer(false);" class="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-wider text-slate-300 hover:bg-surface-700 rounded-xl text-left">📊 Dashboard Hasil</button>
+            </div>
+          </div>
+          <div class="text-center text-[10px] text-slate-600 border-t border-slate-700 pt-4">EduPulse Pro v2.0</div>
         </div>
-        <div id="stats-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl"></div>
-        <div id="history-list" class="space-y-3 mt-6"></div>
-      </section>
-
-    </main>
-
-    <!-- NAVIGASI BOTTOM MOBILE -->
-    <div class="md:hidden fixed bottom-0 inset-x-0 z-50 flex flex-col pointer-events-none">
-      <div class="px-4 py-2 bg-gradient-to-t from-surface-900 to-transparent flex gap-2 pointer-events-auto w-full max-w-md mx-auto">
-        <button onclick="bukaModalTambah()" class="flex-1 bg-surface-800/90 backdrop-blur-md border border-slate-700 hover:border-cyan-500/50 text-white text-[11px] font-bold py-2.5 rounded-xl shadow-lg flex items-center justify-center gap-1.5 active:scale-95">
-          <span>✍️</span> Tulis Artikel
-        </button>
-        <button onclick="bukaModalBuatUjian()" class="flex-1 bg-gradient-to-r from-cyan-600 to-indigo-600 text-white text-[11px] font-bold py-2.5 rounded-xl shadow-lg flex items-center justify-center gap-1.5 active:scale-95">
-          <span>📝</span> Buat Ujian
-        </button>
       </div>
 
-      <nav class="bg-surface-800/95 backdrop-blur-xl border-t border-slate-700 px-2 py-2.5 flex justify-around items-center pointer-events-auto shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.5)]">
-        <button onclick="switchTab('artikel')" id="bot-nav-artikel" class="flex flex-col items-center gap-0.5 text-cyan-400 focus:outline-none w-16">
-          <span class="text-lg">📄</span><span class="text-[9px] font-bold uppercase tracking-wider">Artikel</span>
-        </button>
-        <button onclick="switchTab('ujian')" id="bot-nav-ujian" class="flex flex-col items-center gap-0.5 text-slate-500 focus:outline-none w-16">
-          <span class="text-lg">📝</span><span class="text-[9px] font-bold uppercase tracking-wider">Ujian</span>
-        </button>
-        <button onclick="switchTab('riwayat')" id="bot-nav-riwayat" class="flex flex-col items-center gap-0.5 text-slate-500 focus:outline-none w-16">
-          <span class="text-lg">📊</span><span class="text-[9px] font-bold uppercase tracking-wider">Riwayat</span>
-        </button>
-        <button onclick="toggleDrawer(true)" class="flex flex-col items-center gap-0.5 text-slate-500 focus:outline-none w-16">
-          <span class="text-lg">☰</span><span class="text-[9px] font-bold uppercase tracking-wider">Menu</span>
-        </button>
-      </nav>
+      <!-- KONTEN UTAMA -->
+      <main class="max-w-7xl mx-auto w-full px-6 py-10 flex-grow">
+        
+        <section class="text-center py-12 max-w-4xl mx-auto space-y-6">
+          <div class="inline-block bg-cyan-950/40 border border-cyan-800/50 text-cyan-400 text-[10px] md:text-xs font-bold tracking-widest uppercase px-5 py-2 rounded-full shadow-inner shadow-cyan-500/5">
+            Sistem Informasi Pembelajaran Terintegrasi
+          </div>
+          <h1 class="serif-title text-4xl md:text-6xl text-white font-semibold leading-tight tracking-tight">
+            Evolusi Manajemen Literasi & Evaluasi Kompetensi
+          </h1>
+          <p class="text-slate-400 text-sm md:text-base font-normal max-w-2xl mx-auto leading-relaxed">
+            Platform pengelolaan jurnal edukasi mandiri dilengkapi modul ujian interaktif berbasis Cloud untuk mengukur indeks pemahaman secara akurat.
+          </p>
+        </section>
+
+        <!-- TAB ARTIKEL -->
+        <section id="section-artikel" class="space-y-8 pt-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/60 pb-5">
+            <div class="flex items-center gap-3">
+              <h2 class="text-xs font-extrabold tracking-widest uppercase text-slate-400">Daftar Publikasi Jurnal</h2>
+              <span id="article-count" class="bg-surface-800 text-cyan-400 text-xs px-2.5 py-0.5 rounded-md font-mono border border-slate-700">0</span>
+            </div>
+            <input type="text" id="search-artikel" placeholder="🔍 Cari kata kunci materi..." oninput="renderArticles()" class="bg-surface-800 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 w-full sm:w-64" />
+          </div>
+          <div id="articles-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <!-- TAB UJIAN -->
+        <section id="section-ujian" class="hidden space-y-8 pt-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/60 pb-5">
+            <div class="flex items-center gap-3">
+              <h2 class="text-xs font-extrabold tracking-widest uppercase text-slate-400">Simulator Ujian Aktif</h2>
+              <span id="exam-count" class="bg-surface-800 text-indigo-400 text-xs px-2.5 py-0.5 rounded-md font-mono border border-slate-700">0</span>
+            </div>
+            <input type="text" id="search-ujian" placeholder="🔍 Cari judul ujian..." oninput="renderExamsData()" class="bg-surface-800 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 w-full sm:w-64" />
+          </div>
+          <div id="exams-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <!-- TAB RIWAYAT -->
+        <section id="section-riwayat" class="hidden space-y-6 pt-6">
+          <div class="border-b border-slate-800/60 pb-5">
+            <h2 class="text-xs font-extrabold tracking-widest uppercase text-slate-400">Metrik Dashboard & Hasil Mahasiswa</h2>
+          </div>
+          <div id="stats-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl"></div>
+          <div id="history-list" class="space-y-3 mt-6"></div>
+        </section>
+
+      </main>
+
+      <!-- NAVIGASI BOTTOM MOBILE -->
+      <div id="mobile-bottom-navigation-bar" class="md:hidden fixed bottom-0 inset-x-0 z-50 flex flex-col pointer-events-none">
+        <div id="admin-mobile-action-group" class="hidden px-4 py-2 bg-gradient-to-t from-surface-900 to-transparent flex gap-2 pointer-events-auto w-full max-w-md mx-auto">
+          <button onclick="bukaModalTambah()" class="flex-1 bg-surface-800/90 backdrop-blur-md border border-slate-700 hover:border-cyan-500/50 text-white text-[11px] font-bold py-2.5 rounded-xl shadow-lg flex items-center justify-center gap-1.5 active:scale-95">
+            <span>✍️</span> Tulis Artikel
+          </button>
+          <button onclick="bukaModalBuatUjian()" class="flex-1 bg-gradient-to-r from-cyan-600 to-indigo-600 text-white text-[11px] font-bold py-2.5 rounded-xl shadow-lg flex items-center justify-center gap-1.5 active:scale-95">
+            <span>📝</span> Buat Ujian
+          </button>
+        </div>
+
+        <nav class="bg-surface-800/95 backdrop-blur-xl border-t border-slate-700 px-2 py-2.5 flex justify-around items-center pointer-events-auto shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.5)]">
+          <button onclick="switchTab('artikel')" id="bot-nav-artikel" class="flex flex-col items-center gap-0.5 text-cyan-400 focus:outline-none w-16">
+            <span class="text-lg">📄</span><span class="text-[9px] font-bold uppercase tracking-wider">Artikel</span>
+          </button>
+          <button onclick="switchTab('ujian')" id="bot-nav-ujian" class="flex flex-col items-center gap-0.5 text-slate-500 focus:outline-none w-16">
+            <span class="text-lg">📝</span><span class="text-[9px] font-bold uppercase tracking-wider">Ujian</span>
+          </button>
+          <button onclick="switchTab('riwayat')" id="bot-nav-riwayat" class="flex flex-col items-center gap-0.5 text-slate-500 focus:outline-none w-16">
+            <span class="text-lg">📊</span><span class="text-[9px] font-bold uppercase tracking-wider">Riwayat</span>
+          </button>
+          <button onclick="toggleDrawer(true)" class="flex flex-col items-center gap-0.5 text-slate-500 focus:outline-none w-16">
+            <span class="text-lg">☰</span><span class="text-[9px] font-bold uppercase tracking-wider">Menu</span>
+          </button>
+        </nav>
+      </div>
     </div>
 
     <!-- TOAST CONFIRM -->
@@ -267,16 +361,26 @@
       </div>
     </div>
 
-    <!-- SCRIPT LOGIKA CORE ENGINE -->
+    <!-- SCRIPT LOGIKA CORE ENGINE & AUTH STATE MANAGEMENT -->
     <script>
       (function () {
         const API_ENDPOINT = "https://lms.agungbarliansaputra.workers.dev/api";
         const AUTH_HEADER = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.QMUFsIDTnFmyG3nMiGM6SDlOWk5GTlVSR0Yzd2g3U21xSnAtUXYzMA";
         
+        // Pangkalan Database Bayangan Lokal (Mock Authentication DB)
+        if (!localStorage.getItem('eduUsersDB')) {
+          localStorage.setItem('eduUsersDB', JSON.stringify([
+            { name: "Administrator Utama", email: "admin@edupulse.com", password: "admin", role: "admin" },
+            { name: "Budi Mahasiswa", email: "user@edupulse.com", password: "user", role: "user" }
+          ]));
+        }
+
         window.articlesData = []; window.examsData = []; window.resultsData = [];
         let activeExam = null; let userAnswers = {};
         let examTimerInterval = null; let examTimeRemaining = 0; let soalSementara = [];
         let onConfirmSuccess = null;
+        let loggedInUser = null; // Menyimpan data akun aktif saat ini
+        let isRegisterState = false; // Deteksi mode form Auth aktif
 
         const gradienWarna = [
           "from-cyan-500 to-blue-600",     
@@ -286,7 +390,112 @@
           "from-pink-500 to-rose-500"      
         ];
 
-        // DIALOG KONFIRMASI CUSTOM
+        // ================= AUTHENTICATION LOGIC =================
+
+        window.toggleAuthMode = function(isRegister) {
+          isRegisterState = isRegister;
+          document.getElementById("group-name").classList.toggle("hidden", !isRegister);
+          document.getElementById("group-role").classList.toggle("hidden", !isRegister);
+          
+          if(isRegister) {
+            document.getElementById("auth-title").textContent = "Daftarkan Akun Baru";
+            document.getElementById("auth-subtitle").textContent = "Isi formulir secara lengkap untuk mendapatkan peran hak akses.";
+            document.getElementById("btn-auth-primary").textContent = "Buat Akun Sekarang";
+            document.getElementById("auth-switch-text").innerHTML = 'Sudah memiliki akun? <a href="#" onclick="toggleAuthMode(false)" class="text-cyan-400 font-semibold hover:underline">Masuk disini</a>';
+          } else {
+            document.getElementById("auth-title").textContent = "Selamat Datang Kembali";
+            document.getElementById("auth-subtitle").textContent = "Silakan masukkan kredensial akun Anda untuk memulai sesi.";
+            document.getElementById("btn-auth-primary").textContent = "Masuk Sistem";
+            document.getElementById("auth-switch-text").innerHTML = 'Belum terdaftar di EduPulse? <a href="#" onclick="toggleAuthMode(true)" class="text-cyan-400 font-semibold hover:underline">Buat Akun Baru</a>';
+          }
+        };
+
+        window.prosesAksiAuth = function() {
+          const emailInput = document.getElementById("auth-email").value.trim();
+          const passwordInput = document.getElementById("auth-password").value.trim();
+          let usersDB = JSON.parse(localStorage.getItem('eduUsersDB'));
+
+          if(!emailInput || !passwordInput) {
+            return alert("Kredensial Email dan Password tidak boleh dikosongkan!");
+          }
+
+          if (isRegisterState) {
+            // Logika Registrasi Akun Baru
+            const nameInput = document.getElementById("auth-name").value.trim();
+            const roleInput = document.getElementById("auth-role").value;
+            
+            if(!nameInput) return alert("Nama Lengkap wajib diisi!");
+            if(usersDB.find(u => u.email.toLowerCase() === emailInput.toLowerCase())) {
+              return alert("Email ini telah digunakan oleh akun lain!");
+            }
+
+            const userBaru = { name: nameInput, email: emailInput, password: passwordInput, role: roleInput };
+            usersDB.push(userBaru);
+            localStorage.setItem('eduUsersDB', JSON.stringify(usersDB));
+            
+            alert(`Registrasi sukses sebagai ${roleInput.toUpperCase()}! Silakan masuk kembali.`);
+            toggleAuthMode(false);
+          } else {
+            // Logika Proses Verifikasi Login
+            const matchUser = usersDB.find(u => u.email.toLowerCase() === emailInput.toLowerCase() && u.password === passwordInput);
+            if (!matchUser) return alert("Kombinasi alamat email atau kata sandi tidak valid!");
+
+            loggedInUser = matchUser;
+            terapkanHakAksesRole();
+          }
+        };
+
+        function terapkanHakAksesRole() {
+          // Update Identitas Header UI
+          document.getElementById("profile-display-name").textContent = loggedInUser.name;
+          document.getElementById("profile-display-role").textContent = loggedInUser.role === 'admin' ? '🔥 Admin / Dosen' : '🎓 Mahasiswa';
+
+          // Kontrol Akses Fitur Manajemen Pembuat (Hanya Admin)
+          const adminNavGroup = document.getElementById("admin-action-nav-group");
+          const adminMobileGroup = document.getElementById("admin-mobile-action-group");
+          
+          if(loggedInUser.role === 'admin') {
+            adminNavGroup.classList.remove("hidden");
+            if (adminMobileGroup) adminMobileGroup.classList.remove("hidden");
+          } else {
+            adminNavGroup.classList.add("hidden");
+            if (adminMobileGroup) adminMobileGroup.classList.add("hidden");
+          }
+
+          // Transisi Tampilan Menuju Ruang Dashboard Utama
+          document.getElementById("auth-container").classList.add("hidden");
+          const mainApp = document.getElementById("main-application-content");
+          mainApp.classList.remove("hidden");
+          setTimeout(() => {
+            mainApp.classList.remove("opacity-0", "pointer-events-none");
+          }, 50);
+
+          // Panggil Inisialisasi Data Default Cloud
+          fetchArticles(); 
+          fetchExams(); 
+          switchTab("artikel");
+        }
+
+        window.keluarSistem = function() {
+          loggedInUser = null;
+          // Mengosongkan isian form
+          document.getElementById("auth-email").value = "";
+          document.getElementById("auth-password").value = "";
+          document.getElementById("auth-name").value = "";
+
+          const mainApp = document.getElementById("main-application-content");
+          mainApp.classList.add("opacity-0", "pointer-events-none");
+          
+          setTimeout(() => {
+            mainApp.classList.add("hidden");
+            document.getElementById("auth-container").classList.remove("hidden");
+            toggleAuthMode(false);
+          }, 200);
+        };
+
+
+        // ================= APPLICATION ENGINE LOGIC =================
+
         function tampilkanKonfirmasiCustom(title, desc, actionText, callback) {
           document.getElementById("confirm-modal-title").textContent = title;
           document.getElementById("confirm-modal-desc").textContent = desc;
@@ -362,6 +571,14 @@
             const inisial = a.title ? a.title.substring(0, 3).toUpperCase() : "COB";
             const gradienSesuai = gradienWarna[index % gradienWarna.length];
 
+            // Proteksi Kondisional Tombol Aksi (Hanya Ditampilkan Jika Role Admin)
+            const aksiAdminHTML = (loggedInUser && loggedInUser.role === 'admin') ? `
+              <div class="flex gap-1.5">
+                <button onclick="bukaModalEditArtikel('${a.id}')" class="text-cyan-400/80 hover:text-cyan-400 text-xs font-semibold px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/10">Edit</button>
+                <button onclick="hapusArtikelInstan('${a.id}')" class="text-rose-400/80 hover:text-rose-400 text-xs font-semibold px-2.5 py-1.5 rounded-lg hover:bg-rose-500/10">Hapus</button>
+              </div>
+            ` : '';
+
             return `<div class="bg-[#151b2c] rounded-2xl overflow-hidden shadow-lg border border-slate-800/60 flex flex-col hover:border-slate-700 group">
               <div onclick="bukaDetailArtikel('${a.id}', '${gradienSesuai}')" class="h-44 bg-gradient-to-tr ${gradienSesuai} relative flex items-center justify-center p-6 select-none cursor-pointer">
                 <span class="absolute top-4 left-4 bg-[#0b0f19]/80 backdrop-blur-sm text-[9px] font-extrabold text-[#06b6d4] px-2.5 py-1 rounded-md tracking-wider uppercase">MATERI LMS</span>
@@ -377,10 +594,7 @@
                 </div>
                 <div class="pt-4 border-t border-slate-800/60 flex justify-between items-center">
                   <span class="text-slate-400 text-[11px] font-medium flex items-center gap-1">☕ 3 min read</span>
-                  <div class="flex gap-1.5">
-                    <button onclick="bukaModalEditArtikel('${a.id}')" class="text-cyan-400/80 hover:text-cyan-400 text-xs font-semibold px-2.5 py-1.5 rounded-lg hover:bg-cyan-500/10">Edit</button>
-                    <button onclick="hapusArtikelInstan('${a.id}')" class="text-rose-400/80 hover:text-rose-400 text-xs font-semibold px-2.5 py-1.5 rounded-lg hover:bg-rose-500/10">Hapus</button>
-                  </div>
+                  ${aksiAdminHTML}
                 </div>
               </div>
             </div>`;
@@ -482,6 +696,14 @@
             const gradienSesuai = gradienWarna[(index + 2) % gradienWarna.length];
             const jmlSoal = e.questions ? e.questions.length : 0;
 
+            // Kontrol Proteksi Fitur Edit/Hapus Lembar Ujian (Hanya Muncul Jika Role Admin)
+            const controlAksiAdminHTML = (loggedInUser && loggedInUser.role === 'admin') ? `
+              <div class="flex justify-between gap-2 mt-1">
+                <button onclick="bukaModalEditUjian('${e.id}')" class="flex-1 text-center text-cyan-400 border border-slate-700 hover:bg-slate-700/40 text-xs py-1.5 rounded-xl font-medium">Edit</button>
+                <button onclick="hapusUjianInstan('${e.id}')" class="flex-1 text-center text-rose-400 border border-slate-700 hover:bg-slate-700/40 text-xs py-1.5 rounded-xl font-medium">Hapus</button>
+              </div>
+            ` : '';
+
             return `<div class="bg-[#151b2c] rounded-2xl overflow-hidden shadow-lg border border-slate-800 flex flex-col hover:border-slate-700">
               <div class="h-44 bg-gradient-to-tr ${gradienSesuai} relative flex items-center justify-center p-6 select-none">
                 <span class="absolute top-4 left-4 bg-[#0b0f19]/80 backdrop-blur-sm text-[9px] font-extrabold text-[#818cf8] px-2.5 py-1 rounded-md tracking-wider uppercase">SIMULATOR UJIAN</span>
@@ -497,10 +719,7 @@
                 </div>
                 <div class="pt-4 border-t border-slate-800/60 flex flex-col gap-2">
                   <button onclick="mulaiUjian('${e.id}')" class="w-full bg-gradient-to-r from-cyan-500 to-indigo-600 text-white font-bold text-xs py-2 rounded-xl shadow-md text-center">Mulai Tes</button>
-                  <div class="flex justify-between gap-2 mt-1">
-                    <button onclick="bukaModalEditUjian('${e.id}')" class="flex-1 text-center text-cyan-400 border border-slate-700 hover:bg-slate-700/40 text-xs py-1.5 rounded-xl font-medium">Edit</button>
-                    <button onclick="hapusUjianInstan('${e.id}')" class="flex-1 text-center text-rose-400 border border-slate-700 hover:bg-slate-700/40 text-xs py-1.5 rounded-xl font-medium">Hapus</button>
-                  </div>
+                  ${controlAksiAdminHTML}
                 </div>
               </div>
             </div>`;
@@ -762,7 +981,7 @@
         window.bukaModalBuatUjian = bukaModalBuatUjian; 
         window.tutupModalUjian = tutupModalUjian;
 
-        window.onload = function () { fetchArticles(); fetchExams(); switchTab("artikel"); };
+        // Catatan: window.onload dinonaktifkan agar aplikasi menunggu proses Log In user terlebih dahulu
       })();
     </script>
   </body>
