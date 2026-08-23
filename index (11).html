@@ -1,0 +1,3216 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>CodePlayground Pro — Final</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha384-/o6I2CkkWC//PSjvWC/eYN7l3xM3tJm8ZzVkCOfp//W05QcE3mlGskpoHB6XqI+B" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/editor/editor.main.min.css" integrity="sha384-QOL+KMGDSHiTGpw4XDfyq5kJL37YaD/smO5a7/aNyBGQaFMNnrbYfDj+HzhC3daQ" crossorigin="anonymous" />
+    <style>
+        /* ===== RESET & VARIABEL ===== */
+        * {
+            margin: 0;
+            --bg-sidebar: #f0f2f5;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --border-color: #d1d5db;
+            --accent: #4f46e5;
+            --accent-hover: #4338ca;
+            --accent-light: #eef2ff;
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            --radius: 8px;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --console-bg: #1e1e2e;
+            --console-text: #cdd6f4;
+            --console-border: #313244;
+            --sidebar-width: 220px;
+            --tab-height: 36px;
+            --header-min-height: 56px;
+            --btn-bg: #eef2f6;
+            --btn-hover: #e2e8f0;
+            --btn-text: #1e293b;
+        }
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-editor: #1e293b;
+            --bg-preview: #0f172a;
+            --bg-sidebar: #1a2236;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            --accent: #818cf8;
+            --accent-hover: #6366f1;
+            --accent-light: #1e293b;
+            --console-bg: #0f172a;
+            --console-text: #e2e8f0;
+            --console-border: #334155;
+            --btn-bg: #334155;
+            --btn-hover: #475569;
+            --btn-text: #f1f5f9;
+        }
+        html,
+        body {
+            height: 100dvh;
+            overflow: hidden;
+            font-family: var(--font);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: background 0.2s, color 0.2s;
+        }
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 8px;
+        }
+        :focus-visible {
+            outline: 3px solid var(--accent);
+            outline-offset: 2px;
+        }
+        .mobile-sidebar-btn {
+            display: inline-flex;
+            min-width: 44px;
+            min-height: 44px;
+            align-items: center;
+            justify-content: center;
+        }
+        /* ===== HEADER ===== */
+        .header {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 6px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 6px 12px;
+            flex-shrink: 0;
+            z-index: 10;
+            min-height: var(--header-min-height);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            user-select: none;
+        }
+        .logo i {
+            color: var(--accent);
+            font-size: 22px;
+        }
+        .logo span {
+            background: var(--accent-light);
+            padding: 0 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-weight: 500;
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            cursor: pointer;
+            transition: background 0.15s, transform 0.1s;
+            white-space: nowrap;
+            font-family: var(--font);
+        }
+        .btn:hover {
+            background: var(--btn-hover);
+            transform: translateY(-1px);
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            color: #fff;
+        }
+        .btn i {
+            font-size: 13px;
+        }
+        .btn-theme {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            padding: 5px 10px;
+            border-radius: var(--radius);
+            font-size: 15px;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: background 0.15s;
+        }
+        .btn-theme:hover {
+            background: var(--btn-bg);
+        }
+        /* ===== APP ===== */
+        .app {
+            display: flex;
+            height: calc(100dvh - var(--header-height, var(--header-min-height)));
+            overflow: hidden;
+        }
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: width 0.2s, background 0.2s;
+        }
+        .sidebar.collapsed {
+            width: 0;
+            border: none;
+            overflow: hidden;
+        }
+        .sidebar-header {
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            min-height: 34px;
+        }
+        .sidebar-header button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 13px;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .sidebar-header button:hover {
+            background: var(--border-color);
+        }
+        .file-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 4px 4px;
+        }
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--text-primary);
+            transition: background 0.1s;
+        }
+        .file-item:hover {
+            background: var(--border-color);
+        }
+        .file-item.active {
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+        .file-item .file-icon {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        .file-item .file-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .file-item .file-actions {
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+        .file-item:hover .file-actions {
+            opacity: 1;
+        }
+        .file-item .file-actions button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 11px;
+            padding: 0 3px;
+            border-radius: 3px;
+        }
+        .file-item .file-actions button:hover {
+            background: var(--border-color);
+        }
+        .file-item .file-actions .delete-btn:hover {
+            color: #ef4444;
+        }
+        .sidebar-footer {
+            padding: 4px 10px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .sidebar-footer .btn {
+            flex: 1;
+            padding: 4px 8px;
+            font-size: 12px;
+            justify-content: center;
+        }
+        /* ===== MAIN PANEL ===== */
+        .main-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+            transition: flex-direction 0.25s ease;
+        }
+        .main-panel.vertical {
+            flex-direction: column;
+        }
+        .editor-area {
+            flex: 1 1 55%;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            overflow: hidden;
+            min-width: 200px;
+        }
+        .main-panel.vertical .editor-area {
+            border-right: none;
+            border-bottom: 1px solid var(--border-color);
+            flex: 1 1 50%;
+        }
+        .editor-tabs-bar {
+            display: flex;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            height: var(--tab-height);
+            flex-shrink: 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 0 4px;
+            gap: 2px;
+            align-items: center;
+        }
+        .editor-tab-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            height: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.15s, border-color 0.15s, background 0.15s;
+            font-family: var(--font);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .editor-tab-btn .close-tab {
+            border: none;
+            background: transparent;
+            color: inherit;
+            cursor: pointer;
+            font: inherit;
+            padding: 8px;
+            margin: -8px;
+            margin-left: 0;
+        }
+        .editor-tab-btn:hover {
+            color: var(--text-primary);
+            background: var(--btn-bg);
+        }
+        .editor-tab-btn.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+            background: transparent;
+        }
+        .editor-tab-btn .dirty-dot {
+            display: none;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+        }
+        .editor-tab-btn.dirty .dirty-dot {
+            display: inline-block;
+        }
+        .editor-tab-btn .close-tab {
+            margin-left: 4px;
+            font-size: 11px;
+            opacity: 0;
+            transition: opacity 0.15s;
+            color: var(--text-secondary);
+        }
+        .editor-tab-btn:hover .close-tab {
+            opacity: 1;
+        }
+        .editor-tab-btn:focus-visible .close-tab,
+        .close-tab:focus-visible {
+            opacity: 1;
+        }
+        .editor-tab-btn .close-tab:hover {
+            color: #ef4444;
+        }
+        .editor-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        .editor-slot {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .editor-slot.active {
+            display: block;
+        }
+        .preview-area {
+            flex: 1 1 45%;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-preview);
+            overflow: hidden;
+            min-width: 150px;
+        }
+        .main-panel.vertical .preview-area {
+            flex: 1 1 50%;
+        }
+        .preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 14px;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            height: var(--tab-height);
+            flex-shrink: 0;
+        }
+        .preview-header span {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .preview-header .preview-status {
+            font-size: 11px;
+            font-weight: 400;
+            opacity: 0.6;
+        }
+        .preview-header .preview-status.running {
+            color: var(--accent);
+            opacity: 1;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+        .preview-frame {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: var(--bg-preview);
+        }
+        .preview-frame iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #ffffff;
+        }
+        .console-panel {
+            background: var(--console-bg);
+            border-top: 1px solid var(--console-border);
+            height: 0;
+            overflow: hidden;
+            transition: height 0.25s ease;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .console-panel.open {
+            height: 130px;
+        }
+        .console-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 3px 14px;
+            background: var(--console-bg);
+            border-bottom: 1px solid var(--console-border);
+            flex-shrink: 0;
+            color: var(--console-text);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .console-header .console-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .console-header .console-actions button {
+            background: none;
+            border: none;
+            color: var(--console-text);
+            cursor: pointer;
+            font-size: 12px;
+            opacity: 0.6;
+            transition: opacity 0.15s;
+        }
+        .console-header .console-actions button:hover {
+            opacity: 1;
+        }
+        .console-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 4px 12px;
+            font-family: 'Fira Code', 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--console-text);
+            background: var(--console-bg);
+        }
+        .console-body .log-entry {
+            display: flex;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            padding: 2px 0;
+        }
+        .console-body .log-entry .log-level {
+            font-weight: 700;
+            min-width: 48px;
+            color: #a6e3a1;
+        }
+        .console-body .log-entry .log-level.error {
+            color: #f38ba8;
+        }
+        .console-body .log-entry .log-level.warn {
+            color: #f9e2af;
+        }
+        .console-body .log-entry .log-level.info {
+            color: #89b4fa;
+        }
+        .console-body .log-empty {
+            color: var(--text-secondary);
+            font-style: italic;
+            padding: 8px 0;
+        }
+        .gutter {
+            background: var(--border-color);
+            transition: background 0.15s;
+        }
+        .gutter.gutter-horizontal {
+            cursor: col-resize;
+            width: 5px;
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+        }
+        .gutter.gutter-horizontal:hover {
+            background: var(--accent);
+        }
+        .gutter.gutter-vertical {
+            cursor: row-resize;
+            height: 5px;
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFCAMAAABl/6zIAAAABlBMVEUAAADMzMzI8B5+AAAAAXRSTlMAQObYZgAAABRJREFUeAFjYGBkwmJgYGBgAAAA2AABFAF5pQAAAABJRU5ErkJggg==');
+        }
+        .gutter.gutter-vertical:hover {
+            background: var(--accent);
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+        }
+        .modal-overlay.open {
+            display: flex;
+        }
+        .modal {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 24px 28px;
+            max-width: 540px;
+            width: 92%;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+        }
+        .modal h2 {
+            font-size: 19px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-primary);
+        }
+        .modal .sub {
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin-bottom: 18px;
+        }
+        .modal .input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        .modal .input-group input {
+            flex: 1;
+            padding: 6px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 13px;
+            transition: border-color 0.15s;
+        }
+        .modal .input-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .modal .input-group button {
+            padding: 6px 16px;
+            border: none;
+            border-radius: var(--radius);
+            background: var(--accent);
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .modal .input-group button:hover {
+            background: var(--accent-hover);
+        }
+        .modal .cdn-list {
+            list-style: none;
+            padding: 0;
+            margin: 8px 0 12px;
+            max-height: 140px;
+            overflow-y: auto;
+        }
+        .modal .cdn-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 6px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 13px;
+            gap: 8px;
+        }
+        .modal .cdn-list li .url {
+            word-break: break-all;
+            flex: 1;
+        }
+        .modal .cdn-list li .remove-btn {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.15s;
+        }
+        .modal .cdn-list li .remove-btn:hover {
+            opacity: 1;
+        }
+        .modal .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+        }
+        .modal .modal-actions .btn-close {
+            padding: 6px 18px;
+            border: none;
+            border-radius: var(--radius);
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.15s;
+        }
+        .modal .modal-actions .btn-close:hover {
+            background: var(--btn-hover);
+        }
+        .settings-group {
+            margin-bottom: 18px;
+        }
+        .settings-group h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 4px;
+        }
+        .settings-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 0;
+            gap: 12px;
+        }
+        .settings-row label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            min-width: 90px;
+        }
+        .settings-row input[type="number"],
+        .settings-row select {
+            width: 80px;
+            padding: 3px 6px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 13px;
+        }
+        .settings-row input[type="range"] {
+            width: 120px;
+            accent-color: var(--accent);
+        }
+        .settings-row .range-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .settings-row .range-wrap span {
+            font-size: 12px;
+            min-width: 40px;
+            color: var(--text-secondary);
+        }
+        .theme-selector {
+            display: flex;
+            gap: 8px;
+        }
+        .theme-selector button {
+            padding: 4px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+        .theme-selector button.active {
+            border-color: var(--accent);
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            padding: 8px 22px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 999;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .cmd-palette {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 520px;
+            max-width: 92%;
+            background: var(--bg-primary);
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            z-index: 2000;
+            display: none;
+            overflow: hidden;
+        }
+        .cmd-palette.open {
+            display: block;
+        }
+        .cmd-palette input {
+            width: 100%;
+            padding: 12px 18px;
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-primary);
+            font-size: 15px;
+            font-family: var(--font);
+            outline: none;
+        }
+        .cmd-palette .cmd-list {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 6px 0;
+        }
+        .cmd-palette .cmd-item {
+            width: 100%;
+            padding: 8px 18px;
+            border: none;
+            background: transparent;
+            text-align: left;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: background 0.1s;
+        }
+        .cmd-palette .cmd-item:hover,
+        .cmd-palette .cmd-item.selected {
+            background: var(--accent-light);
+        }
+        .cmd-palette .cmd-item i {
+            width: 20px;
+            color: var(--text-secondary);
+        }
+        .cmd-palette .cmd-item .shortcut {
+            margin-left: auto;
+            font-size: 11px;
+            color: var(--text-secondary);
+            background: var(--border-color);
+            padding: 0 8px;
+            border-radius: 4px;
+        }
+        @media (max-width: 820px) {
+            .sidebar {
+                display: flex;
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                z-index: 20;
+                width: 240px;
+                transform: translateX(-100%);
+                box-shadow: 8px 0 24px rgba(0, 0, 0, 0.18);
+            }
+            .sidebar:not(.collapsed) {
+                transform: translateX(0);
+            }
+            .sidebar.collapsed {
+                width: 240px;
+                transform: translateX(-100%);
+                border-right: 1px solid var(--border-color);
+            }
+            .mobile-sidebar-btn {
+                display: inline-flex;
+            }
+            .main-panel {
+                flex-direction: column !important;
+                min-height: 0;
+            }
+            .editor-area {
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                flex: 1 1 50%;
+                min-height: 0;
+            }
+            .preview-area {
+                flex: 1 1 50%;
+                min-height: 0;
+            }
+            .gutter.gutter-horizontal {
+                display: none;
+            }
+            .gutter.gutter-vertical {
+                display: block;
+            }
+            .header {
+                padding: 4px 10px;
+                min-height: 48px;
+                gap: 4px 8px;
+            }
+            .logo {
+                font-size: 15px;
+            }
+            .logo i {
+                font-size: 18px;
+            }
+            .logo span {
+                font-size: 9px;
+                padding: 0 8px;
+            }
+            .btn span {
+                display: none;
+            }
+            .btn {
+                padding: 4px 8px;
+                font-size: 12px;
+                min-height: 44px;
+            }
+            .btn i {
+                font-size: 14px;
+            }
+            .btn-theme {
+                padding: 4px 8px;
+                font-size: 13px;
+            }
+            .editor-tab-btn {
+                font-size: 11px;
+                padding: 2px 8px;
+                min-height: 44px;
+            }
+            .file-item {
+                min-height: 44px;
+            }
+            .console-header .console-actions button {
+                min-width: 44px;
+                min-height: 44px;
+            }
+            .preview-header span {
+                font-size: 11px;
+            }
+            .console-panel.open {
+                height: min(100px, 24dvh);
+            }
+            .cmd-palette {
+                width: 94%;
+                top: 60px;
+            }
+        }
+        @media (max-width: 480px) {
+            .logo span {
+                display: none;
+            }
+            .editor-tab-btn .badge {
+                display: none;
+            }
+            .preview-header .preview-status {
+                font-size: 10px;
+            }
+            .console-body {
+                font-size: 11px;
+                padding: 3px 8px;
+            }
+            .header {
+                padding: 2px 6px;
+                min-height: 42px;
+            }
+            .btn {
+                padding: 3px 8px;
+                font-size: 11px;
+                min-height: 44px;
+            }
+            .btn i {
+                font-size: 12px;
+            }
+        }
+        #fileInput {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-code"></i> CodePlayground <span>Pro</span>
+        </div>
+        <div class="header-actions">
+            <button class="btn mobile-sidebar-btn" id="mobileSidebarBtn" title="Open explorer" aria-label="Open explorer"><i class="fas fa-folder-tree"></i></button>
+            <button class="btn btn-primary" id="runBtn" title="Jalankan (Ctrl+Enter)"><i class="fas fa-play"></i><span>Run</span></button>
+            <button class="btn" id="saveBtn" title="Simpan (Ctrl+S)"><i class="fas fa-save"></i><span>Save</span></button>
+            <button class="btn" id="downloadBtn" title="Download Project (ZIP)"><i class="fas fa-download"></i><span>Download</span></button>
+            <button class="btn" id="uploadBtn" title="Upload file"><i class="fas fa-upload"></i><span>Upload</span></button>
+            <button class="btn" id="cdnBtn" title="Kelola CDN"><i class="fas fa-link"></i><span>CDN</span></button>
+            <button class="btn" id="formatBtn" title="Format kode (Monaco)"><i class="fas fa-magic"></i><span>Format</span></button>
+            <button class="btn" id="cmdBtn" title="Command Palette (Ctrl+Shift+P)"><i class="fas fa-terminal"></i><span>Cmd</span></button>
+            <button class="btn" id="settingsBtn" title="Settings"><i class="fas fa-cog"></i><span>Settings</span></button>
+            <button class="btn" id="layoutBtn" title="Rotasi layout"><i class="fas fa-arrows-alt-h"></i><span>Layout</span></button>
+            <button class="btn-theme" id="themeBtn" title="Toggle theme" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+        </div>
+    </header>
+
+    <!-- ===== APP ===== -->
+    <div class="app">
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <span>Explorer</span>
+                <button id="toggleSidebarBtn" aria-label="Toggle explorer"><i class="fas fa-chevron-left"></i></button>
+            </div>
+            <div class="file-list" id="fileList"></div>
+            <div class="sidebar-footer">
+                <button class="btn" id="newFileBtn"><i class="fas fa-plus"></i> New</button>
+                <button class="btn" id="renameFileBtn" aria-label="Rename active file"><i class="fas fa-pen"></i></button>
+            </div>
+        </div>
+
+        <div class="main-panel" id="mainPanel">
+            <div class="editor-area" id="editorArea">
+                <div class="editor-tabs-bar" id="editorTabsBar" role="tablist" aria-label="Open files"></div>
+                <div class="editor-container" id="editorContainer">
+                    <div class="editor-slot active" id="htmlEditorSlot"></div>
+                    <div class="editor-slot" id="cssEditorSlot"></div>
+                    <div class="editor-slot" id="jsEditorSlot"></div>
+                </div>
+            </div>
+
+            <div class="preview-area" id="previewArea">
+                <div class="preview-header">
+                    <span><i class="fas fa-eye"></i> Preview <span class="preview-status" id="previewStatus">● live</span></span>
+                    <span style="font-size:11px;opacity:0.5;"><i class="fas fa-sync-alt"></i> auto</span>
+                </div>
+                <div class="preview-frame" id="previewFrame">
+                    <iframe id="previewIframe" title="Live code preview" sandbox="allow-scripts allow-modals"></iframe>
+                </div>
+                <div class="console-panel" id="consolePanel">
+                    <div class="console-header">
+                        <span><i class="fas fa-terminal"></i> Konsol</span>
+                        <div class="console-actions">
+                            <button id="clearConsoleBtn" aria-label="Clear console"><i class="fas fa-eraser"></i></button>
+                            <button id="toggleConsoleBtn" aria-label="Toggle console"><i class="fas fa-chevron-down"></i></button>
+                        </div>
+                    </div>
+                    <div class="console-body" id="consoleBody"><div class="log-empty">⟡ Konsol siap</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <div class="modal-overlay" id="cdnModal" role="dialog" aria-modal="true" aria-labelledby="cdnModalTitle">
+        <div class="modal">
+            <h2 id="cdnModalTitle"><i class="fas fa-link" style="color:var(--accent);"></i> Kelola CDN</h2>
+            <div class="sub">Tambahkan library eksternal (CSS/JS)</div>
+            <div class="input-group">
+                <input type="text" id="cdnInput" placeholder="https://cdn.tailwindcss.com" />
+                <button id="addCdnBtn"><i class="fas fa-plus"></i> Tambah</button>
+            </div>
+            <ul class="cdn-list" id="cdnList"></ul>
+            <div class="modal-actions">
+                <button class="btn-close" id="closeCdnModal">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
+        <div class="modal">
+            <h2 id="settingsModalTitle"><i class="fas fa-sliders-h" style="color:var(--accent);"></i> Pengaturan</h2>
+            <div class="sub">Draft tersimpan otomatis; Save menetapkan versi tersimpan.</div>
+            <div class="settings-group">
+                <h3>✏️ Editor</h3>
+                <div class="settings-row"><label>Font Size</label><input type="number" id="fontSize" min="10" max="28" value="14" /></div>
+                <div class="settings-row"><label>Tab Size</label><input type="number" id="tabSize" min="1" max="8" value="2" /></div>
+                <div class="settings-row"><label>Word Wrap</label><select id="wordWrap"><option value="off">Off</option><option value="on" selected>On</option></select></div>
+                <div class="settings-row"><label>Line Numbers</label><select id="lineNumbers"><option value="on" selected>On</option><option value="off">Off</option></select></div>
+                <div class="settings-row"><label>Minimap</label><select id="minimap"><option value="true" selected>On</option><option value="false">Off</option></select></div>
+            </div>
+            <div class="settings-group">
+                <h3>🖥️ Preview</h3>
+                <div class="settings-row"><label>Auto Run</label><input type="checkbox" id="autoRun" checked /></div>
+                <div class="settings-row"><label>Refresh Delay</label><div class="range-wrap"><input type="range" id="refreshDelay" min="100" max="800" value="350" step="50" /><span id="refreshDelayValue">350ms</span></div></div>
+            </div>
+            <div class="settings-group">
+                <h3>🎨 Tampilan</h3>
+                <div class="settings-row"><label>Tema</label><div class="theme-selector"><button data-theme="light" class="active">☀️ Light</button><button data-theme="dark">🌙 Dark</button></div></div>
+            </div>
+            <div class="modal-actions"><button class="btn-close" id="closeSettingsModal">Tutup</button></div>
+        </div>
+    </div>
+
+    <!-- COMMAND PALETTE -->
+    <div class="cmd-palette" id="cmdPalette">
+        <input type="text" id="cmdInput" aria-label="Search commands" placeholder="Ketik perintah..." />
+        <div class="cmd-list" id="cmdList"></div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <input type="file" id="fileInput" accept=".html,.css,.js" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/loader.min.js" integrity="sha384-IXKqkSd8dPlMLRSjIIxdLeshFYpxdYlkI32bLhsV+yZDD8awNbI2+kmFgULpHUBe" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.6.5/split.min.js" integrity="sha384-q2ksSc8z6Q4ZUnxlfZj9AXZLpSdWmD3q/YrId1twTeNHh56fNh98YbJSpppzGUvL" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha384-+mbV2IY1Zk/X1p/nWllGySJSUN8uMs+gUAN10Or95UBH0fpj6GfKgPmgC5EXieXG" crossorigin="anonymous">
+    </script>
+    <script>
+        (function() {
+            'use strict';
+
+            // ============================================================
+            //  MONACO ENVIRONMENT
+            // ============================================================
+            window.MonacoEnvironment = {
+                getWorkerUrl: function() {
+                    if (window.__codeplaygroundWorkerUrl) return window.__codeplaygroundWorkerUrl;
+                    const script =
+                        `
+                        self.MonacoEnvironment = { baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/' };
+                        importScripts('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/base/worker/workerMain.js');
+                    `;
+                    window.__codeplaygroundWorkerUrl = URL.createObjectURL(new Blob([script], { type: 'application/javascript' }));
+                    return window.__codeplaygroundWorkerUrl;
+                }
+            };
+
+            // ============================================================
+            //  DOM REFS
+            // ============================================================
+            const $ = id => document.getElementById(id);
+            const qsa = (s, ctx) => (ctx || document).querySelectorAll(s);
+
+            const previewIframe = $('previewIframe');
+            const previewStatus = $('previewStatus');
+            const runBtn = $('runBtn');
+            const saveBtn = $('saveBtn');
+            const downloadBtn = $('downloadBtn');
+            const uploadBtn = $('uploadBtn');
+            const formatBtn = $('formatBtn');
+            const cdnBtn = $('cdnBtn');
+            const cmdBtn = $('cmdBtn');
+            const settingsBtn = $('settingsBtn');
+            const layoutBtn = $('layoutBtn');
+            const themeBtn = $('themeBtn');
+            const fileInput = $('fileInput');
+            const toast = $('toast');
+            const mainPanel = $('mainPanel');
+            const sidebar = $('sidebar');
+            const fileList = $('fileList');
+            const newFileBtn = $('newFileBtn');
+            const renameFileBtn = $('renameFileBtn');
+            const toggleSidebarBtn = $('toggleSidebarBtn');
+            const editorTabsBar = $('editorTabsBar');
+            const consolePanel = $('consolePanel');
+            const consoleBody = $('consoleBody');
+            const clearConsoleBtn = $('clearConsoleBtn');
+            const toggleConsoleBtn = $('toggleConsoleBtn');
+            const cdnModal = $('cdnModal');
+            const cdnInput = $('cdnInput');
+            const addCdnBtn = $('addCdnBtn');
+            const cdnList = $('cdnList');
+            const closeCdnModal = $('closeCdnModal');
+            const settingsModal = $('settingsModal');
+            const closeSettingsModal = $('closeSettingsModal');
+            const cmdPalette = $('cmdPalette');
+            const cmdInput = $('cmdInput');
+            const cmdList = $('cmdList');
+            const fontSizeInput = $('fontSize');
+            const tabSizeInput = $('tabSize');
+            const wordWrapSelect = $('wordWrap');
+            const lineNumbersSelect = $('lineNumbers');
+            const minimapSelect = $('minimap');
+            const autoRunCheck = $('autoRun');
+            const refreshDelayRange = $('refreshDelay');
+            const refreshDelayValue = $('refreshDelayValue');
+            const themeSelector = document.querySelector('.theme-selector');
+            const mobileSidebarBtn = $('mobileSidebarBtn');
+
+            // ============================================================
+            //  STATE
+            // ============================================================
+            const STORAGE_KEY = 'codeplayground_pro_data';
+            const SETTINGS_KEY = 'codeplayground_pro_settings';
+            const CDN_KEY = 'codeplayground_pro_cdn';
+            const THEME_KEY = 'codeplayground_pro_theme';
+            const LAYOUT_KEY = 'codeplayground_pro_layout';
+
+            let settings = {
+                fontSize: 14,
+                tabSize: 2,
+                wordWrap: 'on',
+                lineNumbers: 'on',
+                minimap: true,
+                autoRun: true,
+                refreshDelay: 350
+            };
+            let theme = 'light';
+            let cdnUrls = [];
+            let consoleEntries = [];
+            let consoleOpen = false;
+            let splitInstance = null;
+            let layoutMode = 'horizontal';
+            let toastTimer = null;
+            let updateTimer = null;
+            let previewStatusTimer = null;
+            let previewSessionToken = '';
+            let uiRenderFrame = 0;
+            let modalTrigger = null;
+
+            // --- VFS ---
+            let files = {};
+            let activeFileId = 'index.html';
+            let openFileIds = [];
+            const fileOrder = ['index.html', 'style.css', 'script.js'];
+
+            // --- Editor instances ---
+            let editors = {};
+
+            // --- Defaults ---
+            const DEFAULT_HTML = `<h1>Hello, World! 👋</h1>\n<p>Edit kode di sebelah kiri untuk melihat perubahan secara langsung.</p>\n<link rel="stylesheet" href="style.css" />\n<script src="script.js"><\/script>`;
+            const DEFAULT_CSS = `body {\n  font-family: 'Segoe UI', sans-serif;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  min-height: 100vh;\n  margin: 0;\n  background: #f8fafc;\n  color: #1e293b;\n}\n\nh1 {\n  color: #4f46e5;\n  font-size: 2.8rem;\n  margin-bottom: 0.4rem;\n}\n\np {\n  font-size: 1.2rem;\n  color: #475569;\n}`;
+            const DEFAULT_JS =
+                `// Selamat datang di CodePlayground!\nconsole.log("Hello from JavaScript!");\n\ndocument.querySelector('h1')?.addEventListener('click', () => {\n  alert('🎉 H1 diklik!');\n});`;
+
+            // ============================================================
+            //  PERSISTENCE (dengan error handling & validasi)
+            // ============================================================
+            function loadData() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (!raw) return null;
+                    const data = JSON.parse(raw);
+                    if (!data || typeof data !== 'object' || !data.files || typeof data.files !== 'object') {
+                        console.warn('Invalid data structure, using defaults');
+                        return null;
+                    }
+                    for (const id of Object.keys(data.files)) {
+                        const f = data.files[id];
+                        if (!validateFileName(id) || !f || typeof f !== 'object' || typeof f.content !== 'string' ||
+                            !['html', 'css', 'javascript'].includes(f.language)) {
+                            console.warn('Invalid file entry, removing:', id);
+                            delete data.files[id];
+                        }
+                    }
+                    if (Object.keys(data.files).length === 0) return null;
+                    const storedVersion = Number(data.version) || 1;
+                    if (storedVersion < 3) data.migratedFromVersion = storedVersion;
+                    data.version = 3;
+                    return data;
+                } catch (err) {
+                    console.warn('Load data error:', err);
+                    return null;
+                }
+            }
+
+            function saveData(sourceFiles = files, sourceActiveFileId = activeFileId, commit = false, sourceOpenFileIds = openFileIds) {
+                try {
+                    const payload = {
+                        files: {},
+                        activeFileId: sourceActiveFileId,
+                        openFileIds: sourceOpenFileIds.filter(id => sourceFiles[id]),
+                        version: 3
+                    };
+                    Object.keys(sourceFiles).forEach(id => {
+                        const f = sourceFiles[id];
+                        const currentContent = getCurrentContent(f);
+                        payload.files[id] = {
+                            content: currentContent,
+                            committedContent: commit ? currentContent : (typeof f.committedContent === 'string' ? f.committedContent : currentContent),
+                            language: f.language,
+                            dirty: commit ? false : isFileDirty(f),
+                            legacyDirty: commit ? false : f.legacyDirty === true
+                        };
+                    });
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+                    return true;
+                } catch (err) {
+                    console.error('Save data error:', err);
+                    showToast('⚠️ Gagal menyimpan data');
+                    return false;
+                }
+            }
+
+            function getCurrentContent(file) {
+                return file && file.model ? file.model.getValue() : (file ? file.content : '');
+            }
+
+            function isFileDirty(file) {
+                return !!file && (getCurrentContent(file) !== file.committedContent || file.legacyDirty === true);
+            }
+
+            function syncFileState(file) {
+                if (!file) return false;
+                const currentContent = getCurrentContent(file);
+                const changed = file.content !== currentContent || file.dirty !== isFileDirty(file);
+                file.content = currentContent;
+                file.dirty = isFileDirty(file);
+                return changed;
+            }
+
+            function syncAllFileState() {
+                Object.keys(files).forEach(id => syncFileState(files[id]));
+            }
+
+            function commitAllFiles() {
+                syncAllFileState();
+                if (!saveData(files, activeFileId, true)) return false;
+                Object.keys(files).forEach(id => {
+                    const file = files[id];
+                    file.committedContent = file.content;
+                    file.legacyDirty = false;
+                    file.dirty = false;
+                });
+                return true;
+            }
+
+            // ============================================================
+            //  SETTINGS (dengan validasi)
+            // ============================================================
+            function loadSettings() {
+                try {
+                    const raw = localStorage.getItem(SETTINGS_KEY);
+                    if (!raw) return;
+                    const s = JSON.parse(raw);
+                    if (s && typeof s === 'object') {
+                        if (typeof s.fontSize === 'number') settings.fontSize = clampNumber(s.fontSize, 10, 28, 14);
+                        if (typeof s.tabSize === 'number') settings.tabSize = clampNumber(s.tabSize, 1, 8, 2);
+                        if (['off', 'on', 'wordWrapColumn', 'bounded'].includes(s.wordWrap)) settings.wordWrap = s.wordWrap;
+                        if (['on', 'off', 'relative', 'interval'].includes(s.lineNumbers)) settings.lineNumbers = s
+                        .lineNumbers;
+                        if (typeof s.minimap === 'boolean') settings.minimap = s.minimap;
+                        if (typeof s.autoRun === 'boolean') settings.autoRun = s.autoRun;
+                        if (typeof s.refreshDelay === 'number') settings.refreshDelay = clampNumber(s.refreshDelay, 100, 800, 350);
+                    }
+                } catch (err) {
+                    console.warn('Load settings error:', err);
+                }
+                applySettingsUI();
+            }
+
+            function saveSettings() {
+                try {
+                    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+                } catch (err) {
+                    console.error('Save settings error:', err);
+                }
+                applySettingsToEditors();
+            }
+
+            function applySettingsUI() {
+                settings.fontSize = clampNumber(settings.fontSize, 10, 28, 14);
+                settings.tabSize = clampNumber(settings.tabSize, 1, 8, 2);
+                settings.refreshDelay = clampNumber(settings.refreshDelay, 100, 800, 350);
+                fontSizeInput.value = settings.fontSize;
+                tabSizeInput.value = settings.tabSize;
+                wordWrapSelect.value = settings.wordWrap;
+                lineNumbersSelect.value = settings.lineNumbers;
+                minimapSelect.value = settings.minimap ? 'true' : 'false';
+                autoRunCheck.checked = settings.autoRun;
+                refreshDelayRange.value = settings.refreshDelay;
+                refreshDelayValue.textContent = settings.refreshDelay + 'ms';
+            }
+
+            function clampNumber(value, min, max, fallback) {
+                const number = Number(value);
+                return Number.isFinite(number) ? Math.min(max, Math.max(min, number)) : fallback;
+            }
+
+            function applySettingsToEditors() {
+                if (!editors.html) return;
+                const opts = {
+                    fontSize: settings.fontSize,
+                    tabSize: settings.tabSize,
+                    wordWrap: settings.wordWrap,
+                    lineNumbers: settings.lineNumbers,
+                    minimap: { enabled: settings.minimap }
+                };
+                Object.values(editors).forEach(ed => ed.updateOptions(opts));
+            }
+
+            // ============================================================
+            //  CDN (dengan revalidasi)
+            // ============================================================
+            const ALLOWED_CDN_DOMAINS = [
+                'cdnjs.cloudflare.com',
+                'unpkg.com',
+                'jsdelivr.net',
+                'cdn.tailwindcss.com',
+                'cdn.jsdelivr.net',
+                'cdnjs.com'
+            ];
+
+            function loadCdn() {
+                try {
+                    const raw = localStorage.getItem(CDN_KEY);
+                    if (raw) {
+                        cdnUrls = JSON.parse(raw);
+                        if (!Array.isArray(cdnUrls)) cdnUrls = [];
+                        cdnUrls = [...new Set(cdnUrls
+                            .filter(u => typeof u === 'string' && validateCdnUrl(u))
+                            .map(u => new URL(u).href))];
+                    }
+                } catch (err) {
+                    console.warn('Load CDN error:', err);
+                    cdnUrls = [];
+                }
+                renderCdnList();
+            }
+
+            function validateCdnUrl(url) {
+                try {
+                    const u = new URL(url);
+                    if (u.protocol !== 'https:') return false;
+                    const host = u.hostname;
+                    for (const d of ALLOWED_CDN_DOMAINS) {
+                        if (host === d || host.endsWith('.' + d)) return true;
+                    }
+                    return false;
+                } catch (_) { return false; }
+            }
+
+            function saveCdn() {
+                try {
+                    localStorage.setItem(CDN_KEY, JSON.stringify(cdnUrls));
+                } catch (err) {
+                    console.error('Save CDN error:', err);
+                }
+            }
+
+            function renderCdnList() {
+                cdnList.innerHTML = '';
+                if (cdnUrls.length === 0) {
+                    const li = document.createElement('li');
+                    li.textContent = 'Belum ada CDN.';
+                    li.style.color = 'var(--text-secondary)';
+                    li.style.fontStyle = 'italic';
+                    cdnList.appendChild(li);
+                    return;
+                }
+                cdnUrls.forEach((url, i) => {
+                    const li = document.createElement('li');
+                    const span = document.createElement('span');
+                    span.className = 'url';
+                    span.textContent = url;
+                    const btn = document.createElement('button');
+                    btn.className = 'remove-btn';
+                    btn.innerHTML = '<i class="fas fa-times"></i>';
+                    btn.onclick = () => { cdnUrls.splice(i, 1);
+                        saveCdn();
+                        renderCdnList();
+                        buildPreview();
+                        showToast('🗑️ CDN dihapus'); };
+                    li.appendChild(span);
+                    li.appendChild(btn);
+                    cdnList.appendChild(li);
+                });
+            }
+
+            function addCdnUrl(url) {
+                url = url.trim();
+                if (!url) return false;
+                if (!validateCdnUrl(url)) {
+                    showToast('⚠️ Domain tidak diizinkan atau URL tidak valid');
+                    return false;
+                }
+                const normalizedUrl = new URL(url).href;
+                if (cdnUrls.includes(normalizedUrl)) {
+                    showToast('⚠️ Sudah ada');
+                    return false;
+                }
+                cdnUrls.push(normalizedUrl);
+                saveCdn();
+                renderCdnList();
+                buildPreview();
+                showToast('✅ CDN ditambahkan');
+                return true;
+            }
+
+            function getExtFromUrl(url) {
+                try {
+                    const u = new URL(url);
+                    const p = u.pathname.split('.');
+                    if (p.length > 1) return p.pop().toLowerCase();
+                } catch (_) { /* ignore */ }
+                return null;
+            }
+
+            function normalizeFileName(name) {
+                return name.trim().replace(/\\/g, '/').replace(/^\.\//, '');
+            }
+
+            function normalizeVfsPath(pathname) {
+                return normalizeFileName(pathname).replace(/^\/+/, '');
+            }
+
+            function getFileDirectory(fileId) {
+                const slash = normalizeVfsPath(fileId).lastIndexOf('/');
+                return slash === -1 ? '' : normalizeVfsPath(fileId).slice(0, slash + 1);
+            }
+
+            function getSourceBaseHref(fileId, baseHref) {
+                const origin = 'https://codeplayground.local/';
+                const sourceDirectory = getFileDirectory(fileId);
+                return new URL(baseHref || './', origin + sourceDirectory);
+            }
+
+            function isLocalVfsReference(reference, allowBare = false) {
+                const value = (reference || '').trim();
+                return allowBare || value.startsWith('./') || value.startsWith('../') || value.startsWith('/');
+            }
+
+            function getReferenceBaseHref(sourceFileId, baseHref) {
+                return sourceFileId ? getSourceBaseHref(sourceFileId, baseHref) :
+                    new URL(baseHref || './', 'https://codeplayground.local/');
+            }
+
+            function validateFileName(name) {
+                const normalized = normalizeFileName(name);
+                if (!normalized || normalized.length > 128 || normalized.startsWith('/') || normalized.endsWith('/')) return false;
+                if (normalized.split('/').some(part => !part || part === '.' || part === '..')) return false;
+                return /^[A-Za-z0-9][A-Za-z0-9._/-]*$/.test(normalized) && /\.(html|css|js)$/i.test(normalized);
+            }
+
+            // ============================================================
+            //  ESCAPE & SAFE STRINGIFY
+            // ============================================================
+            function escapeForHtml(str) {
+                return str
+                    .replace(/<\/script\b/gi, '<\\/script')
+                    .replace(/<\/style\b/gi, '<\\/style');
+            }
+
+            function escapeForAttribute(str) {
+                return str
+                    .replace(/&/g, '&amp;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+            }
+
+            function safeStringify(obj) {
+                try {
+                    return JSON.stringify(obj);
+                } catch (_) {
+                    return '[Circular]';
+                }
+            }
+
+            // ============================================================
+            //  BUILD PREVIEW — dengan full-document detection yang lebih baik
+            // ============================================================
+            function isFullDocument(html) {
+                const withoutLeadingComments = html.replace(/^\uFEFF/, '').replace(/^(?:\s*\x3C!--[\s\S]*?-->\s*)*/, '');
+                return /^(?:<!doctype\s+html\b|<html\b|<head\b|<body\b)/i.test(withoutLeadingComments.trimStart());
+            }
+
+            function getBestFile(language, preferredName) {
+                const candidates = Object.keys(files).filter(id => files[id].language === language);
+                if (candidates.length === 0) return null;
+                const preferred = candidates.find(id => id === preferredName);
+                if (preferred) return preferred;
+                return candidates[0];
+            }
+
+            function getAssetFileId(url, language, baseHref, sourceFileId, allowBare = false) {
+                try {
+                    if (!isLocalVfsReference(url, allowBare)) return null;
+                    const virtualOrigin = 'https://codeplayground.local/';
+                    const parsed = new URL(url, getReferenceBaseHref(sourceFileId, baseHref));
+                    if (parsed.origin !== virtualOrigin) return null;
+                    const pathname = normalizeVfsPath(decodeURIComponent(parsed.pathname));
+                    const exact = Object.keys(files).find(id => (language === 'resource' || files[id].language === language) &&
+                        normalizeVfsPath(id) === pathname);
+                    if (exact) return exact;
+                    if (language === 'javascript' && !/\.[a-z0-9]+$/i.test(pathname)) {
+                        return Object.keys(files).find(id => files[id].language === language &&
+                            normalizeVfsPath(id) === pathname + '.js') || null;
+                    }
+                    return null;
+                } catch (_) {
+                    return null;
+                }
+            }
+
+            function getModuleSpecifiers(content) {
+                return [
+                    ...content.matchAll(/(?:import|export)\s+(?:[^'";]*?\s+from\s+)?["']([^"']+)["']/g),
+                    ...content.matchAll(/\bimport\(\s*["']([^"']+)["']\s*\)/g)
+                ].map(match => match[1]);
+            }
+
+            function getLocalModuleSpecifiers(content, fileId) {
+                return getModuleSpecifiers(content).filter(specifier =>
+                    !!getAssetFileId(specifier, 'javascript', './', fileId));
+            }
+
+            function getPreviewProject() {
+                const entrypoint = getBestFile('html', 'index.html');
+                const html = entrypoint ? getCurrentContent(files[entrypoint]) : '';
+                return {
+                    entrypoint,
+                    html,
+                    css: Object.keys(files).filter(id => files[id].language === 'css').sort(),
+                    javascript: Object.keys(files).filter(id => files[id].language === 'javascript').sort()
+                };
+            }
+
+            function isExternalReference(url) {
+                return !url || /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(url.trim());
+            }
+
+            function isCheckableCodeReference(reference, language) {
+                const path = reference.split(/[?#]/, 1)[0];
+                if (!isLocalVfsReference(path)) return false;
+                return language === 'css' ? /\.css$/i.test(path) : language === 'javascript' &&
+                    (/\.js$/i.test(path) || !path.includes('.'));
+            }
+
+            function getHtmlResourceReferences(doc) {
+                const references = [];
+                const add = (selector, attribute, language, splitSrcset = false) => {
+                    doc.querySelectorAll(selector).forEach(node => {
+                        const value = node.getAttribute(attribute);
+                        if (!value) return;
+                        const values = splitSrcset ? value.split(',').map(item => item.trim().split(/\s+/, 1)[0]) : [value];
+                        values.forEach(reference => references.push({ reference, language }));
+                    });
+                };
+                add('link[href]', 'href', 'resource');
+                add('script[src]', 'src', 'javascript');
+                add('img[src], source[src], video[poster], object[data], iframe[src], audio[src], track[src], embed[src], input[src]',
+                    'src', 'resource');
+                add('video[poster]', 'poster', 'resource');
+                add('object[data]', 'data', 'resource');
+                add('img[srcset], source[srcset]', 'srcset', 'resource', true);
+                return references;
+            }
+
+            function getDependencyGraph() {
+                const graph = new Map();
+                const visit = (fileId) => {
+                    if (!fileId || graph.has(fileId)) return;
+                    const file = files[fileId];
+                    if (!file) return;
+                    const dependencies = new Set();
+                    graph.set(fileId, dependencies);
+                    const content = getCurrentContent(file);
+                    if (file.language === 'html') {
+                        const doc = new DOMParser().parseFromString(content, 'text/html');
+                        const baseHref = doc.querySelector('base[href]')?.getAttribute('href') || './';
+                        doc.querySelectorAll('link[rel~="stylesheet"][href], script[src]').forEach(node => {
+                            const reference = node.getAttribute(node.hasAttribute('href') ? 'href' : 'src');
+                            const language = node.tagName.toLowerCase() === 'link' ? 'css' : 'javascript';
+                            const dependency = getAssetFileId(reference, language, baseHref, fileId, true);
+                            if (dependency) dependencies.add(dependency);
+                        });
+                        doc.querySelectorAll('script[type="module"]:not([src])').forEach(node => {
+                            getModuleSpecifiers(node.textContent).forEach(specifier => {
+                                const dependency = getAssetFileId(specifier, 'javascript', baseHref, fileId);
+                                if (dependency) dependencies.add(dependency);
+                            });
+                        });
+                    } else if (file.language === 'css') {
+                        const importPattern = /@import\s+(?:["']([^"']+)["']|url\(["']?([^"')]+)["']?\))/gi;
+                        let match;
+                        while ((match = importPattern.exec(content))) {
+                            const dependency = getAssetFileId(match[1] || match[2], 'css', './', fileId, true);
+                            if (dependency) dependencies.add(dependency);
+                        }
+                    } else if (file.language === 'javascript') {
+                        const importPattern = /(?:import|export)\s+(?:[^'";]*?\s+from\s+)?["']([^"']+)["']/g;
+                        const dynamicImportPattern = /\bimport\(\s*["']([^"']+)["']\s*\)/g;
+                        let match;
+                        while ((match = importPattern.exec(content))) {
+                            const dependency = getAssetFileId(match[1], 'javascript', './', fileId);
+                            if (dependency) dependencies.add(dependency);
+                        }
+                        while ((match = dynamicImportPattern.exec(content))) {
+                            const dependency = getAssetFileId(match[1], 'javascript', './', fileId);
+                            if (dependency) dependencies.add(dependency);
+                        }
+                    }
+                    dependencies.forEach(visit);
+                };
+                const entrypoint = getBestFile('html', 'index.html');
+                visit(entrypoint);
+                return graph;
+            }
+
+            function findBrokenLocalReferences() {
+                const broken = [];
+                Object.keys(files).filter(id => files[id].language === 'html').forEach(id => {
+                    const doc = new DOMParser().parseFromString(getCurrentContent(files[id]), 'text/html');
+                    const baseHref = doc.querySelector('base[href]')?.getAttribute('href') || './';
+                    getHtmlResourceReferences(doc).forEach(({ reference, language }) => {
+                        if (!isExternalReference(reference) && !getAssetFileId(reference, language, baseHref, id, true)) {
+                            broken.push(`${id}: ${reference}`);
+                        }
+                    });
+                });
+                Object.keys(files).forEach(id => {
+                    const file = files[id];
+                    const content = getCurrentContent(file);
+                    const references = file.language === 'javascript' ?
+                        [...content.matchAll(/(?:import|export)\s+(?:[^'";]*?\s+from\s+)?["']([^"']+)["']/g),
+                            ...content.matchAll(/\bimport\(\s*["']([^"']+)["']\s*\)/g)].map(m => m[1]) :
+                        file.language === 'css' ? [
+                            ...content.matchAll(/@import\s*["']([^"']+)["']/gi)
+                        ].map(m => m[1]) : [];
+                    references.forEach(reference => {
+                        const language = file.language === 'javascript' ? 'javascript' : 'css';
+                        if (!isExternalReference(reference) && isCheckableCodeReference(reference, language) &&
+                            !getAssetFileId(reference, language, './', id, language === 'css')) {
+                            broken.push(`${id}: ${reference}`);
+                        }
+                    });
+                    if (file.language === 'css') {
+                        [...content.matchAll(/url\(\s*["']?([^"')]+)["']?\s*\)/gi)].forEach(match => {
+                            const reference = match[1].trim();
+                            if (!isExternalReference(reference) && !getAssetFileId(reference, 'resource', './', id, true)) {
+                                broken.push(`${id}: ${reference}`);
+                            }
+                        });
+                    }
+                });
+                return broken;
+            }
+
+            function findReferencesToFile(fileId) {
+                return Object.keys(files).filter(id => id !== fileId && hasSemanticReference(id, fileId));
+            }
+
+            function forEachReference(fileId, callback) {
+                const file = files[fileId];
+                if (!file) return;
+                const content = getCurrentContent(file);
+                if (file.language === 'html') {
+                    const doc = new DOMParser().parseFromString(content, 'text/html');
+                    const baseHref = doc.querySelector('base[href]')?.getAttribute('href') || './';
+                    const pattern = /(href|src)=(?:"([^"]+)"|'([^']+)'|([^\s>]+))/gi;
+                    let match;
+                    while ((match = pattern.exec(content))) callback(match[2] || match[3] || match[4], baseHref, match.index, match[0], match[1]);
+                } else if (file.language === 'css') {
+                    const pattern = /url\(\s*(["']?)([^"')]+)\1\s*\)|@import\s+(?:(["'])([^"']+)\3|url\((["']?)([^"')]+)\5\))/gi;
+                    let match;
+                    while ((match = pattern.exec(content))) callback(match[2] || match[4] || match[6], './', match.index, match[0]);
+                } else {
+                    const pattern = /(?:import|export)\s+(?:[^'";]*?\s+from\s+)?["']([^"']+)["']|\bimport\(\s*["']([^"']+)["']\s*\)/g;
+                    let match;
+                    while ((match = pattern.exec(content))) callback(match[1] || match[2], './', match.index, match[0]);
+                }
+            }
+
+            function hasSemanticReference(sourceFileId, targetFileId) {
+                let found = false;
+                forEachReference(sourceFileId, (reference, baseHref, index, match, attributeName) => {
+                    const language = getReferenceLanguage(sourceFileId, reference, attributeName);
+                    const allowBare = files[sourceFileId].language !== 'javascript';
+                    if (getAssetFileId(reference, language, baseHref, sourceFileId, allowBare) === targetFileId) found = true;
+                });
+                return found;
+            }
+
+            function getReferenceLanguage(sourceFileId, reference, attributeName) {
+                if (files[sourceFileId].language !== 'html') return files[sourceFileId].language;
+                if (attributeName === 'src') return 'javascript';
+                if (/\.html([?#]|$)/i.test(reference)) return 'html';
+                return 'css';
+            }
+
+            function getRelativeVfsPath(sourceFileId, targetFileId, baseHref = './') {
+                const sourcePath = getReferenceBaseHref(sourceFileId, baseHref).pathname;
+                const sourceParts = sourcePath.split('/').filter(Boolean);
+                sourceParts.pop();
+                const targetParts = normalizeVfsPath(targetFileId).split('/').filter(Boolean);
+                targetParts.pop();
+                while (sourceParts.length && targetParts.length && sourceParts[0] === targetParts[0]) {
+                    sourceParts.shift();
+                    targetParts.shift();
+                }
+                return [...sourceParts.map(() => '..'), ...targetParts, normalizeVfsPath(targetFileId).split('/').pop()].join('/') || './';
+            }
+
+            function rewriteReferences(oldName, newName) {
+                Object.keys(files).forEach(id => {
+                    const file = files[id];
+                    let content = getCurrentContent(file);
+                    if (file.language === 'html') {
+                        const doc = new DOMParser().parseFromString(content, 'text/html');
+                        const baseHref = doc.querySelector('base[href]')?.getAttribute('href') || './';
+                        let changed = false;
+                        doc.querySelectorAll('link[href], script[src]').forEach(node => {
+                            const attributeName = node.hasAttribute('href') ? 'href' : 'src';
+                            const reference = node.getAttribute(attributeName);
+                            const language = node.tagName.toLowerCase() === 'script' ? 'javascript' :
+                                (/\.html([?#]|$)/i.test(reference) ? 'html' : 'css');
+                            const pathOnly = reference.split(/[?#]/, 1)[0];
+                            if (getAssetFileId(pathOnly, language, baseHref, id, true) === oldName) {
+                                node.setAttribute(attributeName, reference.replace(pathOnly, getRelativeVfsPath(id, newName)));
+                                changed = true;
+                            }
+                        });
+                        if (changed) {
+                            const doctype = doc.doctype ? '<!DOCTYPE ' + doc.doctype.name + '>' : '';
+                            file.model.setValue(doctype + doc.documentElement.outerHTML);
+                        }
+                        return;
+                    }
+                    const replacements = [];
+                    forEachReference(id, (reference, baseHref, index, match, attributeName) => {
+                        const language = getReferenceLanguage(id, reference, attributeName);
+                        const pathOnly = reference.split(/[?#]/, 1)[0];
+                        if (getAssetFileId(pathOnly, language, baseHref, id) === oldName) {
+                            const newRef = reference.replace(pathOnly, getRelativeVfsPath(id, newName, baseHref));
+                            replacements.push({ index, length: match.length, value: match.replace(reference, newRef) });
+                        }
+                    });
+                    replacements.reverse().forEach(replacement => {
+                        content = content.slice(0, replacement.index) + replacement.value +
+                            content.slice(replacement.index + replacement.length);
+                    });
+                    if (content !== getCurrentContent(file)) file.model.setValue(content);
+                });
+            }
+
+            function inlineCssImports(content, fileId, stack = new Set()) {
+                if (stack.has(fileId)) return '';
+                const nextStack = new Set(stack);
+                nextStack.add(fileId);
+                return content.replace(/@import\s+(?:["']([^"']+)["']|url\((["']?)([^"')]+)\2\))\s*([^;]*);?/gi, (match, quotedPath, _, urlPath, modifiers) => {
+                    const path = quotedPath || urlPath;
+                    const dependency = getAssetFileId(path, 'css', './', fileId, true);
+                    if (!dependency) return match;
+                    let imported = inlineCssImports(getCurrentContent(files[dependency]), dependency, nextStack);
+                    const qualifier = (modifiers || '').trim();
+                    const layerMatch = qualifier.match(/\blayer(?:\(([^)]*)\))?/i);
+                    const supportsMatch = qualifier.match(/\bsupports\(([^)]*)\)/i);
+                    const media = qualifier
+                        .replace(layerMatch?.[0] || '', '')
+                        .replace(supportsMatch?.[0] || '', '')
+                        .trim();
+                    if (media) imported = `@media ${media} {${imported}}`;
+                    if (supportsMatch) imported = `@supports ${supportsMatch[1]} {${imported}}`;
+                    if (layerMatch) imported = `@layer${layerMatch[1] ? ' ' + layerMatch[1].trim() : ''} {${imported}}`;
+                    return imported;
+                });
+            }
+
+            function inlineReferencedAssets(doc, language, tagName, attributeName, baseHref, sourceFileId) {
+                const referenced = new Set();
+                doc.querySelectorAll(`${tagName}[${attributeName}]`).forEach(node => {
+                    const reference = node.getAttribute(attributeName);
+                    const fileId = getAssetFileId(reference, language, baseHref, sourceFileId, true);
+                    if (!fileId) return;
+                    if (referenced.has(fileId)) {
+                        node.remove();
+                        return;
+                    }
+                    referenced.add(fileId);
+                    if (language === 'javascript' && node.getAttribute('type') === 'module') {
+                        const bundle = createModuleBundle(fileId);
+                        if (bundle) {
+                            const replacement = document.createElement('script');
+                            replacement.textContent = bundle;
+                            Array.from(node.attributes).forEach(attribute => {
+                                if (attribute.name !== attributeName && attribute.name !== 'type') {
+                                    replacement.setAttribute(attribute.name, attribute.value);
+                                }
+                            });
+                            node.replaceWith(replacement);
+                        }
+                        return;
+                    }
+                    const replacement = document.createElement(language === 'css' ? 'style' : 'script');
+                    let content = getCurrentContent(files[fileId]);
+                    if (language === 'css') {
+                        content = inlineCssImports(content, fileId);
+                    }
+                    replacement.textContent = content;
+                    Array.from(node.attributes).forEach(attribute => {
+                        if (attribute.name !== attributeName) replacement.setAttribute(attribute.name, attribute.value);
+                    });
+                    node.replaceWith(replacement);
+                });
+                return referenced;
+            }
+
+            function createModuleBundle(entryFileId) {
+                if (!files[entryFileId]) return '';
+                const modules = new Map();
+                const visit = fileId => {
+                    if (modules.has(fileId) || !files[fileId]) return;
+                    const content = getCurrentContent(files[fileId]);
+                    modules.set(fileId, content);
+                    getLocalModuleSpecifiers(content, fileId).forEach(specifier => {
+                        const dependency = getAssetFileId(specifier, 'javascript', './', fileId);
+                        if (dependency) visit(dependency);
+                    });
+                };
+                visit(entryFileId);
+                const unsupported = [...modules.entries()].flatMap(([fileId, content]) =>
+                    getModuleSpecifiers(content).filter(specifier => !getAssetFileId(specifier, 'javascript', './', fileId))
+                        .filter(specifier => isLocalVfsReference(specifier))
+                        .map(specifier => `${fileId}: ${specifier}`));
+                if (unsupported.length) {
+                    addConsoleEntry('error', 'Local module tidak ditemukan: ' + unsupported.join(', '));
+                    return '';
+                }
+                return createBundleSource(modules, entryFileId);
+            }
+
+            function transformModuleSource(content, fileId, baseHref = './') {
+                const imports = [];
+                const exportedDeclarations = [];
+                const reexports = [];
+                content = content.replace(/import\s+([\s\S]*?)\s+from\s+["']([^"']+)["']\s*;?/g, (match, clause, specifier) => {
+                    const dependency = getAssetFileId(specifier, 'javascript', baseHref, fileId);
+                    if (!dependency) return match;
+                    imports.push({ clause: clause.trim(), dependency });
+                    return '';
+                });
+                content = content.replace(/import\s+["']([^"']+)["']\s*;?/g, (match, specifier) => {
+                    const dependency = getAssetFileId(specifier, 'javascript', baseHref, fileId);
+                    return dependency ? `__require(${JSON.stringify(dependency)});` : match;
+                });
+                content = content.replace(/export\s*\{([^}]+)\}\s*from\s*["']([^"']+)["']\s*;?/g, (match, names, specifier) => {
+                    const dependency = getAssetFileId(specifier, 'javascript', baseHref, fileId);
+                    if (!dependency) return match;
+                    reexports.push({ names, dependency });
+                    return '';
+                });
+                content = content.replace(/export\s*\*\s*from\s*["']([^"']+)["']\s*;?/g, (match, specifier) => {
+                    const dependency = getAssetFileId(specifier, 'javascript', baseHref, fileId);
+                    if (!dependency) return match;
+                    reexports.push({ dependency, all: true });
+                    return '';
+                });
+                const prelude = imports.map(({ clause, dependency }) => {
+                    const required = `__require(${JSON.stringify(dependency)})`;
+                    if (clause.startsWith('* as ')) return `const ${clause.slice(5).trim()} = ${required};`;
+                    const parts = clause.split(/,(.+)/s).map(part => part.trim()).filter(Boolean);
+                    const lines = [];
+                    parts.forEach(part => {
+                        if (part.startsWith('{') && part.endsWith('}')) {
+                            part.slice(1, -1).split(',').map(item => item.trim()).filter(Boolean).forEach(item => {
+                                const [remote, local] = item.split(/\s+as\s+/);
+                                lines.push(`const ${local || remote} = ${required}.${remote};`);
+                            });
+                        } else {
+                            lines.push(`const ${part} = ${required}.default;`);
+                        }
+                    });
+                    return lines.join('\n');
+                }).join('\n');
+                content = content.replace(/export\s+default\s+/g, '__exports.default = ');
+                [...content.matchAll(/export\s+(?:const|let|var|function|class)\s+([A-Za-z_$][\w$]*)/g)].forEach(match => exportedDeclarations.push(match[1]));
+                content = content.replace(/export\s+(const|let|var)\s+([A-Za-z_$][\w$]*)/g, '$1 $2');
+                content = content.replace(/export\s+(async\s+)?function\s+([A-Za-z_$][\w$]*)/g, '$1function $2');
+                content = content.replace(/export\s+class\s+([A-Za-z_$][\w$]*)/g, 'class $1');
+                const exportedNames = [];
+                content = content.replace(/export\s*\{([^}]+)\}\s*;?/g, (match, names) => {
+                    names.split(',').map(item => item.trim()).filter(Boolean).forEach(item => {
+                        const [local, exported] = item.split(/\s+as\s+/);
+                        exportedNames.push(`__exports.${exported || local} = ${local};`);
+                    });
+                    return '';
+                });
+                content = content.replace(/\bimport\(\s*["']([^"']+)["']\s*\)/g, (match, specifier) => {
+                    const dependency = getAssetFileId(specifier, 'javascript', baseHref, fileId);
+                    return dependency ? `Promise.resolve(__require(${JSON.stringify(dependency)}))` : match;
+                });
+                const exportAssignments = [...new Set(exportedDeclarations)].map(name => `__exports.${name} = ${name};`);
+                const reexportAssignments = reexports.map(reexport => {
+                    const required = `__require(${JSON.stringify(reexport.dependency)})`;
+                    if (reexport.all) return `Object.assign(__exports, ${required});`;
+                    return reexport.names.split(',').map(item => {
+                        const [remote, local] = item.trim().split(/\s+as\s+/);
+                        return `__exports.${local || remote} = ${required}.${remote};`;
+                    }).join('\n');
+                });
+                return `${prelude}\n${content}\n${exportedNames.join('\n')}\n${exportAssignments.join('\n')}\n${reexportAssignments.join('\n')}`;
+            }
+
+            function createBundleSource(modules, entryFileId, entryBaseHref = './') {
+                const unsupported = [...modules.entries()].flatMap(([fileId, content]) =>
+                    getModuleSpecifiers(content).filter(specifier => !getAssetFileId(specifier, 'javascript', './', fileId))
+                        .filter(specifier => isLocalVfsReference(specifier))
+                        .map(specifier => `${fileId}: ${specifier}`));
+                if (unsupported.length) {
+                    addConsoleEntry('error', 'Local module tidak ditemukan: ' + unsupported.join(', '));
+                    return '';
+                }
+                const factories = [...modules.entries()].map(([fileId, content]) =>
+                    `${JSON.stringify(fileId)}:(function(__exports,__require){\n${transformModuleSource(content, fileId, fileId === entryFileId ? entryBaseHref : './')}\n})`).join(',\n');
+                return `(function(){const __modules={${factories}};const __cache={};const __require=id=>{if(__cache[id])return __cache[id];const __exports={};__cache[id]=__exports;const __factory=__modules[id];if(!__factory)throw new Error('Module not found: '+id);__factory(__exports,__require);return __exports;};__require(${JSON.stringify(entryFileId)});})();`;
+            }
+
+            function rewriteInlineModuleScripts(doc, baseHref, sourceFileId) {
+                doc.querySelectorAll('script[type="module"]:not([src])').forEach(node => {
+                    const inlineId = `__inline__:${sourceFileId}`;
+                    const modules = new Map([[inlineId, node.textContent]]);
+                    const visit = fileId => {
+                        if (modules.has(fileId) || !files[fileId]) return;
+                        const content = getCurrentContent(files[fileId]);
+                        modules.set(fileId, content);
+                        getModuleSpecifiers(content).forEach(specifier => {
+                            const dependency = getAssetFileId(specifier, 'javascript', './', fileId);
+                            if (dependency) visit(dependency);
+                        });
+                    };
+                    getLocalModuleSpecifiers(node.textContent, sourceFileId).forEach(specifier => {
+                        const dependency = getAssetFileId(specifier, 'javascript', baseHref, sourceFileId);
+                        if (dependency) visit(dependency);
+                    });
+                    node.textContent = createBundleSource(modules, inlineId);
+                    node.removeAttribute('type');
+                });
+            }
+
+            function buildPreview() {
+                syncAllFileState();
+                const project = getPreviewProject();
+                const html = project.html;
+                previewSessionToken = window.crypto && typeof window.crypto.randomUUID === 'function' ?
+                    window.crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
+
+                const dependencyGraph = getDependencyGraph();
+                const reachable = new Set();
+                const collectReachable = fileId => {
+                    if (!fileId || reachable.has(fileId)) return;
+                    reachable.add(fileId);
+                    (dependencyGraph.get(fileId) || new Set()).forEach(collectReachable);
+                };
+                collectReachable(project.entrypoint);
+                const reachableCss = project.css.filter(id => reachable.has(id));
+                const reachableJs = project.javascript.filter(id => reachable.has(id));
+
+                let cdnLinks = '';
+                cdnUrls.forEach(url => {
+                    const ext = getExtFromUrl(url);
+                    const safeUrl = escapeForAttribute(url);
+                    if (ext === 'css') cdnLinks += `<link rel="stylesheet" href="${safeUrl}" />\n`;
+                    else cdnLinks += `<script src="${safeUrl}"><\/script>\n`;
+                });
+
+                // Interceptor — diletakkan sebelum user JS
+                const intercept = `
+                (function(){
+                    const send=(lvl,args)=>{
+                        const msg=args.map(a=>{
+                            if(typeof a==='object'){
+                                try { return JSON.stringify(a); } catch(_){ return '[Circular]'; }
+                            }
+                            return String(a);
+                        }).join(' ');
+                        window.parent.postMessage({type:'console',token:'${previewSessionToken}',level:lvl,message:msg},'*');
+                    };
+                    ['log','error','warn','info'].forEach(m=>{
+                        const orig=console[m];
+                        console[m]=function(...args){ orig.apply(console,args); send(m,args); };
+                    });
+                    window.onerror=function(msg,src,line,col,err){
+                        window.parent.postMessage({type:'console',token:'${previewSessionToken}',level:'error',message:'Uncaught: '+msg+' (at '+src+':'+line+')'},'*');
+                        return false;
+                    };
+                    window.addEventListener('unhandledrejection',e=>{
+                        window.parent.postMessage({type:'console',token:'${previewSessionToken}',level:'error',message:'Promise rejection: '+e.reason},'*');
+                    });
+                })();
+                `;
+
+                let doc;
+                const isFull = isFullDocument(html);
+
+                if (isFull) {
+                    const parsedDocument = new DOMParser().parseFromString(html, 'text/html');
+                    const baseHref = parsedDocument.querySelector('base[href]')?.getAttribute('href') || './';
+                    const referencedCss = inlineReferencedAssets(parsedDocument, 'css', 'link[rel~="stylesheet"]', 'href', baseHref, project.entrypoint);
+                    const referencedJs = inlineReferencedAssets(parsedDocument, 'javascript', 'script', 'src', baseHref, project.entrypoint);
+                    rewriteInlineModuleScripts(parsedDocument, baseHref, project.entrypoint);
+                    const extraCss = reachableCss.filter(id => !referencedCss.has(id))
+                        .map(id => `<style data-vfs-file="${id}">${escapeForHtml(getCurrentContent(files[id]))}</style>`).join('\n');
+                    const extraJs = reachableJs.filter(id => !referencedJs.has(id))
+                        .filter(id => !/\b(?:import|export)\b/.test(getCurrentContent(files[id])))
+                        .map(id => `<script data-vfs-file="${id}">${escapeForHtml(getCurrentContent(files[id]))}<\/script>`).join('\n');
+                    const headAssets = (extraCss ? extraCss + '\n' : '') + cdnLinks;
+                    const interceptorScript = `<script>${intercept}<\/script>`;
+                    const head = parsedDocument.head || parsedDocument.documentElement.insertBefore(parsedDocument.createElement('head'), parsedDocument.body);
+                    head.insertAdjacentHTML('afterbegin', interceptorScript + headAssets);
+                    if (extraJs) {
+                        const body = parsedDocument.body || parsedDocument.documentElement.appendChild(parsedDocument.createElement('body'));
+                        body.insertAdjacentHTML('beforeend', extraJs);
+                    }
+                    doc = '<!DOCTYPE html>' + parsedDocument.documentElement.outerHTML;
+                } else {
+                    const parsedDocument = new DOMParser().parseFromString(html, 'text/html');
+                    const baseHref = parsedDocument.querySelector('base[href]')?.getAttribute('href') || './';
+                    const referencedCss = inlineReferencedAssets(parsedDocument, 'css', 'link[rel~="stylesheet"]', 'href', baseHref, project.entrypoint);
+                    const referencedJs = inlineReferencedAssets(parsedDocument, 'javascript', 'script', 'src', baseHref, project.entrypoint);
+                    rewriteInlineModuleScripts(parsedDocument, baseHref, project.entrypoint);
+                    const extraCss = reachableCss.filter(id => !referencedCss.has(id))
+                        .map(id => `<style data-vfs-file="${id}">${escapeForHtml(getCurrentContent(files[id]))}</style>`).join('\n');
+                    const extraJs = reachableJs.filter(id => !referencedJs.has(id))
+                        .filter(id => !/\b(?:import|export)\b/.test(getCurrentContent(files[id])))
+                        .map(id => `<script data-vfs-file="${id}">${escapeForHtml(getCurrentContent(files[id]))}<\/script>`).join('\n');
+                    doc =
+                        `<!DOCTYPE html><html><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1.0" /><script>${intercept}<\/script>${cdnLinks}${extraCss}</head><body>${parsedDocument.body.innerHTML}${extraJs}</body></html>`;
+                }
+
+                previewIframe.srcdoc = doc;
+                setPreviewStatus('live');
+            }
+
+            // ============================================================
+            //  DOWNLOAD PROJECT (ZIP)
+            // ============================================================
+            function downloadProject() {
+                if (typeof JSZip === 'undefined') {
+                    showToast('⚠️ Library JSZip tidak dimuat');
+                    return;
+                }
+                syncAllFileState();
+                const brokenReferences = findBrokenLocalReferences();
+                if (brokenReferences.length > 0) {
+                    showToast('⚠️ ZIP dibatalkan: referensi lokal tidak valid');
+                    console.warn('Broken local references:', brokenReferences);
+                    return;
+                }
+                const zip = new JSZip();
+                let hasHtml = false;
+                Object.keys(files).forEach(id => {
+                    const f = files[id];
+                    const content = f.model ? f.model.getValue() : f.content;
+                    zip.file(id, content);
+                    if (f.language === 'html') hasHtml = true;
+                });
+                if (!hasHtml) {
+                    zip.file('index.html', '<h1>Project</h1>');
+                }
+                zip.generateAsync({ type: 'blob' }).then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `codeplayground-project-${Date.now()}.zip`;
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    setTimeout(() => URL.revokeObjectURL(url), 1000);
+                    showToast('📦 Project diunduh sebagai ZIP');
+                }).catch(err => {
+                    console.error('Zip error:', err);
+                    showToast('⚠️ Gagal membuat ZIP');
+                });
+            }
+
+            // ============================================================
+            //  PREVIEW STATUS
+            // ============================================================
+            function setPreviewStatus(state) {
+                if (state === 'running') {
+                    previewStatus.textContent = '● running';
+                    previewStatus.className = 'preview-status running';
+                } else {
+                    previewStatus.textContent = '● live';
+                    previewStatus.className = 'preview-status';
+                }
+            }
+
+            function scheduleUpdate() {
+                if (!settings.autoRun) return;
+                if (updateTimer) clearTimeout(updateTimer);
+                updateTimer = setTimeout(() => { buildPreview();
+                    updateTimer = null; }, settings.refreshDelay);
+            }
+
+            // ============================================================
+            //  CONSOLE — dengan origin validation yang baik
+            // ============================================================
+            function addConsoleEntry(level, message) {
+                consoleEntries.push({ level, message });
+                if (consoleEntries.length > 300) {
+                    consoleEntries.shift();
+                    if (consoleBody.firstElementChild) consoleBody.firstElementChild.remove();
+                }
+                if (consoleEntries.length === 1) consoleBody.innerHTML = '';
+                appendConsoleEntry(level, message);
+                if (!consoleOpen) openConsole();
+            }
+
+            function appendConsoleEntry(level, message) {
+                const div = document.createElement('div');
+                div.className = 'log-entry';
+                const lvl = document.createElement('span');
+                lvl.className = 'log-level';
+                if (level === 'error') lvl.classList.add('error');
+                else if (level === 'warn') lvl.classList.add('warn');
+                else if (level === 'info') lvl.classList.add('info');
+                lvl.textContent = level.toUpperCase();
+                const msg = document.createElement('span');
+                msg.className = 'log-message';
+                msg.textContent = message;
+                div.appendChild(lvl);
+                div.appendChild(msg);
+                consoleBody.appendChild(div);
+                consoleBody.scrollTop = consoleBody.scrollHeight;
+            }
+
+            function renderConsole() {
+                consoleBody.innerHTML = '';
+                if (consoleEntries.length === 0) {
+                    consoleBody.innerHTML = '<div class="log-empty">⟡ Konsol siap</div>';
+                    return;
+                }
+                consoleEntries.forEach(e => {
+                    const div = document.createElement('div');
+                    div.className = 'log-entry';
+                    const lvl = document.createElement('span');
+                    lvl.className = 'log-level';
+                    if (e.level === 'error') lvl.classList.add('error');
+                    else if (e.level === 'warn') lvl.classList.add('warn');
+                    else if (e.level === 'info') lvl.classList.add('info');
+                    lvl.textContent = e.level.toUpperCase();
+                    const msg = document.createElement('span');
+                    msg.className = 'log-message';
+                    msg.textContent = e.message;
+                    div.appendChild(lvl);
+                    div.appendChild(msg);
+                    consoleBody.appendChild(div);
+                });
+                consoleBody.scrollTop = consoleBody.scrollHeight;
+            }
+
+            function clearConsole() { consoleEntries = [];
+                renderConsole(); }
+
+            function openConsole() {
+                consoleOpen = true;
+                consolePanel.classList.add('open');
+                toggleConsoleBtn.innerHTML = '<i class="fas fa-chevron-down"></i>';
+            }
+
+            function closeConsole() {
+                consoleOpen = false;
+                consolePanel.classList.remove('open');
+                toggleConsoleBtn.innerHTML = '<i class="fas fa-chevron-up"></i>';
+            }
+
+            function toggleConsole() { consoleOpen ? closeConsole() : openConsole(); }
+
+            window.addEventListener('message', e => {
+                const data = e.data;
+                if (e.source !== previewIframe.contentWindow || !data || data.type !== 'console' ||
+                    data.token !== previewSessionToken || !['log', 'error', 'warn', 'info'].includes(data.level) ||
+                    typeof data.message !== 'string') return;
+                addConsoleEntry(data.level, data.message);
+            });
+
+            // ============================================================
+            //  FILES UI
+            // ============================================================
+            function renderFileList() {
+                fileList.innerHTML = '';
+                const order = Object.keys(files).sort((a, b) => {
+                    const ia = fileOrder.indexOf(a),
+                        ib = fileOrder.indexOf(b);
+                    if (ia !== -1 && ib !== -1) return ia - ib;
+                    if (ia !== -1) return -1;
+                    if (ib !== -1) return 1;
+                    return a.localeCompare(b);
+                });
+                order.forEach(id => {
+                    const f = files[id];
+                    const div = document.createElement('div');
+                    div.className = 'file-item' + (id === activeFileId ? ' active' : '');
+                    div.dataset.fileId = id;
+                    div.tabIndex = 0;
+                    div.setAttribute('role', 'button');
+                    div.setAttribute('aria-label', 'Open ' + id);
+                    const icon = document.createElement('span');
+                    icon.className = 'file-icon';
+                    if (f.language === 'html') icon.innerHTML = '<i class="fab fa-html5" style="color:#e34f26;"></i>';
+                    else if (f.language === 'css') icon.innerHTML = '<i class="fab fa-css3-alt" style="color:#2965f1;"></i>';
+                    else if (f.language === 'javascript') icon.innerHTML =
+                        '<i class="fab fa-js" style="color:#f7df1e;"></i>';
+                    else icon.innerHTML = '<i class="fas fa-file"></i>';
+                    const name = document.createElement('span');
+                    name.className = 'file-name';
+                    name.textContent = id + (f.dirty ? ' ●' : '');
+                    const actions = document.createElement('span');
+                    actions.className = 'file-actions';
+                    const del = document.createElement('button');
+                    del.className = 'delete-btn';
+                    del.innerHTML = '<i class="fas fa-times"></i>';
+                    del.title = 'Hapus file';
+                    del.setAttribute('aria-label', 'Delete ' + id);
+                    del.onclick = (e) => { e.stopPropagation();
+                        deleteFile(id); };
+                    actions.appendChild(del);
+                    div.appendChild(icon);
+                    div.appendChild(name);
+                    div.appendChild(actions);
+                    div.onclick = () => switchFile(id);
+                    div.onkeydown = event => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            switchFile(id);
+                        }
+                    };
+                    fileList.appendChild(div);
+                });
+            }
+
+            function renderTabs() {
+                editorTabsBar.innerHTML = '';
+                const order = openFileIds.filter(id => files[id]);
+                order.sort((a, b) => {
+                    const ia = fileOrder.indexOf(a),
+                        ib = fileOrder.indexOf(b);
+                    if (ia !== -1 && ib !== -1) return ia - ib;
+                    if (ia !== -1) return -1;
+                    if (ib !== -1) return 1;
+                    return a.localeCompare(b);
+                });
+                order.forEach(id => {
+                    const f = files[id];
+                    const btn = document.createElement('div');
+                    btn.className = 'editor-tab-btn' + (id === activeFileId ? ' active' : '') + (f.dirty ? ' dirty' :
+                    '');
+                    btn.dataset.file = id;
+                    btn.tabIndex = 0;
+                    btn.setAttribute('role', 'tab');
+                    btn.setAttribute('aria-selected', id === activeFileId ? 'true' : 'false');
+                    const label = document.createElement('span');
+                    label.textContent = id;
+                    const dot = document.createElement('span');
+                    dot.className = 'dirty-dot';
+                    const close = document.createElement('button');
+                    close.type = 'button';
+                    close.className = 'close-tab';
+                    close.innerHTML = '&times;';
+                    close.setAttribute('aria-label', 'Close ' + id);
+                    close.onclick = (e) => { e.stopPropagation();
+                        closeFileTab(id); };
+                    btn.appendChild(label);
+                    btn.appendChild(dot);
+                    btn.appendChild(close);
+                    btn.onclick = () => switchFile(id);
+                    btn.onkeydown = event => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            switchFile(id);
+                        }
+                    };
+                    editorTabsBar.appendChild(btn);
+                });
+            }
+
+            function renderFileUI() {
+                renderFileList();
+                renderTabs();
+            }
+
+            function scheduleFileUIRender() {
+                if (uiRenderFrame) return;
+                uiRenderFrame = requestAnimationFrame(() => {
+                    uiRenderFrame = 0;
+                    renderFileUI();
+                });
+            }
+
+            // ============================================================
+            //  CORE: SWITCH FILE
+            // ============================================================
+            function switchFile(id) {
+                if (!files[id]) return;
+                syncAllFileState();
+                if (!openFileIds.includes(id)) openFileIds.push(id);
+                activeFileId = id;
+                const f = files[id];
+                const lang = f.language;
+                const keyMap = { html: 'html', css: 'css', javascript: 'js' };
+                const editorKey = keyMap[lang] || 'html';
+
+                const editor = editors[editorKey];
+                if (editor) {
+                    editor.setModel(f.model);
+                    editor.focus();
+                }
+
+                const slotMap = { html: 'htmlEditorSlot', css: 'cssEditorSlot', js: 'jsEditorSlot' };
+                Object.keys(slotMap).forEach(k => {
+                    document.getElementById(slotMap[k]).classList.toggle('active', k === editorKey);
+                });
+
+                renderFileUI();
+            }
+
+            function closeFileTab(id) {
+                const file = files[id];
+                if (!file) return;
+                syncFileState(file);
+                if (isFileDirty(file) && !confirm(`Tutup tab "${id}"? Perubahan belum disimpan akan tetap ada di Explorer.`)) return;
+                const index = openFileIds.indexOf(id);
+                const nextOpenFileIds = openFileIds.filter(fileId => fileId !== id);
+                const nextActiveFileId = activeFileId === id ?
+                    (nextOpenFileIds[index] || nextOpenFileIds[index - 1] || nextOpenFileIds[0] || '') : activeFileId;
+                if (!saveData(files, nextActiveFileId, false, nextOpenFileIds)) return;
+                openFileIds = nextOpenFileIds;
+                activeFileId = nextActiveFileId;
+                if (activeFileId) {
+                    switchFile(activeFileId);
+                } else {
+                    ['html', 'css', 'js'].forEach(key => editors[key]?.setModel(null));
+                    document.querySelectorAll('.editor-slot').forEach(slot => slot.classList.remove('active'));
+                    renderFileUI();
+                }
+            }
+
+            // ============================================================
+            //  FILE OPERATIONS
+            // ============================================================
+            function createNewFile() {
+                const requestedName = prompt('Nama file (contoh: about.html, utils.js):', 'newfile.js');
+                if (!requestedName) return;
+                const name = normalizeFileName(requestedName);
+                if (!validateFileName(name)) { showToast('⚠️ Nama file tidak valid'); return; }
+                if (files[name]) { showToast('⚠️ File sudah ada'); return; }
+                let lang = 'javascript';
+                const ext = name.split('.').pop().toLowerCase();
+                if (ext === 'html') lang = 'html';
+                else if (ext === 'css') lang = 'css';
+                else if (ext === 'js') lang = 'javascript';
+                else { showToast('⚠️ Ekstensi tidak didukung (.html, .css, .js)'); return; }
+
+                const model = monaco.editor.createModel('', lang);
+                const newFile = { content: '', committedContent: '', language: lang, dirty: false, model: model };
+                const nextFiles = { ...files, [name]: newFile };
+                const nextOpenFileIds = [...openFileIds, name];
+                if (!saveData(nextFiles, name, false, nextOpenFileIds)) {
+                    model.dispose();
+                    return;
+                }
+                files[name] = newFile;
+                openFileIds.push(name);
+                attachModelListener(model, name);
+                activeFileId = name;
+                renderFileList();
+                renderTabs();
+                switchFile(name);
+                showToast('✅ File dibuat: ' + name);
+            }
+
+            function deleteFile(id) {
+                if (Object.keys(files).length <= 1) { showToast('⚠️ Tidak bisa menghapus file terakhir'); return; }
+                syncFileState(files[id]);
+                const warning = isFileDirty(files[id]) ? ' Perubahan belum disimpan akan hilang.' : '';
+                const references = findReferencesToFile(id);
+                const referenceWarning = references.length ? ` Direferensikan oleh: ${references.join(', ')}.` : '';
+                if (!confirm(`Hapus file "${id}"?${warning}${referenceWarning}`)) return;
+                const nextFiles = { ...files };
+                delete nextFiles[id];
+                const nextOpenFileIds = openFileIds.filter(fileId => fileId !== id);
+                const nextActiveFileId = activeFileId === id ?
+                    (nextOpenFileIds[0] || Object.keys(nextFiles)[0]) : activeFileId;
+                if (!saveData(nextFiles, nextActiveFileId, false, nextOpenFileIds)) return;
+                if (files[id].model) {
+                    files[id].model.dispose();
+                }
+                if (files[id].modelListeners) {
+                    files[id].modelListeners.dispose();
+                }
+                delete files[id];
+                openFileIds = nextOpenFileIds;
+                if (activeFileId === id) {
+                    activeFileId = nextActiveFileId;
+                }
+                renderFileList();
+                renderTabs();
+                switchFile(activeFileId);
+                showToast('🗑️ File dihapus: ' + id);
+            }
+
+            function renameFile() {
+                const oldName = activeFileId;
+                const requestedName = prompt('Nama baru:', oldName);
+                const newName = requestedName ? normalizeFileName(requestedName) : '';
+                if (!newName || newName === oldName) return;
+                if (!validateFileName(newName)) { showToast('⚠️ Nama file tidak valid'); return; }
+                if (files[newName]) { showToast('⚠️ Nama sudah dipakai'); return; }
+                const ext = newName.split('.').pop().toLowerCase();
+                if (!['html', 'css', 'js'].includes(ext)) { showToast('⚠️ Ekstensi harus .html, .css, atau .js'); return; }
+                const oldExt = oldName.split('.').pop().toLowerCase();
+                if (oldExt !== ext) {
+                    showToast('⚠️ Rename tidak boleh mengubah jenis file');
+                    return;
+                }
+                const langMap = { html: 'html', css: 'css', js: 'javascript' };
+                const newLang = langMap[ext] || 'javascript';
+
+                const oldModel = files[oldName].model;
+                const oldContent = oldModel.getValue();
+                const oldCommittedContent = files[oldName].committedContent;
+                const oldLegacyDirty = files[oldName].legacyDirty === true;
+                const oldLanguage = files[oldName].language;
+                const oldModelListener = files[oldName].modelListeners;
+                const previousContents = Object.fromEntries(Object.keys(files).map(id => [id, getCurrentContent(files[id])]));
+
+                const newModel = monaco.editor.createModel(oldContent, newLang);
+
+                files[newName] = {
+                    content: oldContent,
+                    committedContent: oldCommittedContent,
+                    language: newLang,
+                    dirty: oldContent !== oldCommittedContent || oldLegacyDirty,
+                    legacyDirty: oldLegacyDirty,
+                    model: newModel
+                };
+                openFileIds = openFileIds.map(fileId => fileId === oldName ? newName : fileId);
+                attachModelListener(newModel, newName);
+                rewriteReferences(oldName, newName);
+                delete files[oldName];
+                activeFileId = newName;
+                if (!saveData()) {
+                    Object.keys(previousContents).forEach(id => {
+                        if (files[id] && getCurrentContent(files[id]) !== previousContents[id]) {
+                            files[id].model.setValue(previousContents[id]);
+                        }
+                    });
+                    if (getCurrentContent(oldModel) !== previousContents[oldName]) {
+                        oldModel.setValue(previousContents[oldName]);
+                    }
+                    if (files[newName].modelListeners) files[newName].modelListeners.dispose();
+                    files[newName].model.dispose();
+                    delete files[newName];
+                    files[oldName] = {
+                        content: previousContents[oldName],
+                        committedContent: oldCommittedContent,
+                        language: oldLanguage,
+                        dirty: previousContents[oldName] !== oldCommittedContent || oldLegacyDirty,
+                        legacyDirty: oldLegacyDirty,
+                        model: oldModel,
+                        modelListeners: null
+                    };
+                    openFileIds = openFileIds.map(fileId => fileId === newName ? oldName : fileId);
+                    attachModelListener(oldModel, oldName);
+                    activeFileId = oldName;
+                    return;
+                }
+                oldModel.dispose();
+                if (oldModelListener) oldModelListener.dispose();
+                renderFileList();
+                renderTabs();
+                switchFile(newName);
+                showToast('✏️ File diubah: ' + newName);
+            }
+
+            // ============================================================
+            //  MODEL LISTENER — lifecycle yang rapi
+            // ============================================================
+            function attachModelListener(model, fileId) {
+                // Dispose listener lama jika ada
+                if (files[fileId] && files[fileId].modelListeners) {
+                    try { files[fileId].modelListeners.dispose(); } catch (_) {}
+                }
+                const listener = model.onDidChangeContent(() => {
+                    const f = files[fileId];
+                    if (!f) return;
+                    const wasDirty = f.dirty;
+                    syncFileState(f);
+                    if (f.dirty !== wasDirty) {
+                        scheduleFileUIRender();
+                    }
+                    scheduleUpdate();
+                });
+                if (files[fileId]) {
+                    files[fileId].modelListeners = listener;
+                }
+            }
+
+            // ============================================================
+            //  DIRTY CHECK — fungsi yang benar
+            // ============================================================
+            function hasDirtyFiles() {
+                return Object.keys(files).some(id => isFileDirty(files[id]));
+            }
+
+            function syncContentFromModels() {
+                let changed = false;
+                Object.keys(files).forEach(id => {
+                    const f = files[id];
+                    if (f.model) {
+                        const newContent = f.model.getValue();
+                        if (f.content !== newContent) changed = true;
+                        syncFileState(f);
+                    }
+                });
+                return changed;
+            }
+
+            // ============================================================
+            //  SAVE ALL
+            // ============================================================
+            function saveAll(showToastMsg = true) {
+                const saved = commitAllFiles();
+                renderFileUI();
+                if (showToastMsg && saved) showToast('💾 Semua disimpan');
+                return saved;
+            }
+
+            // ============================================================
+            //  SILENT AUTO-SAVE — perbaikan
+            // ============================================================
+            function persistDrafts() {
+                if (!editors.html || document.hidden) return;
+                syncAllFileState();
+                saveData();
+                scheduleFileUIRender();
+            }
+
+            // ============================================================
+            //  RUN CODE — perbaikan deteksi dirty
+            // ============================================================
+            function runCode() {
+                syncAllFileState();
+                buildPreview();
+                setPreviewStatus('running');
+                if (previewStatusTimer) clearTimeout(previewStatusTimer);
+                previewStatusTimer = setTimeout(() => {
+                    setPreviewStatus('live');
+                    previewStatusTimer = null;
+                }, 300);
+                showToast(hasDirtyFiles() ? '▶️ Kode dijalankan (draft)' : '✅ Kode dijalankan');
+            }
+
+            // ============================================================
+            //  FORMAT (Monaco)
+            // ============================================================
+            function formatCode() {
+                const f = files[activeFileId];
+                if (!f) return;
+                const keyMap = { html: 'html', css: 'css', javascript: 'js' };
+                const editorKey = keyMap[f.language] || 'html';
+                const editor = editors[editorKey];
+                if (!editor) { showToast('⚠️ Editor tidak tersedia'); return; }
+                if (editor.getModel() !== f.model) editor.setModel(f.model);
+                const targetFileId = activeFileId;
+                const targetModel = f.model;
+                const action = editor.getAction('editor.action.formatDocument');
+                if (!action) { showToast('⚠️ Format tidak didukung untuk bahasa ini'); return; }
+                action.run().then(() => {
+                    if (activeFileId !== targetFileId || editor.getModel() !== targetModel) return;
+                    const newContent = targetModel.getValue();
+                    if (f.content !== newContent) {
+                        syncFileState(f);
+                        renderFileList();
+                        renderTabs();
+                        showToast('✨ Format diterapkan (Monaco)');
+                    } else {
+                        showToast('ℹ️ Tidak ada perubahan');
+                    }
+                }).catch(() => showToast('⚠️ Gagal format'));
+            }
+
+            // ============================================================
+            //  UPLOAD
+            // ============================================================
+            function uploadFile() { fileInput.click(); }
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const ext = file.name.split('.').pop().toLowerCase();
+                if (!['html', 'css', 'js'].includes(ext)) {
+                    showToast('⚠️ Format tidak didukung');
+                    fileInput.value = '';
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const content = ev.target.result;
+                    const name = normalizeFileName(file.name);
+                    if (!validateFileName(name)) {
+                        showToast('⚠️ Nama file tidak valid');
+                        fileInput.value = '';
+                        return;
+                    }
+                    let lang = 'javascript';
+                    if (ext === 'html') lang = 'html';
+                    else if (ext === 'css') lang = 'css';
+                    else if (ext === 'js') lang = 'javascript';
+
+                    const previousFile = files[name];
+                    if (previousFile) {
+                        if (!confirm(`File "${name}" sudah ada. Timpa?`)) {
+                            fileInput.value = '';
+                            return;
+                        }
+                    }
+
+                    const model = monaco.editor.createModel(content, lang);
+                    const uploadedFile = { content, committedContent: content, language: lang, dirty: false, model: model };
+                    const nextFiles = { ...files, [name]: uploadedFile };
+                    const nextOpenFileIds = openFileIds.includes(name) ? openFileIds : [...openFileIds, name];
+                    if (!saveData(nextFiles, name, false, nextOpenFileIds)) {
+                        model.dispose();
+                        fileInput.value = '';
+                        return;
+                    }
+                    if (previousFile?.modelListeners) previousFile.modelListeners.dispose();
+                    if (previousFile?.model) previousFile.model.dispose();
+                    files[name] = uploadedFile;
+                    if (!openFileIds.includes(name)) openFileIds.push(name);
+                    attachModelListener(model, name);
+                    activeFileId = name;
+                    renderFileList();
+                    renderTabs();
+                    switchFile(name);
+                    showToast(`📄 ${name} dimuat`);
+                    fileInput.value = '';
+                };
+                reader.readAsText(file);
+            });
+
+            // ============================================================
+            //  THEME
+            // ============================================================
+            function setTheme(mode) {
+                theme = mode;
+                document.documentElement.setAttribute('data-theme', mode);
+                const icon = themeBtn.querySelector('i');
+                icon.className = mode === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+                if (editors.html) {
+                    monaco.editor.setTheme(mode === 'dark' ? 'vs-dark' : 'vs');
+                }
+                qsa('.theme-selector button').forEach(b => b.classList.toggle('active', b.dataset.theme === mode));
+                try { localStorage.setItem(THEME_KEY, mode); } catch (_) {}
+                buildPreview();
+            }
+
+            // ============================================================
+            //  LAYOUT
+            // ============================================================
+            function toggleLayout() {
+                if (window.innerWidth <= 820) {
+                    showToast('Layout vertikal digunakan pada layar kecil');
+                    return;
+                }
+                layoutMode = layoutMode === 'horizontal' ? 'vertical' : 'horizontal';
+                mainPanel.classList.toggle('vertical', layoutMode === 'vertical');
+                const icon = layoutBtn.querySelector('i');
+                icon.className = layoutMode === 'horizontal' ? 'fas fa-arrows-alt-h' : 'fas fa-arrows-alt-v';
+                try { localStorage.setItem(LAYOUT_KEY, layoutMode); } catch (_) {}
+                setTimeout(() => {
+                    if (splitInstance) { try { splitInstance.destroy(); } catch (_) {} }
+                    splitInstance = null;
+                    document.querySelectorAll('.gutter').forEach(g => g.remove());
+                    initSplit();
+                    Object.values(editors).forEach(ed => ed && ed.layout());
+                }, 50);
+                showToast(layoutMode === 'horizontal' ? '↔️ Horizontal' : '↕️ Vertikal');
+            }
+
+            // ============================================================
+            //  SPLIT
+            // ============================================================
+            function initSplit() {
+                const isMobile = window.innerWidth <= 820;
+                if (isMobile) {
+                    if (splitInstance) { try { splitInstance.destroy(); } catch (_) {} }
+                    splitInstance = null;
+                    mainPanel.classList.add('vertical');
+                    layoutBtn.querySelector('i').className = 'fas fa-arrows-alt-v';
+                    layoutBtn.title = 'Layout vertikal (layar kecil)';
+                    return;
+                }
+                if (window.Split && document.getElementById('editorArea') && document.getElementById('previewArea')) {
+                    if (splitInstance) { try { splitInstance.destroy(); } catch (_) {} }
+                    const dir = layoutMode === 'horizontal' ? 'horizontal' : 'vertical';
+                    splitInstance = Split(['#editorArea', '#previewArea'], {
+                        sizes: [55, 45],
+                        minSize: [200, 150],
+                        gutterSize: 5,
+                        direction: dir,
+                        cursor: dir === 'horizontal' ? 'col-resize' : 'row-resize',
+                        onDragEnd: () => { Object.values(editors).forEach(ed => ed && ed.layout()); }
+                    });
+                    mainPanel.classList.toggle('vertical', layoutMode === 'vertical');
+                    layoutBtn.querySelector('i').className = layoutMode === 'horizontal' ? 'fas fa-arrows-alt-h' : 'fas fa-arrows-alt-v';
+                    layoutBtn.title = 'Rotasi layout';
+                }
+            }
+
+            // ============================================================
+            //  COMMAND PALETTE
+            // ============================================================
+            const commands = [
+                { id: 'run', label: 'Jalankan kode', icon: 'fa-play', shortcut: 'Ctrl+Enter', action: runCode },
+                { id: 'save', label: 'Simpan semua', icon: 'fa-save', shortcut: 'Ctrl+S', action: () => saveAll(true) },
+                { id: 'format', label: 'Format kode (Monaco)', icon: 'fa-magic', shortcut: '', action: formatCode },
+                { id: 'newfile', label: 'Buat file baru', icon: 'fa-plus', shortcut: '', action: createNewFile },
+                { id: 'rename', label: 'Ubah nama file', icon: 'fa-pen', shortcut: '', action: renameFile },
+                { id: 'toggleconsole', label: 'Toggle konsol', icon: 'fa-terminal', shortcut: '', action: toggleConsole },
+                { id: 'togglelayout', label: 'Rotasi layout', icon: 'fa-arrows-alt-h', shortcut: '', action: toggleLayout },
+                { id: 'settings', label: 'Buka pengaturan', icon: 'fa-cog', shortcut: '', action: () => openModal(settingsModal, fontSizeInput) },
+            ];
+
+            function openCmdPalette() {
+                cmdPalette.classList.toggle('open');
+                if (cmdPalette.classList.contains('open')) {
+                    cmdInput.value = '';
+                    cmdInput.focus();
+                    renderCmdList('');
+                }
+            }
+
+            function renderCmdList(filter) {
+                cmdList.innerHTML = '';
+                const items = commands.filter(c => c.label.toLowerCase().includes(filter.toLowerCase()));
+                items.forEach(c => {
+                    const div = document.createElement('button');
+                    div.type = 'button';
+                    div.className = 'cmd-item';
+                    div.innerHTML =
+                        `<i class="fas ${c.icon}"></i> ${c.label}${c.shortcut ? '<span class="shortcut">'+c.shortcut+'</span>' : ''}`;
+                    div.onclick = () => { cmdPalette.classList.remove('open');
+                        c.action(); };
+                    cmdList.appendChild(div);
+                });
+            }
+
+            cmdInput.addEventListener('input', () => renderCmdList(cmdInput.value));
+            cmdInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') cmdPalette.classList.remove('open');
+                if (e.key === 'Enter') {
+                    const first = cmdList.querySelector('.cmd-item');
+                    if (first) { cmdPalette.classList.remove('open');
+                        first.click(); }
+                }
+            });
+
+            // ============================================================
+            //  TOAST
+            // ============================================================
+            function showToast(msg) {
+                if (toastTimer) { clearTimeout(toastTimer);
+                    toast.classList.remove('show'); }
+                toast.textContent = msg;
+                toast.classList.add('show');
+                toastTimer = setTimeout(() => { toast.classList.remove('show');
+                    toastTimer = null; }, 2000);
+            }
+
+            function openModal(modal, initialFocus) {
+                modalTrigger = document.activeElement;
+                modal.classList.add('open');
+                requestAnimationFrame(() => initialFocus && initialFocus.focus());
+            }
+
+            function closeModal(modal) {
+                modal.classList.remove('open');
+                if (modalTrigger && typeof modalTrigger.focus === 'function') modalTrigger.focus();
+                modalTrigger = null;
+            }
+
+            // ============================================================
+            //  MONACO INIT
+            // ============================================================
+            function initMonaco() {
+                return new Promise((resolve, reject) => {
+                    if (typeof monaco !== 'undefined') {
+                        resolve(createEditors());
+                        return;
+                    }
+                    require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs' } });
+                    let settled = false;
+                    const timeout = setTimeout(() => {
+                        if (!settled) {
+                            settled = true;
+                            reject(new Error('Monaco load timeout'));
+                        }
+                    }, 15000);
+                    require(['vs/editor/editor.main'], () => {
+                        if (settled) return;
+                        settled = true;
+                        clearTimeout(timeout);
+                        resolve(createEditors());
+                    }, error => {
+                        if (settled) return;
+                        settled = true;
+                        clearTimeout(timeout);
+                        reject(error instanceof Error ? error : new Error('Monaco load failed'));
+                    });
+                });
+            }
+
+            function createEditors() {
+                const commonOpts = {
+                    automaticLayout: true,
+                    theme: theme === 'dark' ? 'vs-dark' : 'vs',
+                    fontSize: settings.fontSize,
+                    fontFamily: "'Fira Code', 'JetBrains Mono', monospace",
+                    minimap: { enabled: settings.minimap },
+                    lineNumbers: settings.lineNumbers,
+                    tabSize: settings.tabSize,
+                    wordWrap: settings.wordWrap,
+                    bracketPairColorization: { enabled: true },
+                    autoClosingBrackets: 'always',
+                    autoClosingQuotes: 'always',
+                    formatOnType: true
+                };
+
+                const htmlEditor = monaco.editor.create(document.getElementById('htmlEditorSlot'), {
+                    model: null,
+                    ...commonOpts
+                });
+                const cssEditor = monaco.editor.create(document.getElementById('cssEditorSlot'), {
+                    model: null,
+                    ...commonOpts
+                });
+                const jsEditor = monaco.editor.create(document.getElementById('jsEditorSlot'), {
+                    model: null,
+                    ...commonOpts
+                });
+
+                editors = { html: htmlEditor, css: cssEditor, js: jsEditor };
+                return editors;
+            }
+
+            // ============================================================
+            //  INIT VFS
+            // ============================================================
+            function initVFS() {
+                const saved = loadData();
+                if (saved && saved.files && Object.keys(saved.files).length > 0) {
+                    files = {};
+                    Object.keys(saved.files).forEach(id => {
+                        const f = saved.files[id];
+                        const lang = f.language || 'javascript';
+                        const model = monaco.editor.createModel(f.content || '', lang);
+                        files[id] = {
+                            content: f.content || '',
+                            committedContent: typeof f.committedContent === 'string' ? f.committedContent : (f.content || ''),
+                            language: lang,
+                            dirty: false,
+                            legacyDirty: f.legacyDirty === true || (saved.migratedFromVersion < 3 && f.dirty === true),
+                            model: model,
+                            modelListeners: null
+                        };
+                        syncFileState(files[id]);
+                        attachModelListener(model, id);
+                    });
+                    const savedOpenFileIds = Array.isArray(saved.openFileIds) ?
+                        saved.openFileIds.filter(id => files[id]) : Object.keys(files);
+                    openFileIds = savedOpenFileIds;
+                    activeFileId = Array.isArray(saved.openFileIds) ?
+                        (savedOpenFileIds.includes(saved.activeFileId) ? saved.activeFileId : (savedOpenFileIds[0] || '')) :
+                        (saved.activeFileId || Object.keys(files)[0]);
+                } else {
+                    const htmlModel = monaco.editor.createModel(DEFAULT_HTML, 'html');
+                    const cssModel = monaco.editor.createModel(DEFAULT_CSS, 'css');
+                    const jsModel = monaco.editor.createModel(DEFAULT_JS, 'javascript');
+
+                    files = {
+                        'index.html': { content: DEFAULT_HTML, committedContent: DEFAULT_HTML, language: 'html', dirty: false, model: htmlModel,
+                            modelListeners: null },
+                        'style.css': { content: DEFAULT_CSS, committedContent: DEFAULT_CSS, language: 'css', dirty: false, model: cssModel,
+                            modelListeners: null },
+                        'script.js': { content: DEFAULT_JS, committedContent: DEFAULT_JS, language: 'javascript', dirty: false, model: jsModel,
+                            modelListeners: null }
+                    };
+                    attachModelListener(htmlModel, 'index.html');
+                    attachModelListener(cssModel, 'style.css');
+                    attachModelListener(jsModel, 'script.js');
+                    activeFileId = 'index.html';
+                    openFileIds = Object.keys(files);
+                }
+
+                if (activeFileId && !files[activeFileId]) activeFileId = openFileIds[0] || '';
+                if (!openFileIds.length && !saved?.openFileIds && activeFileId) openFileIds = [activeFileId];
+                if (activeFileId && !openFileIds.includes(activeFileId)) activeFileId = openFileIds[0] || '';
+
+                // Set model ke editor
+                Object.keys(files).forEach(id => {
+                    const f = files[id];
+                    const keyMap = { html: 'html', css: 'css', javascript: 'js' };
+                    const editorKey = keyMap[f.language] || 'html';
+                    if (editors[editorKey] && editors[editorKey].getModel() === null) {
+                        editors[editorKey].setModel(f.model);
+                    }
+                });
+
+                // Pastikan semua editor punya model
+                ['html', 'css', 'js'].forEach(key => {
+                    if (editors[key] && editors[key].getModel() === null) {
+                        const found = Object.keys(files).find(id => {
+                            const km = { html: 'html', css: 'css', javascript: 'js' };
+                            return km[files[id].language] === key;
+                        });
+                        if (found) {
+                            editors[key].setModel(files[found].model);
+                        } else {
+                        }
+                    }
+                });
+
+                renderFileList();
+                renderTabs();
+                const active = files[activeFileId];
+                if (active) {
+                    const keyMap = { html: 'html', css: 'css', javascript: 'js' };
+                    const editorKey = keyMap[active.language] || 'html';
+                    if (editors[editorKey]) {
+                        editors[editorKey].setModel(active.model);
+                    }
+                    const slotMap = { html: 'htmlEditorSlot', css: 'cssEditorSlot', js: 'jsEditorSlot' };
+                    Object.keys(slotMap).forEach(k => {
+                        document.getElementById(slotMap[k]).classList.toggle('active', k === editorKey);
+                    });
+                } else {
+                    ['html', 'css', 'js'].forEach(key => editors[key]?.setModel(null));
+                    document.querySelectorAll('.editor-slot').forEach(slot => slot.classList.remove('active'));
+                }
+
+                setTimeout(() => { Object.values(editors).forEach(ed => ed.layout()); }, 100);
+                setTimeout(buildPreview, 200);
+            }
+
+            // ============================================================
+            //  RESIZE
+            // ============================================================
+            let resizeTimer = null;
+            window.addEventListener('resize', () => {
+                if (resizeTimer) clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    const isMobile = window.innerWidth <= 820;
+                    if (isMobile) {
+                        if (splitInstance) { try { splitInstance.destroy(); } catch (_) {} }
+                        splitInstance = null;
+                        mainPanel.classList.add('vertical');
+                        layoutBtn.querySelector('i').className = 'fas fa-arrows-alt-v';
+                        layoutBtn.title = 'Layout vertikal (layar kecil)';
+                    } else {
+                        if (!splitInstance) initSplit();
+                        mainPanel.classList.toggle('vertical', layoutMode === 'vertical');
+                        layoutBtn.querySelector('i').className = layoutMode === 'horizontal' ? 'fas fa-arrows-alt-h' : 'fas fa-arrows-alt-v';
+                        layoutBtn.title = 'Rotasi layout';
+                    }
+                    Object.values(editors).forEach(ed => ed && ed.layout());
+                    resizeTimer = null;
+                }, 200);
+            });
+
+            // ============================================================
+            //  SIDEBAR
+            // ============================================================
+            let sidebarOpen = true;
+
+            function toggleSidebar() {
+                sidebarOpen = !sidebarOpen;
+                sidebar.classList.toggle('collapsed', !sidebarOpen);
+                mobileSidebarBtn.setAttribute('aria-label', sidebarOpen ? 'Close explorer' : 'Open explorer');
+                mobileSidebarBtn.title = sidebarOpen ? 'Close explorer' : 'Open explorer';
+                toggleSidebarBtn.innerHTML = sidebarOpen ? '<i class="fas fa-chevron-left"></i>' :
+                    '<i class="fas fa-chevron-right"></i>';
+                setTimeout(() => Object.values(editors).forEach(ed => ed && ed.layout()), 100);
+            }
+
+            // ============================================================
+            //  BEFOREUNLOAD
+            // ============================================================
+            function handleBeforeUnload() {
+                if (!editors.html) return;
+                syncAllFileState();
+                saveData();
+            }
+            window.addEventListener('beforeunload', handleBeforeUnload);
+            window.addEventListener('pagehide', () => {
+                if (editors.html) {
+                    syncAllFileState();
+                    saveData();
+                }
+                if (window.__codeplaygroundWorkerUrl) {
+                    URL.revokeObjectURL(window.__codeplaygroundWorkerUrl);
+                    window.__codeplaygroundWorkerUrl = null;
+                }
+            });
+
+            // ============================================================
+            //  EVENT BINDING
+            // ============================================================
+            runBtn.addEventListener('click', runCode);
+            saveBtn.addEventListener('click', () => saveAll(true));
+            downloadBtn.addEventListener('click', downloadProject);
+            uploadBtn.addEventListener('click', uploadFile);
+            formatBtn.addEventListener('click', formatCode);
+            cdnBtn.addEventListener('click', () => openModal(cdnModal, cdnInput));
+            cmdBtn.addEventListener('click', openCmdPalette);
+            settingsBtn.addEventListener('click', () => openModal(settingsModal, fontSizeInput));
+            layoutBtn.addEventListener('click', toggleLayout);
+            themeBtn.addEventListener('click', () => setTheme(theme === 'light' ? 'dark' : 'light'));
+            newFileBtn.addEventListener('click', createNewFile);
+            renameFileBtn.addEventListener('click', renameFile);
+            toggleSidebarBtn.addEventListener('click', toggleSidebar);
+            mobileSidebarBtn.addEventListener('click', toggleSidebar);
+            clearConsoleBtn.addEventListener('click', clearConsole);
+            toggleConsoleBtn.addEventListener('click', toggleConsole);
+
+            // CDN Modal
+            closeCdnModal.addEventListener('click', () => closeModal(cdnModal));
+            cdnModal.addEventListener('click', (e) => { if (e.target === cdnModal) closeModal(cdnModal); });
+            addCdnBtn.addEventListener('click', () => { const u = cdnInput.value.trim(); if (addCdnUrl(u)) cdnInput.value =
+                ''; });
+            cdnInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addCdnBtn.click(); });
+
+            // Settings Modal
+                closeSettingsModal.addEventListener('click', () => closeModal(settingsModal));
+                settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeModal(settingsModal); });
+            fontSizeInput.addEventListener('change', () => { settings.fontSize = clampNumber(fontSizeInput.value, 10, 28, 14);
+                fontSizeInput.value = settings.fontSize;
+                saveSettings(); });
+            tabSizeInput.addEventListener('change', () => { settings.tabSize = clampNumber(tabSizeInput.value, 1, 8, 2);
+                tabSizeInput.value = settings.tabSize;
+                saveSettings(); });
+            wordWrapSelect.addEventListener('change', () => { settings.wordWrap = wordWrapSelect.value;
+                saveSettings(); });
+            lineNumbersSelect.addEventListener('change', () => { settings.lineNumbers = lineNumbersSelect.value;
+                saveSettings(); });
+            minimapSelect.addEventListener('change', () => { settings.minimap = minimapSelect.value === 'true';
+                saveSettings(); });
+            autoRunCheck.addEventListener('change', () => { settings.autoRun = autoRunCheck.checked;
+                saveSettings(); });
+            refreshDelayRange.addEventListener('input', function() {
+                refreshDelayValue.textContent = this.value + 'ms';
+                settings.refreshDelay = clampNumber(this.value, 100, 800, 350);
+                saveSettings();
+            });
+            themeSelector.addEventListener('click', (e) => {
+                const btn = e.target.closest('button');
+                if (btn && btn.dataset.theme) setTheme(btn.dataset.theme);
+            });
+
+            // Keyboard
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault();
+                    runCode(); }
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault();
+                    saveAll(true); }
+                if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'P') { e.preventDefault();
+                    openCmdPalette(); }
+                const activeModal = [cdnModal, settingsModal].find(modal => modal.classList.contains('open'));
+                if (activeModal && e.key === 'Tab') {
+                    const focusable = activeModal.querySelectorAll('button, input, select, [tabindex]:not([tabindex="-1"])');
+                    if (focusable.length === 0) return;
+                    const first = focusable[0];
+                    const last = focusable[focusable.length - 1];
+                    if (e.shiftKey && document.activeElement === first) {
+                        e.preventDefault();
+                        last.focus();
+                    } else if (!e.shiftKey && document.activeElement === last) {
+                        e.preventDefault();
+                        first.focus();
+                    }
+                }
+                if (e.key === 'Escape') {
+                    cmdPalette.classList.remove('open');
+                    if (cdnModal.classList.contains('open')) closeModal(cdnModal);
+                    if (settingsModal.classList.contains('open')) closeModal(settingsModal);
+                }
+            });
+
+            // ============================================================
+            //  INIT
+            // ============================================================
+            async function init() {
+                const updateHeaderHeight = () => {
+                    document.documentElement.style.setProperty('--header-height', `${document.querySelector('.header').getBoundingClientRect().height}px`);
+                };
+                updateHeaderHeight();
+                if (window.ResizeObserver) new ResizeObserver(updateHeaderHeight).observe(document.querySelector('.header'));
+                loadSettings();
+                loadCdn();
+                try {
+                    await initMonaco();
+                } catch (err) {
+                    console.error('Monaco initialization failed:', err);
+                    showToast('⚠️ Editor gagal dimuat. Periksa koneksi CDN lalu muat ulang.');
+                    return;
+                }
+
+                try {
+                    const savedLayout = localStorage.getItem(LAYOUT_KEY);
+                    if (savedLayout === 'vertical' || savedLayout === 'horizontal') {
+                        layoutMode = savedLayout;
+                        if (layoutMode === 'vertical') {
+                            mainPanel.classList.add('vertical');
+                            layoutBtn.querySelector('i').className = 'fas fa-arrows-alt-v';
+                        }
+                    }
+                } catch (_) {}
+
+                initVFS();
+                saveData();
+                applySettingsToEditors();
+                initSplit();
+
+                try {
+                    const savedTheme = localStorage.getItem(THEME_KEY);
+                    if (savedTheme === 'dark' || savedTheme === 'light') setTheme(savedTheme);
+                    else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) setTheme(
+                        'dark');
+                } catch (_) {}
+
+                if (window.innerWidth <= 820) {
+                    sidebar.classList.add('collapsed');
+                    sidebarOpen = false;
+                    toggleSidebarBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                }
+
+                setTimeout(openConsole, 400);
+
+                // AUTO-SAVE SILENT setiap 15 detik
+                setInterval(persistDrafts, 15000);
+
+                console.log('🚀 CodePlayground Pro siap! (Semua perbaikan selesai)');
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+
+            window.addEventListener('beforeunload', () => {
+                if (updateTimer) clearTimeout(updateTimer);
+            });
+
+        })();
+    </script>
+</body>
+</html>
