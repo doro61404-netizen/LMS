@@ -1,0 +1,2202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Network &amp; Math Tools</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <style>
+        /* ===== RESET & BASE ===== */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0b1120;
+            color: #e8edf5;
+            min-height: 100vh;
+            padding: 0 0 2rem 0;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a2332;
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4f8cf7;
+            border-radius: 8px;
+        }
+
+        #app {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ===== HEADER ===== */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0 16px 0;
+            border-bottom: 1px solid rgba(79, 140, 247, 0.15);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .app-header .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .app-header .logo i {
+            font-size: 28px;
+            color: #4f8cf7;
+            background: rgba(79, 140, 247, 0.12);
+            padding: 10px;
+            border-radius: 14px;
+        }
+        .app-header .logo h1 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #f0f4ff 0%, #4f8cf7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .app-header .logo span {
+            font-weight: 400;
+            font-size: 14px;
+            color: #8899bb;
+            -webkit-text-fill-color: #8899bb;
+            background: none;
+        }
+        .header-actions .version-badge {
+            font-size: 12px;
+            background: rgba(79, 140, 247, 0.15);
+            padding: 4px 14px;
+            border-radius: 20px;
+            color: #7aa5ff;
+            border: 1px solid rgba(79, 140, 247, 0.2);
+        }
+
+        /* ===== TABS ===== */
+        .tabs-container {
+            display: flex;
+            gap: 6px;
+            margin: 24px 0 28px 0;
+            background: #141e2f;
+            padding: 6px;
+            border-radius: 16px;
+            border: 1px solid rgba(79, 140, 247, 0.08);
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            background: transparent;
+            color: #8899bb;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: 'Inter', sans-serif;
+        }
+        .tab-btn i {
+            font-size: 16px;
+        }
+        .tab-btn:hover {
+            color: #c8d8f0;
+            background: rgba(79, 140, 247, 0.06);
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #1a2d4a, #0f1e33);
+            color: #f0f4ff;
+            box-shadow: 0 4px 20px rgba(79, 140, 247, 0.15);
+            border: 1px solid rgba(79, 140, 247, 0.2);
+        }
+        .tab-btn .badge {
+            font-size: 11px;
+            background: rgba(79, 140, 247, 0.2);
+            padding: 2px 10px;
+            border-radius: 12px;
+            color: #7aa5ff;
+        }
+        .tab-btn.active .badge {
+            background: rgba(79, 140, 247, 0.3);
+            color: #b0ccff;
+        }
+
+        /* ===== TOOL GRID ===== */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 18px;
+            margin-bottom: 32px;
+        }
+
+        .tool-card {
+            background: linear-gradient(145deg, #141e2f, #0f1729);
+            border-radius: 16px;
+            padding: 22px 20px 20px 20px;
+            border: 1px solid rgba(79, 140, 247, 0.06);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(79, 140, 247, 0.03), transparent 70%);
+            pointer-events: none;
+        }
+        .tool-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(79, 140, 247, 0.2);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+        .tool-card .icon-wrap {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: rgba(79, 140, 247, 0.1);
+            color: #4f8cf7;
+            margin-bottom: 6px;
+        }
+        .tool-card .tool-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #f0f4ff;
+            letter-spacing: -0.2px;
+        }
+        .tool-card .tool-desc {
+            font-size: 13px;
+            color: #7a8aa8;
+            line-height: 1.4;
+            flex: 1;
+        }
+        .tool-card .tool-icon-right {
+            align-self: flex-end;
+            color: #2a3a55;
+            font-size: 14px;
+            transition: 0.3s;
+            margin-top: 4px;
+        }
+        .tool-card:hover .tool-icon-right {
+            color: #4f8cf7;
+            transform: translateX(4px);
+        }
+        .tool-card .category-tag {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: rgba(79, 140, 247, 0.08);
+            padding: 2px 12px;
+            border-radius: 20px;
+            color: #6a8bbf;
+            margin-top: 4px;
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            animation: fadeIn 0.25s ease;
+        }
+        .modal-overlay.open {
+            display: flex;
+        }
+        .modal-overlay.closing {
+            animation: fadeOut 0.2s ease forwards;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.97);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: scale(0.97);
+            }
+        }
+
+        .modal-content {
+            background: #111b2e;
+            border-radius: 24px;
+            max-width: 820px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 28px 32px 32px 32px;
+            border: 1px solid rgba(79, 140, 247, 0.1);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+            position: relative;
+        }
+        .modal-content .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(79, 140, 247, 0.06);
+        }
+        .modal-content .modal-header .modal-title {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #f0f4ff;
+        }
+        .modal-content .modal-header .modal-title i {
+            color: #4f8cf7;
+            font-size: 24px;
+            background: rgba(79, 140, 247, 0.08);
+            padding: 10px;
+            border-radius: 12px;
+        }
+        .modal-close {
+            background: rgba(255, 255, 255, 0.04);
+            border: none;
+            color: #7a8aa8;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-close:hover {
+            background: rgba(255, 70, 70, 0.12);
+            color: #ff6b6b;
+        }
+
+        /* ===== TOOL BODY ===== */
+        .tool-body {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .tool-body .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+        .tool-body .input-group label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #b0c4e8;
+            min-width: 80px;
+        }
+        .tool-body input,
+        .tool-body select,
+        .tool-body textarea {
+            background: #0b1324;
+            border: 1px solid rgba(79, 140, 247, 0.12);
+            border-radius: 10px;
+            padding: 10px 16px;
+            color: #e8edf5;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: 0.3s;
+            outline: none;
+            flex: 1;
+            min-width: 160px;
+        }
+        .tool-body input:focus,
+        .tool-body select:focus,
+        .tool-body textarea:focus {
+            border-color: #4f8cf7;
+            box-shadow: 0 0 0 3px rgba(79, 140, 247, 0.1);
+        }
+        .tool-body input::placeholder {
+            color: #4a5a7a;
+        }
+        .tool-body textarea {
+            resize: vertical;
+            min-height: 60px;
+            font-family: 'Inter', monospace;
+        }
+        .tool-body .btn-primary {
+            background: linear-gradient(135deg, #4f8cf7, #3a6fd1);
+            border: none;
+            padding: 10px 28px;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Inter', sans-serif;
+            white-space: nowrap;
+        }
+        .tool-body .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(79, 140, 247, 0.25);
+        }
+        .tool-body .btn-secondary {
+            background: rgba(79, 140, 247, 0.08);
+            border: 1px solid rgba(79, 140, 247, 0.12);
+            padding: 10px 28px;
+            border-radius: 10px;
+            color: #b0c4e8;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+        .tool-body .btn-secondary:hover {
+            background: rgba(79, 140, 247, 0.15);
+        }
+
+        /* ===== RESULT BOX ===== */
+        .result-box {
+            background: #0b1324;
+            border-radius: 12px;
+            padding: 18px 22px;
+            border: 1px solid rgba(79, 140, 247, 0.06);
+            margin-top: 6px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #c8d8f0;
+            overflow-x: auto;
+            font-family: 'Inter', monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .result-box .label {
+            color: #7a8aa8;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+        }
+        .result-box .value {
+            color: #f0f4ff;
+            font-weight: 500;
+        }
+        .result-box .highlight {
+            color: #4f8cf7;
+            font-weight: 600;
+        }
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 24px;
+        }
+        .result-grid .item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(79, 140, 247, 0.04);
+        }
+        .result-grid .item .label {
+            color: #7a8aa8;
+            font-weight: 400;
+        }
+        .result-grid .item .value {
+            color: #f0f4ff;
+            font-weight: 500;
+            text-align: right;
+        }
+
+        /* ===== MATRIX INPUT ===== */
+        .matrix-input {
+            display: grid;
+            gap: 6px;
+            max-width: 100%;
+            margin: 6px 0;
+        }
+        .matrix-input .row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .matrix-input .row input {
+            width: 60px;
+            text-align: center;
+            padding: 8px 4px;
+            min-width: 50px;
+            flex: 0 1 auto;
+        }
+        .matrix-input .row input::placeholder {
+            font-size: 12px;
+            color: #3a4a6a;
+        }
+        .matrix-2x2 {
+            grid-template-columns: repeat(2, 1fr);
+            max-width: 140px;
+        }
+        .matrix-3x3 {
+            grid-template-columns: repeat(3, 1fr);
+            max-width: 210px;
+        }
+
+        /* ===== GAUSS-JORDAN STEPS ===== */
+        .gj-steps {
+            font-family: 'Inter', monospace;
+            font-size: 13px;
+            color: #b0c4e8;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 8px;
+            overflow-x: auto;
+            line-height: 1.6;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        .gj-steps .step-label {
+            color: #7a8aa8;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .gj-steps .step-entry {
+            padding: 2px 0;
+            border-bottom: 1px solid rgba(79, 140, 247, 0.05);
+            font-size: 12px;
+        }
+        .gj-steps .step-entry .mat-entry {
+            background: rgba(79, 140, 247, 0.06);
+            padding: 1px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            display: inline-block;
+            margin: 0 2px;
+        }
+        .gj-steps .step-entry .op-label {
+            color: #4f8cf7;
+            font-weight: 500;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            #app {
+                padding: 0 14px;
+            }
+            .app-header .logo h1 {
+                font-size: 18px;
+            }
+            .app-header .logo span {
+                display: none;
+            }
+            .tab-btn {
+                min-width: 100px;
+                font-size: 13px;
+                padding: 10px 14px;
+            }
+            .tab-btn .badge {
+                display: none;
+            }
+            .tools-grid {
+                grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+                gap: 14px;
+            }
+            .modal-content {
+                padding: 20px 18px;
+                max-height: 95vh;
+            }
+            .modal-content .modal-header .modal-title {
+                font-size: 18px;
+            }
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+            .tool-body .input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .tool-body .input-group label {
+                min-width: unset;
+            }
+            .tool-body .btn-primary,
+            .tool-body .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+            .matrix-input .row input {
+                width: 50px;
+                min-width: 40px;
+            }
+            .matrix-2x2 {
+                max-width: 120px;
+            }
+            .matrix-3x3 {
+                max-width: 180px;
+            }
+            .modal-content .modal-header .modal-title i {
+                font-size: 18px;
+                padding: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tools-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            .tool-card {
+                padding: 16px 14px;
+            }
+            .tool-card .tool-name {
+                font-size: 14px;
+            }
+            .tool-card .tool-desc {
+                font-size: 12px;
+            }
+            .tool-card .icon-wrap {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+            .tab-btn {
+                min-width: 70px;
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+            .tab-btn i {
+                font-size: 13px;
+            }
+            .matrix-input .row input {
+                width: 42px;
+                min-width: 34px;
+                font-size: 12px;
+                padding: 6px 2px;
+            }
+            .matrix-2x2 {
+                max-width: 100px;
+            }
+            .matrix-3x3 {
+                max-width: 150px;
+            }
+        }
+
+        .app-footer {
+            margin-top: 48px;
+            padding: 20px 0 8px 0;
+            border-top: 1px solid rgba(79, 140, 247, 0.05);
+            text-align: center;
+            font-size: 13px;
+            color: #4a5a7a;
+        }
+        .empty-state {
+            padding: 40px 20px;
+            text-align: center;
+            color: #4a5a7a;
+        }
+        .empty-state i {
+            font-size: 48px;
+            color: #1a2a44;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app"></div>
+
+    <script>
+        // ============================================================
+        //  DATA TOOLS
+        // ============================================================
+        const TOOLS = {
+            network: [
+                { id: 'ip-calculator', name: 'IP Calculator', icon: 'fa-solid fa-network-wired',
+                    desc: 'Analisis alamat IP secara lengkap', category: 'Network' },
+                { id: 'subnet-calculator', name: 'Subnet Calculator', icon: 'fa-solid fa-diagram-project',
+                    desc: 'Hitung subnet mask & host', category: 'Network' },
+                { id: 'cidr-calculator', name: 'CIDR Calculator', icon: 'fa-solid fa-sliders-h',
+                    desc: 'Konversi CIDR ke subnet mask', category: 'Network' },
+                { id: 'port-converter', name: 'Port Converter', icon: 'fa-solid fa-plug',
+                    desc: 'Cari tahu service dari port', category: 'Network' },
+                { id: 'binary-converter', name: 'Binary Converter', icon: 'fa-solid fa-code',
+                    desc: 'IP ke biner & sebaliknya', category: 'Network' },
+                { id: 'network-mask', name: 'Network Mask Tool', icon: 'fa-solid fa-mask',
+                    desc: 'Info lengkap tentang subnet mask', category: 'Network' },
+                { id: 'ipv4-helper', name: 'IPv4 Helper', icon: 'fa-solid fa-ip', desc: 'Validasi & informasi IPv4',
+                    category: 'Network' }
+            ],
+            math: [
+                { id: 'matriks', name: 'Matriks', icon: 'fa-solid fa-table', desc: 'Operasi matriks 2x2 & 3x3',
+                    category: 'Math' },
+                { id: 'determinan', name: 'Determinan', icon: 'fa-solid fa-calculator', desc: 'Hitung determinan matriks',
+                    category: 'Math' },
+                { id: 'gauss', name: 'Gauss', icon: 'fa-solid fa-arrow-right-arrow-left',
+                    desc: 'Eliminasi Gauss (2 variabel)', category: 'Math' },
+                { id: 'gauss-jordan', name: 'Gauss-Jordan', icon: 'fa-solid fa-exchange-alt',
+                    desc: 'Eliminasi Gauss-Jordan (2 & 3 var)', category: 'Math' },
+                { id: 'cramer', name: 'Cramer', icon: 'fa-solid fa-divide', desc: 'Aturan Cramer untuk SPL 2 var',
+                    category: 'Math' },
+                { id: 'statistik', name: 'Statistik', icon: 'fa-solid fa-chart-bar',
+                    desc: 'Mean, median, modus, varian (populasi/sampel)', category: 'Math' },
+                { id: 'kalkulus', name: 'Kalkulus', icon: 'fa-solid fa-infinity',
+                    desc: 'Turunan & integral dasar (polinomial, trig, eksponensial)', category: 'Math' },
+                { id: 'persamaan-linear', name: 'Persamaan Linear', icon: 'fa-solid fa-equals',
+                    desc: 'Selesaikan SPL 2 & 3 variabel dengan eliminasi', category: 'Math' }
+            ]
+        };
+
+        const ICON_MAP = {
+            'ip-calculator': 'fa-solid fa-network-wired',
+            'subnet-calculator': 'fa-solid fa-diagram-project',
+            'cidr-calculator': 'fa-solid fa-sliders-h',
+            'port-converter': 'fa-solid fa-plug',
+            'binary-converter': 'fa-solid fa-code',
+            'network-mask': 'fa-solid fa-mask',
+            'ipv4-helper': 'fa-solid fa-ip',
+            'matriks': 'fa-solid fa-table',
+            'determinan': 'fa-solid fa-calculator',
+            'gauss': 'fa-solid fa-arrow-right-arrow-left',
+            'gauss-jordan': 'fa-solid fa-exchange-alt',
+            'cramer': 'fa-solid fa-divide',
+            'statistik': 'fa-solid fa-chart-bar',
+            'kalkulus': 'fa-solid fa-infinity',
+            'persamaan-linear': 'fa-solid fa-equals'
+        };
+
+        // ============================================================
+        //  HELPERS
+        // ============================================================
+        function isValidIP(str) {
+            const parts = str.trim().split('.');
+            if (parts.length !== 4) return false;
+            return parts.every(p => {
+                const n = Number(p);
+                return !isNaN(n) && n >= 0 && n <= 255 && p === String(n);
+            });
+        }
+
+        function ipToBinary(str) {
+            return str.trim().split('.').map(p => Number(p).toString(2).padStart(8, '0')).join('.');
+        }
+
+        function ipToHex(str) {
+            return str.trim().split('.').map(p => Number(p).toString(16).padStart(2, '0').toUpperCase()).join('.');
+        }
+
+        function ipClass(str) {
+            const first = parseInt(str.trim().split('.')[0]);
+            if (first >= 1 && first <= 126) return 'A';
+            if (first >= 128 && first <= 191) return 'B';
+            if (first >= 192 && first <= 223) return 'C';
+            if (first >= 224 && first <= 239) return 'D (Multicast)';
+            if (first >= 240 && first <= 255) return 'E (Experimental)';
+            return 'Unknown';
+        }
+
+        function isPrivateIP(str) {
+            const parts = str.trim().split('.').map(Number);
+            if (parts[0] === 10) return true;
+            if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) return true;
+            if (parts[0] === 192 && parts[1] === 168) return true;
+            return false;
+        }
+
+        function isValidCIDR(str) {
+            const m = str.trim().match(/^\/(\d+)$/);
+            if (!m) return false;
+            const n = parseInt(m[1]);
+            return n >= 0 && n <= 32;
+        }
+
+        function cidrToMask(cidr) {
+            const n = parseInt(cidr.trim().replace('/', ''));
+            const mask = (0xFFFFFFFF << (32 - n)) >>> 0;
+            return [
+                (mask >>> 24) & 0xFF,
+                (mask >>> 16) & 0xFF,
+                (mask >>> 8) & 0xFF,
+                mask & 0xFF
+            ].join('.');
+        }
+
+        function maskToCIDR(mask) {
+            const parts = mask.trim().split('.').map(Number);
+            if (parts.some(p => isNaN(p) || p < 0 || p > 255)) return null;
+            const binary = parts.map(p => p.toString(2).padStart(8, '0')).join('');
+            const match = binary.match(/^1*/);
+            if (!match) return null;
+            const cidr = match[0].length;
+            const rest = binary.slice(cidr);
+            if (rest.includes('1')) return null;
+            return cidr;
+        }
+
+        function networkAddress(ip, mask) {
+            const ipParts = ip.trim().split('.').map(Number);
+            const maskParts = mask.trim().split('.').map(Number);
+            return ipParts.map((p, i) => p & maskParts[i]).join('.');
+        }
+
+        function broadcastAddress(ip, mask) {
+            const ipParts = ip.trim().split('.').map(Number);
+            const maskParts = mask.trim().split('.').map(Number);
+            const wildcard = maskParts.map(m => (~m) & 0xFF);
+            return ipParts.map((p, i) => p | wildcard[i]).join('.');
+        }
+
+        function countUsableHosts(cidr) {
+            if (cidr === null || cidr === undefined) return 0;
+            if (cidr === 32) return 0;
+            if (cidr === 31) return 0;
+            return Math.pow(2, 32 - cidr) - 2;
+        }
+
+        // ============================================================
+        //  PARSER PERSAMAAN (mendukung desimal)
+        // ============================================================
+        function parseEquation2(str) {
+            const s = str.replace(/\s/g, '');
+            const parts = s.split('=');
+            if (parts.length !== 2) return null;
+            const lhs = parts[0];
+            const rhs = parseFloat(parts[1]);
+            if (isNaN(rhs)) return null;
+
+            let a = 0,
+                b = 0;
+            const xMatch = lhs.match(/([+-]?\d*\.?\d+)(?=x)/);
+            if (xMatch) {
+                a = parseFloat(xMatch[1]);
+            } else {
+                if (lhs.includes('x')) {
+                    const before = lhs.split('x')[0];
+                    if (before === '' || before === '+') a = 1;
+                    else if (before === '-') a = -1;
+                }
+            }
+            const yMatch = lhs.match(/([+-]?\d*\.?\d+)(?=y)/);
+            if (yMatch) {
+                b = parseFloat(yMatch[1]);
+            } else {
+                if (lhs.includes('y')) {
+                    const before = lhs.split('y')[0];
+                    if (before === '' || before === '+') b = 1;
+                    else if (before === '-') b = -1;
+                }
+            }
+            const constMatch = lhs.match(/([+-]?\d*\.?\d+)(?![xy])/);
+            let constVal = 0;
+            if (constMatch) {
+                constVal = parseFloat(constMatch[1]);
+                const idx = lhs.indexOf(constMatch[1]);
+                const nextChar = lhs[idx + constMatch[1].length];
+                if (nextChar === 'x' || nextChar === 'y') {
+                    // sudah ditangkap
+                } else {
+                    constVal = parseFloat(constMatch[1]);
+                }
+            }
+            return { a, b, rhs: rhs - constVal };
+        }
+
+        function parseEquation3(str) {
+            const s = str.replace(/\s/g, '');
+            const parts = s.split('=');
+            if (parts.length !== 2) return null;
+            const lhs = parts[0];
+            const rhs = parseFloat(parts[1]);
+            if (isNaN(rhs)) return null;
+
+            let a = 0,
+                b = 0,
+                c = 0;
+            const xMatch = lhs.match(/([+-]?\d*\.?\d+)(?=x)/);
+            if (xMatch) {
+                a = parseFloat(xMatch[1]);
+            } else {
+                if (lhs.includes('x')) {
+                    const before = lhs.split('x')[0];
+                    if (before === '' || before === '+') a = 1;
+                    else if (before === '-') a = -1;
+                }
+            }
+            const yMatch = lhs.match(/([+-]?\d*\.?\d+)(?=y)/);
+            if (yMatch) {
+                b = parseFloat(yMatch[1]);
+            } else {
+                if (lhs.includes('y')) {
+                    const before = lhs.split('y')[0];
+                    if (before === '' || before === '+') b = 1;
+                    else if (before === '-') b = -1;
+                }
+            }
+            const zMatch = lhs.match(/([+-]?\d*\.?\d+)(?=z)/);
+            if (zMatch) {
+                c = parseFloat(zMatch[1]);
+            } else {
+                if (lhs.includes('z')) {
+                    const before = lhs.split('z')[0];
+                    if (before === '' || before === '+') c = 1;
+                    else if (before === '-') c = -1;
+                }
+            }
+            const constMatch = lhs.match(/([+-]?\d*\.?\d+)(?![xyz])/);
+            let constVal = 0;
+            if (constMatch) {
+                constVal = parseFloat(constMatch[1]);
+                const idx = lhs.indexOf(constMatch[1]);
+                const nextChar = lhs[idx + constMatch[1].length];
+                if (nextChar === 'x' || nextChar === 'y' || nextChar === 'z') {
+                    // sudah ditangkap
+                } else {
+                    constVal = parseFloat(constMatch[1]);
+                }
+            }
+            return { a, b, c, rhs: rhs - constVal };
+        }
+
+        // ============================================================
+        //  GAUSS-JORDAN (dengan semua langkah)
+        // ============================================================
+        function gaussJordanSolve(matrix) {
+            const n = matrix.length;
+            const aug = matrix.map(row => [...row]);
+            const allSteps = [];
+            const record = () => {
+                allSteps.push(aug.map(row => [...row]));
+            };
+            record();
+
+            for (let i = 0; i < n; i++) {
+                let maxRow = i;
+                for (let j = i + 1; j < n; j++) {
+                    if (Math.abs(aug[j][i]) > Math.abs(aug[maxRow][i])) {
+                        maxRow = j;
+                    }
+                }
+                if (Math.abs(aug[maxRow][i]) < 1e-12) {
+                    return { solution: null, steps: allSteps, singular: true };
+                }
+                if (maxRow !== i) {
+                    [aug[i], aug[maxRow]] = [aug[maxRow], aug[i]];
+                    record();
+                }
+                const pivot = aug[i][i];
+                for (let j = i; j <= n; j++) {
+                    aug[i][j] /= pivot;
+                }
+                record();
+                for (let j = 0; j < n; j++) {
+                    if (j !== i) {
+                        const factor = aug[j][i];
+                        for (let k = i; k <= n; k++) {
+                            aug[j][k] -= factor * aug[i][k];
+                        }
+                        record();
+                    }
+                }
+            }
+            const solution = aug.map(row => row[n]);
+            return { solution, steps: allSteps, singular: false };
+        }
+
+        // ============================================================
+        //  RENDER FUNCTIONS (Vanilla JS)
+        // ============================================================
+
+        // --- IP Calculator ---
+        function renderIPCalculator(container) {
+            let ip = '192.168.1.1';
+            let result = null;
+
+            const calculate = () => {
+                if (!isValidIP(ip)) {
+                    result = { error: 'Alamat IP tidak valid' };
+                    render();
+                    return;
+                }
+                const cls = ipClass(ip);
+                const priv = isPrivateIP(ip);
+                const bin = ipToBinary(ip);
+                const hex = ipToHex(ip);
+                result = { ip, class: cls, private: priv, binary: bin, hex };
+                render();
+            };
+
+            const render = () => {
+                container.innerHTML = `
+                    <div class="tool-body">
+                        <div class="input-group">
+                            <label>Alamat IP</label>
+                            <input type="text" id="ip-input" value="${ip}" placeholder="cth: 192.168.1.1" />
+                            <button class="btn-primary" id="calc-btn"><i class="fa-solid fa-play"></i> Hitung</button>
+                        </div>
+                        ${result ? `
+                        <div class="result-box">
+                            ${result.error ? `<div style="color:#ff6b6b">${result.error}</div>` : `
+                            <div class="result-grid">
+                                <div class="item"><span class="label">IP</span><span class="value">${result.ip}</span></div>
+                                <div class="item"><span class="label">Kelas</span><span class="value">${result.class}</span></div>
+                                <div class="item"><span class="label">Private</span><span class="value">${result.private ? 'Ya' : 'Tidak'}</span></div>
+                                <div class="item"><span class="label">Biner</span><span class="value" style="font-size:13px;font-family:monospace">${result.binary}</span></div>
+                                <div class="item"><span class="label">Hex</span><span class="value" style="font-size:13px;font-family:monospace">${result.hex}</span></div>
+                            </div>`}
+                        </div>` : ''}
+                    </div>
+                `;
+                container.querySelector('#ip-input').addEventListener('input', e => { ip = e.target.value; });
+                container.querySelector('#calc-btn').addEventListener('click', calculate);
+            };
+            render();
+            calculate();
+        }
+
+        // --- Subnet Calculator ---
+        function renderSubnetCalculator(container) {
+            let ip = '192.168.1.1';
+            let mask = '255.255.255.0';
+            let result = null;
+
+            const calculate = () => {
+                if (!isValidIP(ip)) { result = { error: 'IP tidak valid' };
+                    render(); return; }
+                if (!isValidIP(mask)) { result = { error: 'Mask tidak valid' };
+                    render(); return; }
+                const cidr = maskToCIDR(mask);
+                if (cidr === null) { result = { error: 'Subnet mask tidak valid' };
+                    render(); return; }
+                const net = networkAddress(ip, mask);
+                const broad = broadcastAddress(ip, mask);
+                const hosts = countUsableHosts(cidr);
+                const wildcard = mask.trim().split('.').map(p => (~Number(p)) & 0xFF).join('.');
+                result = { ip, mask, net, broad, hosts, cidr, wildcard };
+                render();
+            };
+
+            const render = () => {
+                container.innerHTML = `
+                    <div class="tool-body">
+                        <div class="input-group">
+                            <label>IP</label>
+                            <input type="text" id="ip-input" value="${ip}" placeholder="192.168.1.1" />
+                        </div>
+                        <div class="input-group">
+                            <label>Mask</label>
+                            <input type="text" id="mask-input" value="${mask}" placeholder="255.255.255.0" />
+                            <button class="btn-primary" id="calc-btn"><i class="fa-solid fa-play"></i> Hitung</button>
+                        </div>
+                        ${result ? `
+                        <div class="result-box">
+                            ${result.error ? `<div style="color:#ff6b6b">${result.error}</div>` : `
+                            <div class="result-grid">
+                                <div class="item"><span class="label">Network</span><span class="value">${result.net}</span></div>
+                                <div class="item"><span class="label">Broadcast</span><span class="value">${result.broad}</span></div>
+                                <div class="item"><span class="label">CIDR</span><span class="value">/${result.cidr}</span></div>
+                                <div class="item"><span class="label">Wildcard</span><span class="value">${result.wildcard}</span></div>
+                                <div class="item"><span class="label">Host Usable</span><span class="value">${result.hosts}</span></div>
+                            </div>`}
+                        </div>` : ''}
+                    </div>
+                `;
+                container.querySelector('#ip-input').addEventListener('input', e => { ip = e.target.value; });
+                container.querySelector('#mask-input').addEventListener('input', e => { mask = e.target.value; });
+                container.querySelector('#calc-btn').addEventListener('click', calculate);
+            };
+            render();
+            calculate();
+        }
+
+        // --- CIDR Calculator ---
+        function renderCIDRCalculator(container) {
+            let cidr = '/24';
+            let result = null;
+
+            const calculate = () => {
+                const trimmed = cidr.trim();
+                if (!isValidCIDR(trimmed)) {
+                    result = { error: 'Masukkan CIDR yang valid, contoh: /24' };
+                    render();
+                    return;
+                }
+                const n = parseInt(trimmed.replace('/', ''));
+                const mask = cidrToMask(trimmed);
+                const hosts = countUsableHosts(n);
+                const wildcard = mask.split('.').map(p => (~Number(p)) & 0xFF).join('.');
+                result = { cidr: trimmed, mask, hosts, wildcard, bits: n };
+                render();
+            };
+
+            const render = () => {
+                container.innerHTML = `
+                    <div class="tool-body">
+                        <div class="input-group">
+                            <label>CIDR</label>
+                            <input type="text" id="cidr-input" value="${cidr}" placeholder="/24" />
+                            <button class="btn-primary" id="calc-btn"><i class="fa-solid fa-play"></i> Konversi</button>
+                        </div>
+                        ${result ? `
+                        <div class="result-box">
+                            ${result.error ? `<div style="color:#ff6b6b">${result.error}</div>` : `
+                            <div class="result-grid">
+                                <div class="item"><span class="label">CIDR</span><span class="value">${result.cidr}</span></div>
+                                <div class="item"><span class="label">Subnet Mask</span><span class="value">${result.mask}</span></div>
+                                <div class="item"><span class="label">Wildcard</span><span class="value">${result.wildcard}</span></div>
+                                <div class="item"><span class="label">Host Usable</span><span class="value">${result.hosts}</span></div>
+                                <div class="item"><span class="label">Network Bits</span><span class="value">${result.bits}</span></div>
+                            </div>`}
+                        </div>` : ''}
+                    </div>
+                `;
+                container.querySelector('#cidr-input').addEventListener('input', e => { cidr = e.target.value; });
+                container.querySelector('#calc-btn').addEventListener('click', calculate);
+            };
+            render();
+            calculate();
+        }
+
+        // --- Port Converter ---
+        function renderPortConverter(container) {
+            let port = '80';
+            let result = null;
+            const portMap = {
+                20: 'FTP (Data)',
+                21: 'FTP (Control)',
+                22: 'SSH',
+                23: 'Telnet',
+                25: 'SMTP',
+                53: 'DNS',
+                67: 'DHCP (Server)',
+                68: 'DHCP (Client)',
+                69: 'TFTP',
+                80: 'HTTP',
+                110: 'POP3',
+                123: 'NTP',
+                135: 'RPC',
+                137: 'NetBIOS (NS)',
+                138: 'NetBIOS (Datagram)',
+                139: 'NetBIOS (Session)',
+                143: 'IMAP',
+                161: 'SNMP',
+                162: 'SNMP (Trap)',
+                179: 'BGP',
+                389: 'LDAP',
+                443: 'HTTPS',
+                445: 'SMB',
+                465: 'SMTPS',
+                514: 'Syslog',
+                587: 'SMTP (Submission)',
+                636: 'LDAPS',
+                873: 'Rsync',
+                993: 'IMAPS',
+                995: 'POP3S',
+                1080: 'SOCKS',
+                1433: 'MSSQL',
+                1521: 'Oracle DB',
+                1723: 'PPTP',
+                3306: 'MySQL',
+                3389: 'RDP',
+                5432: 'PostgreSQL',
+                5900: 'VNC',
+                6379: 'Redis',
+                8080: 'HTTP (Alternate)',
+                8443: 'HTTPS (Alternate)',
+                27017: 'MongoDB'
+            };
+
+            const calculate = () => {
+                const n = parseInt(port.trim());
+                if (isNaN(n) || n < 0 || n > 65535) {
+                    result = { error: 'Port harus angka 0-65535' };
+                    render();
+                    return;
+                }
+                const service = portMap[n] || 'Tidak diketahui / Unassigned';
+                const hex = '0x' + n.toString(16).toUpperCase();
+                const bin = n.toString(2);
+                result = { port: n, service, hex, bin };
+                render();
+            };
+
+            const render = () => {
+                container.innerHTML = `
+                    <div class="tool-body">
+                        <div class="input-group">
+                            <label>Port</label>
+                            <input type="number" id="port-input" value="${port}" placeholder="80" min="0" max="65535" />
+                            <button class="btn-primary" id="calc-btn"><i class="fa-solid fa-play"></i> Cari</button>
+                        </div>
+                        ${result ? `
+                        <div class="result-box">
+                            ${result.error ? `<div style="color:#ff6b6b">${result.error}</div>` : `
+                            <div class="result-grid">
+                                <div class="item"><span class="label">Port</span><span class="value">${result.port}</span></div>
+                                <div class="item"><span class="label">Service</span><span class="value">${result.service}</span></div>
+                                <div class="item"><span class="label">Hex</span><span class="value">${result.hex}</span></div>
+                                <div class="item"><span class="label">Biner</span><span class="value">${result.bin}</span></div>
+                            </div>`}
+                        </div>` : ''}
+                    </div>
+                `;
+                container.querySelector('#port-input').addEventListener('input', e => { port = e.target.value; });
+                container.querySelector('#calc-btn').addEventListener('click', calculate);
+            };
+            render();
+            calculate();
+        }
+
+        // --- Binary Converter ---
+        function renderBinaryConverter(container) {
+            let ip = '192.168.1.1';
+            let result = null;
+
+            const calculate = () => {
+                if (!isValidIP(ip)) {
+                    result = { error: 'IP tidak valid' };
+                    render();
+                    return;
+                }
+                const bin = ipToBinary(ip);
+                result = { ip, binary: bin };
+                render();
+            };
+
+            const render = () => {
+                container.innerHTML = `
+                    <div class="tool-body">
+                        <div class="input-group">
+                            <label>IP</label>
+                            <input type="text" id="ip-input" value="${ip}" placeholder="192.168.1.1" />
+                            <button class="btn-primary" id="calc-btn"><i class="fa-solid fa-play"></i> Konversi</button>
+                        </div>
+                        ${result ? `
+                        <div class="result-box">
+                            ${result.error ? `<div style="color:#ff6b6b">${result.error}</div>` : `
+                            <div>
+                                <div class="item"><span class="label">Desimal</span><span class="value">${result.ip}</span></div>
+                                <div class="item" style="margin-top:8px"><span class="label">Biner</span><span class="value" style="font-family:monospace;font-size:13px">${result.binary}</span></div>
+                            </div>`}
+                        </div>` : ''}
+                    </div>
+                `;
+                container.querySelector('#ip-input').addEventListener('input', e => { ip = e.target.value; });
+                container.querySelector('#calc-btn').addEventListener('click', calculate);
+            };
+            render();
+            calculate();
+        }
+
+        // --- Network Mask Tool ---
+        function renderNetworkMaskTool(container) {
+            let mask = '255.255.255.0';
+            let result = null;
+
+            const calculate = () => {
+                if (!isValidIP(mask)) {
+                    result = { error: 'Mask tidak valid' };
+                    render();
+                    return;
+                }
+                const cidr = maskToCIDR(mask);
+                if (cidr === null) {
+                    result = { error: 'Subnet mask tidak valid (harus 1s diikuti 0s)' };
+                    render();
+                    return;
+                }
+                const wildcard = mask.split('.').map(p => (~Number(p)) & 0xFF).join('.');
+                const hosts = countUsableHosts(cidr);
+                const bin = mask.split('.').map(p => Number(p).toString(2).padStart(8, '0')).join('.');
+                result = { mask, cidr, wildcard, hosts, binary: bin };
+                render();
+            };
+
+            const render = () => {
+                container.innerHTML = `
+                    <div class="tool-body">
+                        <div class="input-group">
+                            <label>Subnet Mask</label>
+                            <input type="text" id="mask-input" value="${mask}" placeholder="255.255.255.0" />
+                            <button class="btn-primary" id="calc-btn"><i class="fa-solid fa-play"></i> Analisis</button>
+                        </div>
+                        ${result ? `
+                        <div class="result-box">
+                            ${result.error ? `<div style="color:#ff6b6b">${result.error}</div>` : `
+                            <div class="result-grid">
+                                <div class="item"><span class="label">Mask</span><span class="value">${result.mask}</span></div>
+                                <div class="item"><span class="label">CIDR</span><span class="value">/${result.cidr}</span></div>
+                                <div class="item"><span class="label">Wildcard</span><span class="value">${result.wildcard}</span></div>
+                                <div class="item"><span class="label">Host Usable</span><span class="value">${result.hosts}</span></div>
+                                <div class="item"><span class="label">Biner</span><span class="value" style="font-size:12px;font-family:monospace">${result.binary}</span></div>
+                            </div>`}
+                        </div>` : ''}
+                    </div>
+                `;
+                container.querySelector('#mask-input').addEventListener('input', e => { mask = e.target.value; });
+                container.querySelector('#calc-btn').addEventListener('click', calculate);
+            };
+            render();
+            calculate();
+        }
+
+        // --- IPv4 Helper ---
+        function renderIPv4Helper(container) {
+            let ip = '8.8.8.8';
+            let result = null;
+
+            const calculate = () => {
+                const trimmed = ip.trim();
+                const valid = isValidIP(trimmed);
+                if (!valid) {
+                    result = { error: 'Alamat IPv4 tidak valid' };
+                    render();
+                    return;
+                }
+                const parts = trimmed.split('.').map(Number);
+                const cls = ipClass(trimmed);
+                const priv = isPrivateIP(trimmed);
+                const bin = ipToBinary(trimmed);
+                const hex = ipToHex(trimmed);
+                const isLoopback = parts[0] === 127;
+                const isMulticast = parts[0] >= 224 && parts[0] <= 239;
+                const isLinkLocal = parts[0] === 169 && parts[1] === 254;
+                result = { ip: trimmed, class: cls, private: priv, binary: bin, hex, loopback: isLoopback,
+                    multicast: isMulticast, linkLocal: isLinkLocal };
+                render();
+            };
+
+            const render = () => {
+                container.innerHTML = `
+                    <div class="tool-body">
+                        <div class="input-group">
+                            <label>IPv4</label>
+                            <input type="text" id="ip-input" value="${ip}" placeholder="8.8.8.8" />
+                            <button class="btn-primary" id="calc-btn"><i class="fa-solid fa-play"></i> Analisis</button>
+                        </div>
+                        ${result ? `
+                        <div class="result-box">
+                            ${result.error ? `<div style="color:#ff6b6b">${result.error}</div>` : `
+                            <div class="result-grid">
+                                <div class="item"><span class="label">IP</span><span class="value">${result.ip}</span></div>
+                                <div class="item"><span class="label">Kelas</span><span class="value">${result.class}</span></div>
+                                <div class="item"><span class="label">Private</span><span class="value">${result.private ? 'Ya' : 'Tidak'}</span></div>
+                                <div class="item"><span class="label">Loopback</span><span class="value">${result.loopback ? 'Ya' : 'Tidak'}</span></div>
+                                <div class="item"><span class="label">Multicast</span><span class="value">${result.multicast ? 'Ya' : 'Tidak'}</span></div>
+                                <div class="item"><span class="label">Link-Local</span><span class="value">${result.linkLocal ? 'Ya' : 'Tidak'}</span></div>
+                                <div class="item"><span class="label">Biner</span><span class="value" style="font-size:12px;font-family:monospace">${result.binary}</span></div>
+                                <div class="item"><span class="label">Hex</span><span class="value" style="font-size:12px;font-family:monospace">${result.hex}</span></div>
+                            </div>`}
+                        </div>` : ''}
+                    </div>
+                `;
+                container.querySelector('#ip-input').addEventListener('input', e => { ip = e.target.value; });
+                container.querySelector('#calc-btn').addEventListener('click', calculate);
+            };
+            render();
+            calculate();
+        }
+
+        // --- Matriks ---
+        function renderMatriks(container) {
+            let a11 = '1',
+                a12 = '2',
+                a21 = '3',
+                a22 = '4';
+            let b11 = '5',
+                b12 = '6',
+                b21 = '7',
+                b22 = '8';
+            let op = 'add';
+            let result = null;
+
+            const calculate = () => {
+                const A = [
+                    [parseFloat(a11) || 0, parseFloat(a12) || 0],
+                    [parseFloat(a21) || 0, parseFloat(a22) || 0]
+                ];
+                const B = [
+                    [parseFloat(b11) || 0, parseFloat(b12) || 0],
+                    [parseFloat(b21) || 0, parseFloat(b22) || 0]
+                ];
+                let C;
+                if (op === 'add') {
+                    C = A.map((row, i) => row.map((v, j) => v + B[i][j]));
+                } else if (op === 'sub') {
+                    C = A.map((row, i) => row.map((v, j) => v - B[i][j]));
+                } else if (op === 'mul') {
+                    C = [
+                        [A[0][0] * B[0][0] + A[0][1] * B[1][0], A[0][0] * B[0][1] + A[0][1] * B[1][1]],
+                        [A[1][0] * B[0][0] + A[1][1] * B[1][0], A[1][0] * B[0][1] + A[1][1] * B[1][1]]
+                    ];
+                }
+                result = { A, B, C, op };
+                render();
+            };
+
+            const render = () => {
+                container.innerHTML = `
+                    <div class="tool-body">
+                        <div style="display:flex;flex-wrap:wrap;gap:20px 40px;align-items:flex-start">
+                            <div>
+                                <div style="font-weight:600;color:#b0c4e8;margin-bottom:6px">Matriks A</div>
+                                <div class="matrix-input matrix-2x2">
+                                    <div class="row">
+                                        <input id="a11" value="${a11}" placeholder="a11" />
+                                        <input id="a12" value="${a12}" placeholder="a12" />
+                                    </div>
+                                    <div class="row">
+                                        <input id="a21" value="${a21}" placeholder="a21" />
+                                        <input id="a22" value="${a22}" placeholder="a22" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-weight:600;color:#b0c4e8;margin-bottom:6px">Matriks B</div>
+                                <div class="matrix-input matrix-2x2">
+                                    <div class="row">
+                                        <input id="b11" value="${b11}" placeholder="b11" />
+                                        <input id="b12" value="${b12}" placeholder="b12" />
+                                    </div>
+                                    <div class="row">
+                                        <input id="b21" value="${b21}" placeholder="b21" />
+                                        <input id="b22" value="${b22}" placeholder="b22" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Operasi</label>
+                            <select id="op-select">
+                                <option value="add" ${op==='add'?'selected':''}>Penjumlahan</option>
+                                <option value="sub" ${op==='sub'?'selected':''}>Pengurangan</option>
+                                <option value="mul" ${op==='mul'?'selected':''}>Perkalian</option>
+                            </select>
+                            <button class="btn-primary" id="calc-btn"><i class="fa-solid fa-play"></i> Hitung</button>
+                        </div>
+                        ${result ? `
+                        <div class="result-box">
+                            <div style="font-weight:600;color:#b0c4e8;margin-bottom:8px">Hasil ${result.op==='add'?'Penjumlahan':result.op==='sub'?'Pengurangan':'Perkalian'}</div>
+                            <div style="display:grid;grid-template-columns:50px 50px;gap:4px;justify-content:center">
+                                <div style="text-align:center;padding:4px 8px;background:rgba(79,140,247,0.06);border-radius:4px">${result.C[0][0]}</div>
+                                <div style="text-align:center;padding:4px 8px;background:rgba(79,140,247,0.06);border-radius:4px">${result.C[0][1]}</div>
+                                <div style="text-align:center;padding:4px 8px;background:rgba(79,140,247,0.06);border-radius:4px">${result.C[1][0]}</div>
+                                <div style="text-align:center;padding:4px 8px;background:rgba(79,140,247,0.06);border-radius:4px">${result.C[1][1]}</div>
+                            </div>
+                        </div>` : ''}
+                    </div>
+                `;
+                container.querySelector('#a11').addEventListener('input', e => { a11 = e.target.value; });
+                container.querySelector('#a12').addEventListener('input', e => { a12 = e.target.value; });
+                container.querySelector('#a21').addEventListener('input', e => { a21 = e.target.value; });
+                container.querySelector('#a22').addEventListener('input', e => { a22 = e.target.value; });
+                container.querySelector('#b11').addEventListener('input', e => { b11 = e.target.value; });
+                container.querySelector('#b12').addEventListener('input', e => { b12 = e.target.value; });
+                container.querySelector('#b21').addEventListener('input', e => { b21 = e.target.value; });
+                container.querySelector('#b22').addEventListener('input', e => { b22 = e.target.value; });
+                container.querySelector('#op-select').addEventListener('change', e => { op = e.target.value; });
+                container.querySelector('#calc-btn').addEventListener('click', calculate);
+            };
+            render();
+            calculate();
+        }
+
+        // --- Determinan ---
+        function renderDeterminan(container) {
+            let size = '2';
+            let a11 = '2',
+                a12 = '3',
+                a21 = '1',
+                a22 = '4';
+            let a13 = '1',
+                a23 = '2',
+                a31 = '3',
+                a32 = '1',
+                a33 = '2';
+            let result = null;
+
+            const calculate = () => {
+                if (size === '2') {
+                    const a = parseFloat(a11) || 0,
+                        b = parseFloat(a12) || 0;
+                    const c = parseFloat(a21) || 0,
+                        d = parseFloat(a22) || 0;
+                    const det = a * d - b * c;
+                    result = { det, size: 2 };
+                } else {
+                    const a = parseFloat(a11) || 0,
+                        b = parseFloat(a12) || 0,
+                        c = parseFloat(a13) || 0;
+                    const d = parseFloat(a21) || 0,
+                        e = parseFloat(a22) || 0,
+                        f = parseFloat(a23) || 0;
+                    const g = parseFloat(a31) || 0,
+                        h = parseFloat(a32) || 0,
+                        i = parseFloat(a33) || 0;
+                    const det = a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g);
+                    result = { det, size: 3 };
+                }
+                render();
+            };
+
+            const render = () => {
+                container.innerHTML = `
+                    <div class="tool-body">
+                        <div class="input-group">
+                            <label>Ukuran</label>
+                            <select id="size-select">
+                                <option value="2" ${size==='2'?'selected':''}>2 x 2</option>
+                                <option value="3" ${size==='3'?'selected':''}>3 x 3</option>
+                            </select>
+                        </div>
+                        <div style="display:flex;flex-wrap:wrap;gap:20px 40px;align-items:flex-start">
+                            <div>
+                                <div style="font-weight:600;color:#b0c4e8;margin-bottom:6px">Matriks</div>
+                                ${size === '2' ? `
+                                <div class="matrix-input matrix-2x2">
+                                    <div class="row">
+                                        <input id="a11" value="${a11}" placeholder="a" />
+                                        <input id="a12" value="${a12}" placeholder="b" />
+                                    </div>
+                                    <div class="row">
+                                        <input id="a21" value="${a21}" placeholder="c" />
+                                        <input id="a22" value="${a22}" placeholder="d" />
+                                    </div>
+                                </div>` : `
+                                <div class="matrix-input matrix-3x3">
+                                    <div class="row">
+                                        <input id="a11" value="${a11}" placeholder="a" />
+                                        <input id="a12" value="${a12}" placeholder="b" />
+                                        <input id="a13" value="${a13}" placeholder="c" />
+                                    </div>
+                                    <div class="row">
+                                        <input id="a21" value="${a21}" placeholder="d" />
+                                        <input id="a22" value="${a22}" placeholder="e" />
+                                        <input id="a23" value="${a23}" placeholder="f" />
+                                    </div>
+                                    <div class="row">
+                                        <input id="a31" value="${a31}" placeholder="g" />
+                                        <input id="a32" value="${a32}" placeholder="h" />
+                                        <input id="a33" value="${a33}" placeholder="i" />
+                                    </div>
+                                </div>`}
+                            </div>
+                        </div>
+                        <button class="btn-primary" id="calc-btn"><i class="fa-solid fa-play"></i> Hitung Determinan</button>
+                        ${result ? `
+                        <div class="result-box">
+                            <div style="font-weight:600;color:#b0c4e8;margin-bottom:8px">Determinan = <span style="color:#4f8cf7;font-size:20px">${result.det}</span></div>
+                            <div style="font-size:13px;color:#7a8aa8">${result.size === 2 ? 'Matriks 2×2' : 'Matriks 3×3'}</div>
+                        </div>` : ''}
+                    </div>
+                `;
+                container.querySelector('#size-select').addEventListener('change', e => {
+                    size = e.target.value;
+                    render();
+                    calculate();
+                });
+                // Re-bind input events after render
+                const bindInputs = () => {
+                    const el = (id) => container.querySelector(id);
+                    if (el('#a11')) el('#a11').addEventListener('input', e => { a11 = e.target.value;
+                        calculate(); });
+                    if (el('#a12')) el('#a12').addEventListener('input', e => { a12 = e.target.value;
+                        calculate(); });
+                    if (el('#a21')) el('#a21').addEventListener('input', e => { a21 = e.target.value;
+                        calculate(); });
+                    if (el('#a22')) el('#a22').addEventListener('input', e => { a22 = e.target.value;
+                        calculate(); });
+                    if (el('#a13')) el('#a13').addEventListener('input', e => { a13 = e.target.value;
+                        calculate(); });
+                    if (el('#a23')) el('#a23').addEventListener('input', e => { a23 = e.target.value;
+                        calculate(); });
+                    if (el('#a31')) el('#a31').addEventListener('input', e => { a31 = e.target.value;
+                        calculate(); });
+                    if (el('#a32')) el('#a32').addEventListener('input', e => { a32 = e.target.value;
+                        calculate(); });
+                    if (el('#a33')) el('#a33').addEventListener('input', e => { a33 = e.target.value;
+                        calculate(); });
+                    if (el('#calc-btn')) el('#calc-btn').addEventListener('click', calculate);
+                };
+                bindInputs();
+            };
+            render();
+            calculate();
+        }
+
+        // --- Gauss (2 var) ---
+        function renderGauss(container) {
+            let eq1 = '2x + 3y = 8';
+            let eq2 = '4x - y = 2';
+            let result = null;
+
+            const calculate = () => {
+                const p1 = parseEquation2(eq1);
+                const p2 = parseEquation2(eq2);
+                if (!p1 || !p2) {
+                    result = { error: 'Format persamaan tidak dikenali. Gunakan: 2x + 3y = 8' };
+                    render();
+                    return;
+                }
+                const { a: a1, b: b1, rhs: r1 } = p1;
+                const { a: a2, b: b2, rhs: r2 } = p2;
+                const det = a1 * b2 - a2 * b1;
+                if (Math.abs(det) < 1e-10) {
+                    result = { error: 'Determinan nol, sistem tidak memiliki solusi unik' };
+                    render();
+                    return;
+                }
+                const x = (r1 * b2 - r2 * b1) / det;
+                const y = (a1 * r2 - a2 * r1) / det;
+                result = { x, y, det };
+                render();
+            };
+
+            const render = () => {
+                container.innerHTML = `
+                    <div class="tool-body">
+                        <div class="input-group">
+                            <label>Persamaan 1</label>
+                            <input type="text" id="eq1" value="${eq1}" placeholder="2x + 3y = 8" />
+                        </div>
+                        <div class="input-group">
+                            <label>Persamaan 2</label>
+                            <input type="text" id="eq2" value="${eq2}" placeholder="4x - y = 2" />
+                            <button class="btn-primary" id="calc-btn"><i class="fa-solid fa-play"></i> Eliminasi</button>
+                        </div>
+                        ${result ? `
+                        <div class="result-box">
+                            ${result.error ? `<div style="color:#ff6b6b">${result.error}</div>` : `
+                            <div>
+                                <div class="result-grid">
+                                    <div class="item"><span class="label">x</span><span class="value highlight">${result.x.toFixed(4)}</span></div>
+                                    <div class="item"><span class="label">y</span><span class="value highlight">${result.y.toFixed(4)}</span></div>
+                                    <div class="item"><span class="label">Determinan</span><span class="value">${result.det.toFixed(4)}</span></div>
+                                </div>
+                                <div style="margin-top:10px;font-size:13px;color:#7a8aa8">Solusi: x = ${result.x.toFixed(4)}, y = ${result.y.toFixed(4)}</div>
+                            </div>`}
+                        </div>` : ''}
+                    </div>
+                `;
+                container.querySelector('#eq1').addEventListener('input', e => { eq1 = e.target.value; });
+                container.querySelector('#eq2').addEventListener('input', e => { eq2 = e.target.value; });
+                container.querySelector('#calc-btn').addEventListener('click', calculate);
+            };
+            render();
+            calculate();
+        }
+
+        // --- Gauss-Jordan ---
+        function renderGaussJordan(container) {
+            let size = '2';
+            // 2 var
+            let a11 = '2',
+                a12 = '3',
+                b1 = '8';
+            let a21 = '4',
+                a22 = '-1',
+                b2 = '2';
+            // 3 var
+            let a11_3 = '1',
+                a12_3 = '1',
+                a13_3 = '1',
+                b1_3 = '6';
+            let a21_3 = '2',
+                a22_3 = '3',
+                a23_3 = '1',
+                b2_3 = '13';
+            let a31_3 = '1',
+                a32_3 = '-1',
+                a33_3 = '2',
+                b3_3 = '7';
+
+            let result = null;
+
+            const calculate = () => {
+                if (size === '2') {
+                    const A = [
+                        [parseFloat(a11) || 0, parseFloat(a12) || 0],
+                        [parseFloat(a21) || 0, parseFloat(a22) || 0]
+                    ];
+                    const rhs = [parseFloat(b1) || 0, parseFloat(b2) || 0];
+                    const aug = A.map((row, i) => [...row, rhs[i]]);
+                    const res = gaussJordanSolve(aug);
+                    if (res.singular) {
+                        result = { error: 'Matriks singular, tidak ada solusi unik', steps: res.steps };
+                        render();
+                        return;
+                    }
+                    result = { solution: res.solution, steps: res.steps, size: 2 };
+                    render();
+                } else {
+                    const A = [
+                        [parseFloat(a11_3) || 0, parseFloat(a12_3) || 0, parseFloat(a13_3) || 0],
+                        [parseFloat(a21_3) || 0, parseFloat(a22_3) || 0, parseFloat(a23_3) || 0],
+                        [parseFloat(a31_3) || 0, parseFloat(a32_3) || 0, parseFloat(a33_3) || 0]
+                    ];
+                    const rhs = [parseFloat(b1_3) || 0, parseFloat(b2_3) || 0, parseFloat(b3_3) || 0];
+                    const aug = A.map((row, i) => [...row, rhs[i]]);
+                    const res = gaussJordanSolve(aug);
+                    if (res.singular) {
+                        result = { error: 'Matriks singular, tidak ada solusi unik', steps: res.steps };
+                        render();
+                        return;
+                    }
+                    result = { solution: res.solution, steps: res.steps, size: 3 };
+                    render();
+                }
+            };
+
+            const renderSteps = (steps) => {
+                if (!steps || steps.length === 0) return '';
+                let html = `<div class="gj-steps"><span class="step-label"><i class="fa-solid fa-list-ol"></i> Langkah-langkah eliminasi (${steps.length} langkah)</span>`;
+                steps.forEach((mat, idx) => {
+                    html += `<div class="step-entry"><span class="op-label">Langkah ${idx+1}:</span>`;
+                    mat.forEach(row => {
+                        html +=
+                            `<span class="mat-entry">[ ${row.map(v => v.toFixed(2)).join(', ')} ]</span>`;
+                    });
+                    html += `</div>`;
+                });
+                html += `</div>`;
+                return html;
+            };
+
+            const render = () => {
+                container.innerHTML = `
+                    <div class="tool-body">
+                        <div class="input-group">
+                            <label>Jumlah Variabel</label>
+                            <select id="size-select">
+                                <option value="2" ${size==='2'?'selected':''}>2 Variabel (x, y)</option>
+                                <option value="3" ${size==='3'?'selected':''}>3 Variabel (x, y, z)</option>
+                            </select>
+                        </div>
+                        ${size === '2' ? `
+                        <div style="display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center">
+                            <div>
+                                <div style="font-weight:500;color:#b0c4e8;margin-bottom:4px">Persamaan 1</div>
+                                <div class="input-group" style="gap:6px">
+                                    <input type="text" id="a11" value="${a11}" style="min-width:50px;flex:0 1 60px" placeholder="a" />
+                                    <span style="color:#7a8aa8">x +</span>
+                                    <input type="text" id="a12" value="${a12}" style="min-width:50px;flex:0 1 60px" placeholder="b" />
+                                    <span style="color:#7a8aa8">y =</span>
+                                    <input type="text" id="b1" value="${b1}" style="min-width:50px;flex:0 1 60px" placeholder="r1" />
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-weight:500;color:#b0c4e8;margin-bottom:4px">Persamaan 2</div>
+                                <div class="input-group" style="gap:6px">
+                                    <input type="text" id="a21" value="${a21}" style="min-width:50px;flex:0 1 60px" placeholder="c" />
+                                    <span style="color:#7a8aa8">x +</span>
+                                    <input type="text" id="a22" value="${a22}" style="min-width:50px;flex:0 1 60px" placeholder="d" />
+                                    <span style="color:#7a8aa8">y =</span>
+                                    <input type="text" id="b2" value="${b2}" style="min-width:50px;flex:0 1 60px" placeholder="r2" />
+                                </div>
+                            </div>
+                        </div>` : `
+                        <div style="display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center">
+                            <div>
+                                <div style="font-weight:500;color:#b0c4e8;margin-bottom:4px">Persamaan 1</div>
+                                <div class="input-group" style="gap:4px">
+                                    <input type="text" id="a11_3" value="${a11_3}" style="min-width:40px;flex:0 1 50px" placeholder="a" />
+                                    <span style="color:#7a8aa8">x +</span>
+                                    <input type="text" id="a12_3" value="${a12_3}" style="min-width:40px;flex:0 1 50px" placeholder="b" />
+                                    <span style="color:#7a8aa8">y +</span>
+                                    <input type="text" id="a13_3" value="${a13_3}" style="min-width:40px;flex:0 1 50px" placeholder="c" />
+                                    <span style="color:#7a8aa8">z =</span>
+                                    <input type="text" id="b1_3" value="${b1_3}" style="min-width:40px;flex:0 1 50px" placeholder="r1" />
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-weight:500;color:#b0c4e8;margin-bottom:4px">Persamaan 2</div>
+                                <div class="input-group" style="gap:4px">
+                                    <input type="text" id="a21_3" value="${a21_3}" style="min-width:40px;flex:0 1 50px" placeholder="d" />
+                                    <span style="color:#7a8aa8">x +</span>
+                                    <input type="text" id="a22_3" value="${a22_3}" style="min-width:40px;flex:0 1 50px" placeholder="e" />
+                                    <span style="color:#7a8aa8">y +</span>
+                                    <input type="text" id="a23_3" value="${a23_3}" style="min-width:40px;flex:0 1 50px" placeholder="f" />
+                                    <span style="color:#7a8aa8">z =</span>
+                                    <input type="text" id="b2_3" value="${b2_3}" style="min-width:40px;flex:0 1 50px" placeholder="r2" />
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-weight:500;color:#b0c4e8;margin-bottom:4px">Persamaan 3</div>
+                                <div class="input-group" style="gap:4px">
+                                    <input type="text" id="a31_3" value="${a31_3}" style="min-width:40px;flex:0 1 50px" placeholder="g" />
+                                    <span style="color:#7a8aa8">x +</span>
+                                    <input type="text" id="a32_3" value="${a32_3}" style="min-width:40px;flex:0 1 50px" placeholder="h" />
+                                    <span style="color:#7a8aa8">y +</span>
+                                    <input type="text" id="a33_3" value="${a33_3}" style="min-width:40px;flex:0 1 50px" placeholder="i" />
+                                    <span style="color:#7a8aa8">z =</span>
+                                    <input type="text" id="b3_3" value="${b3_3}" style="min-width:40px;flex:0 1 50px" placeholder="r3" />
+                                </div>
+                            </div>
+                        </div>`}
+                        <button class="btn-primary" id="calc-btn"><i class="fa-solid fa-play"></i> Eliminasi Gauss-Jordan</button>
+                        ${result ? `
+                        <div class="result-box">
+                            ${result.error ? `
+                            <div>
+                                <div style="color:#ff6b6b">${result.error}</div>
+                                ${result.steps ? renderSteps(result.steps) : ''}
+                            </div>` : `
+                            <div>
+                                <div class="result-grid">
+                                    <div class="item"><span class="label">${size==='2'?'x':'x'}</span><span class="value highlight">${result.solution[0].toFixed(4)}</span></div>
+                                    <div class="item"><span class="label">${size==='2'?'y':'y'}</span><span class="value highlight">${result.solution[1].toFixed(4)}</span></div>
+                                    ${size === '3' ? `<div class="item"><span class="label">z</span><span class="value highlight">${result.solution[2].toFixed(4)}</span></div>` : ''}
+                                </div>
+                                ${renderSteps(result.steps)}
+                            </div>`}
+                        </div>` : ''}
+                    </div>
+                `;
+                // Bind events
+                const bind = (id, cb) => {
+                    const el = container.querySelector(id);
+                    if (el) el.addEventListener('input', cb);
+                };
+                if (size === '2') {
+                    bind('#a11', e => { a11 = e.target.value; });
+                    bind('#a12', e => { a12 = e.target.value; });
+                    bind('#b1', e => { b1 = e.target.value; });
+                    bind('#a21', e => { a21 = e.target.value; });
+                    bind('#a22', e => { a22 = e.target.value; });
+                    bind('#b2', e => { b2 = e.target.value; });
+                } else {
+                    bind('#a11_3', e => { a11_3 = e.target.value; });
+                    bind('#a12_3', e => { a12_3 = e.target.value; });
+                    bind('#a13_3', e => { a13_3 = e.target.value; });
+                    bind('#b1_3', e => { b1_3 = e.target.value; });
+                    bind('#a21_3', e => { a21_3 = e.target.value; });
+                    bind('#a22_3', e => { a22_3 = e.target.value; });
+                    bind('#a23_3', e => { a23_3 = e.target.value; });
+                    bind('#b2_3', e => { b2_3 = e.target.value; });
+                    bind('#a31_3', e => { a31_3 = e.target.value; });
+                    bind('#a32_3', e => { a32_3 = e.target.value; });
+                    bind('#a33_3', e => { a33_3 = e.target.value; });
+                    bind('#b3_3', e => { b3_3 = e.target.value; });
+                }
+                container.querySelector('#size-select').addEventListener('change', e => {
+                    size = e.target.value;
+                    render();
+                    calculate();
+                });
+                container.querySelector('#calc-btn').addEventListener('click', calculate);
+            };
+            render();
+            calculate();
+        }
+
+        // --- Cramer (2 var) ---
+        function renderCramer(container) {
+            let eq1 = '2x + 3y = 8';
+            let eq2 = '4x - y = 2';
+            let result = null;
+
+            const calculate = () => {
+                const p1 = parseEquation2(eq1);
+                const p2 = parseEquation2(eq2);
+                if (!p1 || !p2) {
+                    result = { error: 'Format persamaan tidak dikenali. Gunakan: 2x + 3y = 8' };
+                    render();
+                    return;
+                }
+                const { a: a1, b: b1, rhs: r1 } = p1;
+                const { a: a2, b: b2, rhs: r2 } = p2;
+                const D = a1 * b2 - a2 * b1;
+                if (Math.abs(D) < 1e-10) {
+                    result = { error: 'Determinan nol, aturan Cramer tidak berlaku' };
+                    render();
+                    return;
+                }
+                const Dx = r1 * b2 - r2 * b1;
+                const Dy = a1 * r2 - a2 * r1;
+                const x = Dx / D;
+                const y = Dy / D;
+                result = { x, y, D, Dx, Dy };
+                render();
+            };
+
+            const render = () => {
+                container.innerHTML = `
+                    <div class="tool-body">
+                        <div class="input-group">
+                            <label>Pers. 1</label>
+                            <input type="text" id="eq1" value="${eq1}" placeholder="2x + 3y = 8" />
+                        </div>
+                        <div class="input-group">
+                            <label>Pers. 2</label>
+                            <input type="text" id="eq2" value="${eq2}" placeholder="4x - y = 2" />
+                            <button class="btn-primary" id="calc-btn"><i class="fa-solid fa-play"></i> Cramer</button>
+                        </div>
+                        ${result ? `
+                        <div class="result-box">
+                            ${result.error ? `<div style="color:#ff6b6b">${result.error}</div>` : `
+                            <div>
+                                <div class="result-grid">
+                                    <div class="item"><span class="label">x</span><span class="value highlight">${result.x.toFixed(4)}</span></div>
+                                    <div class="item"><span class="label">y</span><span class="value highlight">${result.y.toFixed(4)}</span></div>
+                                    <div class="item"><span class="label">D</span><span class="value">${result.D.toFixed(4)}</span></div>
+                                    <div class="item"><span class="label">Dx</span><span class="value">${result.Dx.toFixed(4)}</span></div>
+                                    <div class="item"><span class="label">Dy</span><span class="value">${result.Dy.toFixed(4)}</span></div>
+                                </div>
+                                <div style="margin-top:10px;font-size:13px;color:#7a8aa8">x = Dx / D = ${result.Dx.toFixed(4)} / ${result.D.toFixed(4)} = ${result.x.toFixed(4)}</div>
+                            </div>`}
+                        </div>` : ''}
+                    </div>
+                `;
+                container.querySelector('#eq1').addEventListener('input', e => { eq1 = e.target.value; });
+                container.querySelector('#eq2').addEventListener('input', e => { eq2 = e.target.value; });
+                container.querySelector('#calc-btn').addEventListener('click', calculate);
+            };
+            render();
+            calculate();
+        }
+
+        // --- Statistik ---
+        function renderStatistik(container) {
+            let data = '1, 2, 3, 4, 5, 6, 7, 8, 9, 10';
+            let varianceType = 'population';
+            let result = null;
+
+            const calculate = () => {
+                const nums = data.split(/[,\s]+/).map(Number).filter(n => !isNaN(n));
+                if (nums.length === 0) {
+                    result = { error: 'Masukkan data numerik' };
+                    render();
+                    return;
+                }
+                const sorted = [...nums].sort((a, b) => a - b);
+                const sum = nums.reduce((a, b) => a + b, 0);
+                const mean = sum / nums.length;
+                const median = sorted.length % 2 === 0 ?
+                    (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2 :
+                    sorted[Math.floor(sorted.length / 2)];
+                const freq = {};
+                nums.forEach(n => { freq[n] = (freq[n] || 0) + 1; });
+                const maxFreq = Math.max(...Object.values(freq));
+                const modes = Object.keys(freq).filter(k => freq[k] === maxFreq).map(Number);
+                const variance = varianceType === 'population' ?
+                    nums.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / nums.length :
+                    nums.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (nums.length - 1);
+                const stdDev = Math.sqrt(variance);
+                const min = sorted[0];
+                const max = sorted[sorted.length - 1];
+                const range = max - min;
+                result = { nums, mean, median, modes, variance, stdDev, min, max, range, count: nums.length, sum,
+                    varianceType };
+                render();
+            };
+
+            const render = () => {
+                container.innerHTML = `
+                    <div class="tool-body">
+                        <div class="input-group">
+                            <label>Data</label>
+                            <input type="text" id="data-input" value="${data}" placeholder="1, 2, 3, 4, 5" />
+                        </div>
+                        <div class="input-group">
+                            <label>Varian</label>
+                            <select id="var-select">
+                                <option value="population" ${varianceType==='population'?'selected':''}>Populasi (/ n)</option>
+                                <option value="sample" ${varianceType==='sample'?'selected':''}>Sampel (/ n-1)</option>
+                            </select>
+                            <button class="btn-primary" id="calc-btn"><i class="fa-solid fa-play"></i> Hitung</button>
+                        </div>
+                        ${result ? `
+                        <div class="result-box">
+                            ${result.error ? `<div style="color:#ff6b6b">${result.error}</div>` : `
+                            <div class="result-grid">
+                                <div class="item"><span class="label">Jumlah Data</span><span class="value">${result.count}</span></div>
+                                <div class="item"><span class="label">Jumlah</span><span class="value">${result.sum.toFixed(2)}</span></div>
+                                <div class="item"><span class="label">Rata-rata</span><span class="value highlight">${result.mean.toFixed(4)}</span></div>
+                                <div class="item"><span class="label">Median</span><span class="value">${result.median.toFixed(4)}</span></div>
+                                <div class="item"><span class="label">Modus</span><span class="value">${result.modes.join(', ') || 'Tidak ada'}</span></div>
+                                <div class="item"><span class="label">Varian</span><span class="value">${result.variance.toFixed(4)}</span></div>
+                                <div class="item"><span class="label">Std. Dev</span><span class="value">${result.stdDev.toFixed(4)}</span></div>
+                                <div class="item"><span class="label">Min</span><span class="value">${result.min}</span></div>
+                                <div class="item"><span class="label">Max</span><span class="value">${result.max}</span></div>
+                                <div class="item"><span class="label">Range</span><span class="value">${result.range}</span></div>
+                                <div class="item"><span class="label">Tipe Varian</span><span class="value">${result.varianceType === 'population' ? 'Populasi' : 'Sampel'}</span></div>
+                            </div>`}
+                        </div>` : ''}
+                    </div>
+                `;
+                container.querySelector('#data-input').addEventListener('input', e => { data = e.target.value; });
+                container.querySelector('#var-select').addEventListener('change', e => {
+                    varianceType = e.target.value;
+                    calculate();
+                });
+                container.querySelector('#calc-btn').addEventListener('click', calculate);
+            };
+            render();
+            calculate();
+        }
+
+        // --- Kalkulus ---
+        function renderKalkulus(container) {
+            let expr = 'x^2';
+            let mode = 'derivative';
+            let result = null;
+
+            const calculate = () => {
+                const s = expr.trim();
+                if (!s) { result = { error: 'Masukkan ekspresi' };
+                    render(); return; }
+                const derivativeMap = {
+                    'x': '1',
+                    'x^2': '2x',
+                    'x^3': '3x^2',
+                    'x^4': '4x^3',
+                    'sin(x)': 'cos(x)',
+                    'cos(x)': '-sin(x)',
+                    'tan(x)': 'sec^2(x)',
+                    'e^x': 'e^x',
+                    'ln(x)': '1/x',
+                    'log(x)': '1/(x ln 10)'
+                };
+                const integralMap = {
+                    'x': '(1/2)x^2 + C',
+                    'x^2': '(1/3)x^3 + C',
+                    'x^3': '(1/4)x^4 + C',
+                    'sin(x)': '-cos(x) + C',
+                    'cos(x)': 'sin(x) + C',
+                    'tan(x)': '-ln|cos(x)| + C',
+                    'e^x': 'e^x + C',
+                    '1/x': 'ln|x| + C',
+                    'sec^2(x)': 'tan(x) + C'
+                };
+
+                const xPow = s.match(/x\^(\d+)/);
+                if (xPow) {
+                    const n = parseInt(xPow[1]);
+                    if (mode === 'derivative') {
+                        if (n === 1) result = { type: 'Turunan', expr: s, result: '1' };
+                        else if (n === 2) result = { type: 'Turunan', expr: s, result: '2x' };
+                        else result = { type: 'Turunan', expr: s, result: `${n}x^${n-1}` };
+                    } else {
+                        const newN = n + 1;
+                        result = { type: 'Integral', expr: s, result: `(1/${newN})x^${newN} + C` };
+                    }
+                    render();
+                    return;
+                }
+
+                if (mode === 'derivative') {
+                    if (derivativeMap[s]) result = { type: 'Turunan', expr: s, result: derivativeMap[s] };
+                    else result = { type: 'Turunan', expr: s,
+                    result: `Turunan dari ${s} (belum diimplementasikan)` };
+                } else {
+                    if (integralMap[s]) result = { type: 'Integral', expr: s, result: integralMap[s] };
+                    else result = { type: 'Integral', expr: s,
+                    result: `Integral dari ${s} (belum diimplementasikan)` };
+                }
+                render();
+            };
+
+            const render = () => {
+                container.innerHTML = `
+                    <div class="tool-body">
+                        <div class="input-group">
+                            <label>Mode</label>
+                            <select id="mode-select">
+                                <option value="derivative" ${mode==='derivative'?'selected':''}>Turunan</option>
+                                <option value="integral" ${mode==='integral'?'selected':''}>Integral</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Ekspresi</label>
+                            <input type="text" id="expr-input" value="${expr}" placeholder="x^2, sin(x), e^x, ln(x)" />
+                            <button class="btn-primary" id="calc-btn"><i class="fa-solid fa-play"></i> Hitung</button>
+                        </div>
+                        ${result ? `
+                        <div class="result-box">
+                            ${result.error ? `<div style="color:#ff6b6b">${result.error}</div>` : `
+                            <div>
+                                <div style="font-weight:600;color:#b0c4e8;margin-bottom:6px">${result.type}</div>
+                                <div style="display:flex;flex-direction:column;gap:4px">
+                                    <span><span class="label">f(x) = </span><span class="value">${result.expr}</span></span>
+                                    <span><span class="label">${result.type === 'Turunan' ? "f'(x) = " : '∫ f(x) dx = '}</span><span class="value highlight">${result.result}</span></span>
+                                </div>
+                            </div>`}
+                        </div>` : ''}
+                    </div>
+                `;
+                container.querySelector('#mode-select').addEventListener('change', e => {
+                    mode = e.target.value;
+                    calculate();
+                });
+                container.querySelector('#expr-input').addEventListener('input', e => { expr = e.target.value; });
+                container.querySelector('#calc-btn').addEventListener('click', calculate);
+            };
+            render();
+            calculate();
+        }
+
+        // --- Persamaan Linear (2 & 3 var dengan eliminasi Gauss) ---
+        function renderPersamaanLinear(container) {
+            let size = '2';
+            // 2 var
+            let eq1 = '2x + 3y = 8';
+            let eq2 = '4x - y = 2';
+            // 3 var
+            let eq1_3 = 'x + y + z = 6';
+            let eq2_3 = '2x + 3y + z = 13';
+            let eq3_3 = 'x - y + 2z = 7';
+            let result = null;
+
+            const calculate = () => {
+                if (size === '2') {
+                    const p1 = parseEquation2(eq1);
+                    const p2 = parseEquation2(eq2);
+                    if (!p1 || !p2) {
+                        result = { error: 'Format persamaan tidak dikenali. Gunakan: 2x + 3y = 8' };
+                        render();
+                        return;
+                    }
+                    const { a: a1, b: b1, rhs: r1 } = p1;
+                    const { a: a2, b: b2, rhs: r2 } = p2;
+                    const det = a1 * b2 - a2 * b1;
+                    if (Math.abs(det) < 1e-10) {
+                        result = { error: 'Determinan nol, sistem tidak memiliki solusi unik' };
+                        render();
+                        return;
+                    }
+                    const x = (r1 * b2 - r2 * b1) / det;
+                    const y = (a1 * r2 - a2 * r1) / det;
+                    result = { x, y, det, size: 2, method: 'Eliminasi Gauss' };
+                    render();
+                } else {
+                    const p1 = parseEquation3(eq1_3);
+                    const p2 = parseEquation3(eq2_3);
+                    const p3 = parseEquation3(eq3_3);
+                    if (!p1 || !p2 || !p3) {
+                        result = { error: 'Format persamaan tidak dikenali. Gunakan: x + y + z = 6' };
+                        render();
+                        return;
+                    }
+                    const { a: a1, b: b1, c: c1, rhs: r1 } = p1;
+                    const { a: a2, b: b2, c: c2, rhs: r2 } = p2;
+                    const { a: a3, b: b3, c: c3, rhs: r3 } = p3;
+
+                    const aug = [
+                        [a1, b1, c1, r1],
+                        [a2, b2, c2, r2],
+                        [a3, b3, c3, r3]
+                    ];
+
+                    // Forward elimination
+                    for (let i = 0; i < 3; i++) {
+                        let maxRow = i;
+                        for (let j = i + 1; j < 3; j++) {
+                            if (Math.abs(aug[j][i]) > Math.abs(aug[maxRow][i])) {
+                                maxRow = j;
+                            }
+                        }
+                        if (Math.abs(aug[maxRow][i]) < 1e-10) {
+                            result = { error: 'Matriks singular, tidak ada solusi unik' };
+                            render();
+                            return;
+                        }
+                        if (maxRow !== i) {
+                            [aug[i], aug[maxRow]] = [aug[maxRow], aug[i]];
+                        }
+                        for (let j = i + 1; j < 3; j++) {
+                            const factor = aug[j][i] / aug[i][i];
+                            for (let k = i; k < 4; k++) {
+                                aug[j][k] -= factor * aug[i][k];
+                            }
+                        }
+                    }
+
+                    const x = aug[2][3] / aug[2][2];
+                    const y = (aug[1][3] - aug[1][2] * x) / aug[1][1];
+                    const z = (aug[0][3] - aug[0][1] * y - aug[0][2] * x) / aug[0][0];
+                    const det = aug[0][0] * aug[1][1] * aug[2][2];
+                    result = { x, y, z, det, size: 3, method: 'Eliminasi Gauss' };
+                    render();
+                }
+            };
+
+            const render = () => {
+                container.innerHTML = `
+                    <div class="tool-body">
+                        <div class="input-group">
+                            <label>Variabel</label>
+                            <select id="size-select">
+                                <option value="2" ${size==='2'?'selected':''}>2 Variabel (x, y)</option>
+                                <option value="3" ${size==='3'?'selected':''}>3 Variabel (x, y, z)</option>
+                            </select>
+                        </div>
+                        ${size === '2' ? `
+                        <div class="input-group">
+                            <label>Pers. 1</label>
+                            <input type="text" id="eq1" value="${eq1}" placeholder="2x + 3y = 8" />
+                        </div>
+                        <div class="input-group">
+                            <label>Pers. 2</label>
+                            <input type="text" id="eq2" value="${eq2}" placeholder="4x - y = 2" />
+                        </div>` : `
+                        <div class="input-group">
+                            <label>Pers. 1</label>
+                            <input type="text" id="eq1_3" value="${eq1_3}" placeholder="x + y + z = 6" />
+                        </div>
+                        <div class="input-group">
+                            <label>Pers. 2</label>
+                            <input type="text" id="eq2_3" value="${eq2_3}" placeholder="2x + 3y + z = 13" />
+                        </div>
+                        <div class="input-group">
+                            <label>Pers. 3</label>
+                            <input type="text" id="eq3_3" value="${eq3_3}" placeholder="x - y + 2z = 7" />
+                        </div>`}
+                        <button class="btn-primary" id="calc-btn"><
