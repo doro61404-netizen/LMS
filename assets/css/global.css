@@ -252,6 +252,34 @@ body {
 
 .content-page__actions { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2rem; }
 
+.contact-page {
+  min-height: 70vh;
+  padding-block: 7rem 8rem;
+}
+
+.contact-page__intro { max-width: 52rem; }
+.contact-page h1 { max-width: 10ch; margin-top: 1rem; font-family: var(--font-display); font-size: clamp(3rem, 8vw, 7rem); font-weight: 400; letter-spacing: -0.04em; line-height: 0.95; }
+.contact-page__grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(16rem, 0.9fr); gap: 5rem; margin-top: 6rem; }
+.contact-form { display: grid; gap: 1.5rem; }
+.form-field { display: grid; gap: 0.5rem; }
+.form-field label { font-size: 0.8rem; font-weight: 700; }
+.form-field label span { color: var(--text-secondary); font-weight: 400; }
+.form-field input,
+.form-field textarea { width: 100%; padding: 0.85rem 0; border: 0; border-bottom: 1px solid var(--border); border-radius: 0; background: transparent; color: var(--text-primary); outline: 0; resize: vertical; transition: border-color 180ms ease; }
+.form-field input:focus,
+.form-field textarea:focus { border-color: var(--focus); }
+.form-field input:user-invalid,
+.form-field textarea:user-invalid { border-color: var(--accent); }
+.form-error { min-height: 1.1rem; color: var(--accent); font-size: 0.75rem; }
+.form-status { min-height: 1.5rem; color: var(--text-secondary); font-size: 0.85rem; }
+.contact-details { align-self: start; padding: 2rem; background: var(--bg-secondary); }
+.contact-details h2 { max-width: 12ch; margin-top: 1rem; font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 400; line-height: 1; }
+.contact-details > p:not(.eyebrow) { margin-top: 1.5rem; color: var(--text-secondary); }
+.contact-details dl { display: grid; gap: 1.25rem; margin-top: 3rem; }
+.contact-details dl div { padding-top: 1rem; border-top: 1px solid var(--border); }
+.contact-details dt { color: var(--accent); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.contact-details dd { margin-top: 0.35rem; color: var(--text-secondary); font-size: 0.85rem; }
+
 @media (max-width: 700px) {
   .hero { grid-template-columns: 1fr; gap: 3rem; padding-block: 5rem; }
   .hero__visual { width: min(100%, 22rem); }
@@ -262,4 +290,6 @@ body {
   .project-grid { grid-template-columns: 1fr; }
   .value { grid-template-columns: 2rem 1fr; }
   .value p { grid-column: 2; }
+  .contact-page { padding-block: 5rem; }
+  .contact-page__grid { grid-template-columns: 1fr; gap: 4rem; margin-top: 4rem; }
 }
