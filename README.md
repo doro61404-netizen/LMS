@@ -1,5 +1,16 @@
 KELOMPOK UJIAN AKHIR SEMESTER (UAS)
 
+## Website Foundation
+
+Milestone 1 has started with a dependency-free HTML, CSS, and JavaScript foundation.
+
+- Responsive navigation with an accessible mobile menu
+- Shared design tokens, typography, layout, and focus states
+- Reusable header and footer components
+- Reduced-motion support
+
+Company details remain placeholders until the team provides the real brand content.
+
 1. reyshan syah                   https://github.com/reyshansyah-arch
 2. Muhammad Ilqi Muzaki           https://github.com/Ilqi63
 3. Agung Barlian Saputra          https://github.com/AgungBarlianSaputra1

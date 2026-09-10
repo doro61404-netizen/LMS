@@ -1,0 +1,116 @@
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid transparent;
+  transition: background-color 180ms ease, border-color 180ms ease;
+}
+
+.site-header.is-scrolled {
+  border-color: var(--border);
+  background: rgba(242, 240, 234, 0.94);
+  backdrop-filter: blur(12px);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 5.5rem;
+}
+
+.brand {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.brand__mark {
+  color: var(--accent);
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 2.8vw, 2.4rem);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.site-nav a,
+.text-link,
+.site-footer__links a {
+  transition: color 180ms ease;
+}
+
+.site-nav a:hover,
+.text-link:hover,
+.site-footer__links a:hover {
+  color: var(--accent);
+}
+
+.site-nav__contact {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.site-nav__contact span,
+.text-link span {
+  display: inline-block;
+  margin-left: 0.25rem;
+  transition: transform 180ms var(--ease-out);
+}
+
+.site-nav__contact:hover span,
+.text-link:hover span {
+  transform: translate(0.2rem, -0.2rem);
+}
+
+.menu-toggle {
+  display: none;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.site-footer {
+  padding-block: 4rem 1.5rem;
+  background: var(--text-primary);
+  color: var(--bg-primary);
+}
+
+.site-footer__top {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr auto;
+  align-items: start;
+  gap: 2rem;
+  padding-bottom: 4rem;
+}
+
+.site-footer__statement {
+  max-width: 22rem;
+  color: #bbc2bb;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  line-height: 1.1;
+}
+
+.text-link {
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid currentColor;
+  font-size: 0.85rem;
+}
+
+.site-footer__bottom {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(242, 240, 234, 0.22);
+  color: #9da69e;
+  font-size: 0.75rem;
+}
+
+.site-footer__links {
+  display: flex;
+  gap: 1.5rem;
+}
