@@ -252,6 +252,43 @@ body {
 
 .content-page__actions { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2rem; }
 
+.internal-hero { min-height: 65vh; padding-block: 8rem; }
+.internal-hero h1 { max-width: 10ch; margin-top: 1rem; font-family: var(--font-display); font-size: clamp(3rem, 8vw, 7rem); font-weight: 400; letter-spacing: -0.04em; line-height: 0.95; }
+.about-story, .about-timeline { padding-block: 7rem; background: var(--text-primary); color: var(--bg-primary); }
+.about-story__grid { display: grid; grid-template-columns: 0.7fr 1.3fr; gap: 2rem; }
+.about-story h2 { max-width: 12ch; font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 5rem); font-weight: 400; letter-spacing: -0.035em; line-height: 0.98; }
+.about-story__grid > div p { max-width: 30rem; margin-top: 2rem; color: #bbc2bb; }
+.about-principles { padding-block: 8rem; }
+.principles-list { border-top: 1px solid var(--border); }
+.principles-list article { display: grid; grid-template-columns: 0.4fr 1fr 1fr; gap: 1rem; padding-block: 1.5rem; border-bottom: 1px solid var(--border); }
+.principles-list span { color: var(--accent); font-size: 0.75rem; }
+.principles-list h3 { font-family: var(--font-display); font-size: 2rem; font-weight: 400; }
+.principles-list p { max-width: 22rem; color: var(--text-secondary); }
+.about-timeline .eyebrow { color: var(--accent); }
+.about-timeline .content-page__notice { max-width: 38rem; border-color: rgba(242, 240, 234, 0.22); color: #bbc2bb; }
+.about-timeline .button--quiet { border-color: rgba(242, 240, 234, 0.35); color: var(--bg-primary); }
+.services-directory { padding-block: 7rem; background: var(--bg-secondary); }
+.service-directory-list { border-top: 1px solid var(--border); }
+.service-directory-list article { display: grid; grid-template-columns: 0.4fr 1fr; gap: 1rem; padding-block: 1.5rem; border-bottom: 1px solid var(--border); }
+.service-directory-list article > span { color: var(--accent); font-size: 0.75rem; }
+.service-directory-list h3 { font-family: var(--font-display); font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 400; line-height: 1; }
+.service-directory-list p { max-width: 32rem; margin-top: 0.75rem; color: var(--text-secondary); }
+.services-next { padding-block: 8rem; }
+.services-next h2 { max-width: 10ch; margin-block: 1rem 2rem; font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 5rem); font-weight: 400; letter-spacing: -0.035em; line-height: 0.98; }
+.project-index { padding-block: 7rem; background: var(--bg-secondary); }
+.case-study-list { border-top: 1px solid var(--border); }
+.case-study-list article { display: grid; grid-template-columns: 0.55fr 1.1fr auto; gap: 2rem; align-items: start; padding-block: 2rem; border-bottom: 1px solid var(--border); }
+.case-study-list article > span { color: var(--accent); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.case-study-list h3 { font-family: var(--font-display); font-size: clamp(1.8rem, 3vw, 3rem); font-weight: 400; line-height: 1; }
+.case-study-list p { max-width: 28rem; margin-top: 0.75rem; color: var(--text-secondary); }
+.case-study-list .text-link { white-space: nowrap; }
+.open-roles { padding-block: 7rem; background: var(--bg-secondary); }
+.role-list { border-top: 1px solid var(--border); }
+.role-list article { display: flex; justify-content: space-between; gap: 2rem; padding-block: 1.5rem; border-bottom: 1px solid var(--border); }
+.role-list h3 { font-family: var(--font-display); font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 400; line-height: 1; }
+.role-list p, .role-list span { color: var(--text-secondary); font-size: 0.8rem; }
+.role-list span { align-self: center; white-space: nowrap; }
+
 .contact-page {
   min-height: 70vh;
   padding-block: 7rem 8rem;
@@ -292,4 +329,16 @@ body {
   .value p { grid-column: 2; }
   .contact-page { padding-block: 5rem; }
   .contact-page__grid { grid-template-columns: 1fr; gap: 4rem; margin-top: 4rem; }
+  .internal-hero { min-height: 65vh; padding-block: 5rem; }
+  .about-story, .about-timeline, .about-principles { padding-block: 5rem; }
+  .about-story__grid { grid-template-columns: 1fr; gap: 2rem; }
+  .principles-list article { grid-template-columns: 2rem 1fr; }
+  .principles-list p { grid-column: 2; }
+  .services-directory { padding-block: 5rem; }
+  .service-directory-list article { grid-template-columns: 2rem 1fr; }
+  .services-next { padding-block: 5rem; }
+  .project-index { padding-block: 5rem; }
+  .case-study-list article { grid-template-columns: 1fr; gap: 1rem; }
+  .open-roles { padding-block: 5rem; }
+  .role-list article { display: grid; gap: 0.75rem; }
 }
