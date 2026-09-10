@@ -1,3 +1,5 @@
+document.documentElement.classList.add('js');
+
 const revealItems = document.querySelectorAll('.reveal');
 const serviceTabs = document.querySelectorAll('.service-tab');
 const servicePanel = document.querySelector('#service-panel');
@@ -17,7 +19,9 @@ const setService = (tab) => {
     const selected = item === tab;
     item.classList.toggle('is-active', selected);
     item.setAttribute('aria-selected', String(selected));
+    item.setAttribute('tabindex', selected ? '0' : '-1');
   });
+  servicePanel.setAttribute('aria-labelledby', tab.id);
   servicePanel.querySelector('.service-panel__number').textContent = content[0];
   servicePanel.querySelector('h3').textContent = content[1];
   servicePanel.querySelector('p:not(.service-panel__number)').textContent = content[2];

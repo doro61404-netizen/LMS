@@ -263,25 +263,3 @@ body {
   .value { grid-template-columns: 2rem 1fr; }
   .value p { grid-column: 2; }
 }
-  display: grid;
-  align-content: center;
-  min-height: 70vh;
-  padding-block: 8rem;
-}
-
-.foundation-intro h1 {
-  max-width: 10ch;
-  margin-top: 1.2rem;
-  font-family: var(--font-display);
-  font-size: clamp(3.5rem, 9vw, 8.5rem);
-  font-weight: 400;
-  letter-spacing: -0.04em;
-  line-height: 0.92;
-}
-
-.foundation-intro__copy {
-  max-width: 31rem;
-  margin-top: 2rem;
-  color: var(--text-secondary);
-  font-size: clamp(1.05rem, 2vw, 1.35rem);
-}

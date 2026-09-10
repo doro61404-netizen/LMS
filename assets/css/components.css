@@ -49,6 +49,10 @@
   color: var(--accent);
 }
 
+.site-nav a[aria-current="page"] {
+  color: var(--accent);
+}
+
 .site-nav__contact {
   color: var(--text-primary);
   font-weight: 700;

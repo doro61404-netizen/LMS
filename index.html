@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Company Name builds thoughtful digital products and systems." />
     <title>Company Name | Digital-first company</title>
+    <link rel="canonical" href="index.html" />
+    <meta property="og:title" content="Company Name | Digital-first company" />
+    <meta property="og:description" content="Company Name builds thoughtful digital products and systems." />
+    <meta property="og:type" content="website" />
+    <script>document.documentElement.classList.add('js');</script>
     <link rel="stylesheet" href="assets/css/reset.css" />
     <link rel="stylesheet" href="assets/css/variables.css" />
     <link rel="stylesheet" href="assets/css/global.css" />
@@ -73,13 +78,13 @@
         </div>
         <div class="services-layout">
           <div class="service-list" role="tablist" aria-label="Services">
-            <button class="service-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="service-panel" data-service="products">Digital products <span>01</span></button>
-            <button class="service-tab" type="button" role="tab" aria-selected="false" aria-controls="service-panel" data-service="web">Web development <span>02</span></button>
-            <button class="service-tab" type="button" role="tab" aria-selected="false" aria-controls="service-panel" data-service="mobile">Mobile development <span>03</span></button>
-            <button class="service-tab" type="button" role="tab" aria-selected="false" aria-controls="service-panel" data-service="cloud">Cloud &amp; infrastructure <span>04</span></button>
-            <button class="service-tab" type="button" role="tab" aria-selected="false" aria-controls="service-panel" data-service="data">Data &amp; AI <span>05</span></button>
+            <button id="service-tab-products" class="service-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="service-panel" tabindex="0" data-service="products">Digital products <span>01</span></button>
+            <button id="service-tab-web" class="service-tab" type="button" role="tab" aria-selected="false" aria-controls="service-panel" tabindex="-1" data-service="web">Web development <span>02</span></button>
+            <button id="service-tab-mobile" class="service-tab" type="button" role="tab" aria-selected="false" aria-controls="service-panel" tabindex="-1" data-service="mobile">Mobile development <span>03</span></button>
+            <button id="service-tab-cloud" class="service-tab" type="button" role="tab" aria-selected="false" aria-controls="service-panel" tabindex="-1" data-service="cloud">Cloud &amp; infrastructure <span>04</span></button>
+            <button id="service-tab-data" class="service-tab" type="button" role="tab" aria-selected="false" aria-controls="service-panel" tabindex="-1" data-service="data">Data &amp; AI <span>05</span></button>
           </div>
-          <div class="service-panel" id="service-panel" role="tabpanel" aria-live="polite" tabindex="0">
+          <div class="service-panel" id="service-panel" role="tabpanel" aria-labelledby="service-tab-products" aria-live="polite" tabindex="0">
             <p class="service-panel__number">01</p>
             <h3>Digital products</h3>
             <p>From first question to working interface, we shape digital products that make difficult things easier to understand and use.</p>

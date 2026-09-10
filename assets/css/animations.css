@@ -1,6 +1,9 @@
 .reveal {
-  opacity: 0;
   transform: translateY(1.25rem);
+}
+
+.js .reveal {
+  opacity: 0;
   transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out);
 }
 
