@@ -1,0 +1,26 @@
+.reveal {
+  opacity: 0;
+  transform: translateY(1.25rem);
+  transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero__orbit--one { animation: orbit-one 14s linear infinite; }
+.hero__orbit--two { animation: orbit-two 18s linear infinite; }
+
+@keyframes orbit-one {
+  to { transform: rotate(360deg) translateX(0.75rem) rotate(-360deg); }
+}
+
+@keyframes orbit-two {
+  to { transform: rotate(-360deg) translateX(0.5rem) rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__orbit--one,
+  .hero__orbit--two { animation: none; }
+}

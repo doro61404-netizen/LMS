@@ -9,8 +9,10 @@
     <link rel="stylesheet" href="assets/css/variables.css" />
     <link rel="stylesheet" href="assets/css/global.css" />
     <link rel="stylesheet" href="assets/css/components.css" />
+    <link rel="stylesheet" href="assets/css/animations.css" />
     <link rel="stylesheet" href="assets/css/responsive.css" />
     <script src="assets/js/navigation.js" defer></script>
+    <script src="assets/js/animations.js" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
@@ -32,10 +34,89 @@
     </header>
 
     <main id="main-content" class="page-shell">
-      <section class="foundation-intro container" aria-labelledby="foundation-title">
-        <p class="eyebrow">Digital-first company experience</p>
-        <h1 id="foundation-title">Building what comes next.</h1>
-        <p class="foundation-intro__copy">A considered foundation for meaningful digital products, experiences, and systems.</p>
+      <section class="hero container" aria-labelledby="hero-title">
+        <div class="hero__content reveal">
+          <p class="eyebrow">Digital-first company experience</p>
+          <h1 id="hero-title">Building what comes next.</h1>
+          <p class="hero__copy">We create digital products, experiences, and systems for organizations ready to move with intent.</p>
+          <div class="hero__actions">
+            <a class="button button--primary" href="projects.html">Explore our work <span aria-hidden="true">↗</span></a>
+            <a class="button button--quiet" href="contact.html">Talk to us</a>
+          </div>
+        </div>
+        <div class="hero__visual" aria-hidden="true">
+          <div class="hero__orbit hero__orbit--one"></div>
+          <div class="hero__orbit hero__orbit--two"></div>
+          <span class="hero__visual-label">Systems / 01</span>
+        </div>
+      </section>
+
+      <section class="intro-band" aria-labelledby="intro-title">
+        <div class="container intro-band__grid reveal">
+          <p class="eyebrow">01 / Who we are</p>
+          <h2 id="intro-title">Technology should feel clear, useful, and human.</h2>
+          <p>Company Name is a placeholder for a team that turns complex challenges into focused digital experiences. Replace this copy with the company's real positioning.</p>
+        </div>
+      </section>
+
+      <section class="stats container" aria-label="Company statistics">
+        <div class="stat reveal"><strong>TBD</strong><span>Years experience</span></div>
+        <div class="stat reveal"><strong>TBD</strong><span>Projects delivered</span></div>
+        <div class="stat reveal"><strong>TBD</strong><span>Partner network</span></div>
+        <div class="stat reveal"><strong>TBD</strong><span>Countries reached</span></div>
+      </section>
+
+      <section class="services-section container" aria-labelledby="services-title">
+        <div class="section-heading reveal">
+          <p class="eyebrow">02 / What we do</p>
+          <h2 id="services-title">Built around the problem, not the trend.</h2>
+        </div>
+        <div class="services-layout">
+          <div class="service-list" role="tablist" aria-label="Services">
+            <button class="service-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="service-panel" data-service="products">Digital products <span>01</span></button>
+            <button class="service-tab" type="button" role="tab" aria-selected="false" aria-controls="service-panel" data-service="web">Web development <span>02</span></button>
+            <button class="service-tab" type="button" role="tab" aria-selected="false" aria-controls="service-panel" data-service="mobile">Mobile development <span>03</span></button>
+            <button class="service-tab" type="button" role="tab" aria-selected="false" aria-controls="service-panel" data-service="cloud">Cloud &amp; infrastructure <span>04</span></button>
+            <button class="service-tab" type="button" role="tab" aria-selected="false" aria-controls="service-panel" data-service="data">Data &amp; AI <span>05</span></button>
+          </div>
+          <div class="service-panel" id="service-panel" role="tabpanel" tabindex="0">
+            <p class="service-panel__number">01</p>
+            <h3>Digital products</h3>
+            <p>From first question to working interface, we shape digital products that make difficult things easier to understand and use.</p>
+            <span class="service-panel__signal">Product / Strategy / Craft</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="work-section" aria-labelledby="work-title">
+        <div class="container">
+          <div class="section-heading section-heading--split reveal">
+            <div><p class="eyebrow">03 / Selected work</p><h2 id="work-title">Proof is better than promise.</h2></div>
+            <p>Project stories will appear here once the company portfolio is supplied. No client work is fabricated in this first version.</p>
+          </div>
+          <div class="project-grid">
+            <article class="project-placeholder reveal"><span>Project 01 / Placeholder</span><h3>Case study to be added</h3><p>Challenge, approach, and measurable result will be documented here.</p><a class="text-link" href="projects.html">View project index <span aria-hidden="true">↗</span></a></article>
+            <article class="project-placeholder project-placeholder--accent reveal"><span>Project 02 / Placeholder</span><h3>A system with room to grow</h3><p>Replace this placeholder with a verified project narrative.</p><a class="text-link" href="projects.html">View project index <span aria-hidden="true">↗</span></a></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="values-section container" aria-labelledby="values-title">
+        <div class="section-heading reveal"><p class="eyebrow">04 / How we work</p><h2 id="values-title">Small details. Long view.</h2></div>
+        <div class="values-list">
+          <div class="value reveal"><span>01</span><h3>Curiosity</h3><p>We ask better questions before reaching for familiar answers.</p></div>
+          <div class="value reveal"><span>02</span><h3>Craft</h3><p>We care about the quiet decisions that make a product feel inevitable.</p></div>
+          <div class="value reveal"><span>03</span><h3>Integrity</h3><p>We make constraints, tradeoffs, and unknowns visible early.</p></div>
+          <div class="value reveal"><span>04</span><h3>Impact</h3><p>We measure usefulness by what changes after the work ships.</p></div>
+        </div>
+      </section>
+
+      <section class="cta-band" aria-labelledby="cta-title">
+        <div class="container cta-band__inner reveal">
+          <p class="eyebrow">05 / Next step</p>
+          <h2 id="cta-title">Have a meaningful problem to solve?</h2>
+          <a class="button button--light" href="contact.html">Start a conversation <span aria-hidden="true">↗</span></a>
+        </div>
       </section>
     </main>
 
