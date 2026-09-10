@@ -24,7 +24,16 @@ const setService = (tab) => {
   servicePanel.querySelector('.service-panel__signal').textContent = content[3];
 };
 
-serviceTabs.forEach((tab) => tab.addEventListener('click', () => setService(tab)));
+serviceTabs.forEach((tab, index) => {
+  tab.addEventListener('click', () => setService(tab));
+  tab.addEventListener('keydown', (event) => {
+    if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    const nextIndex = event.key === 'Home' ? 0 : event.key === 'End' ? serviceTabs.length - 1 : (index + (event.key === 'ArrowDown' ? 1 : -1) + serviceTabs.length) % serviceTabs.length;
+    serviceTabs[nextIndex].focus();
+    setService(serviceTabs[nextIndex]);
+  });
+});
 
 if ('IntersectionObserver' in window) {
   const observer = new IntersectionObserver((entries, currentObserver) => {
