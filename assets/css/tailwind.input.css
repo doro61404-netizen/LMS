@@ -1,0 +1,37 @@
+@import "./reset.css";
+@import "./variables.css";
+@import "./global.css";
+@import "./components.css";
+@import "./animations.css";
+@import "./responsive.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --border: rgba(23, 33, 29, 0.16);
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  html { scroll-behavior: smooth; }
+  body { @apply bg-paper font-body text-ink antialiased; }
+  :focus-visible { @apply outline-2 outline-offset-4 outline-focus; }
+}
+
+@layer components {
+  .tw-container { @apply mx-auto w-[calc(100%-2.5rem)] max-w-content; }
+  .tw-eyebrow { @apply text-xs font-bold uppercase tracking-[0.14em] text-terracotta; }
+  .tw-button { @apply inline-flex min-h-12 items-center gap-2 border border-ink px-4 py-3 text-xs font-bold transition duration-200 ease-editorial hover:-translate-y-0.5; }
+  .tw-button-primary { @apply bg-ink text-paper hover:border-terracotta hover:bg-terracotta; }
+  .tw-button-quiet { @apply border-black/15; }
+  .tw-page-title { @apply max-w-[10ch] font-display text-[clamp(3rem,8vw,7rem)] font-normal leading-[0.95] tracking-[-0.04em]; }
+  .tw-reveal { @apply translate-y-5 opacity-0 transition duration-700 ease-editorial; }
+  .js .tw-reveal.is-visible { @apply translate-y-0 opacity-100; }
+  .tw-menu-line { @apply block h-px w-5 bg-current transition duration-200; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
